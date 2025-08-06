@@ -85,19 +85,19 @@ export default function Footer() {
                 href={SOCIAL_LINKS.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-gray-800 p-3 rounded-full hover:bg-primary transition-colors"
+                className="bg-gradient-to-br from-purple-600 to-pink-500 p-3 rounded-full hover:scale-110 transition-transform shadow-lg"
                 aria-label="Instagram"
               >
-                <Instagram size={20} />
+                <Instagram size={20} className="text-white" />
               </a>
               <a
                 href={SOCIAL_LINKS.facebook}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-gray-800 p-3 rounded-full hover:bg-primary transition-colors"
+                className="bg-blue-600 p-3 rounded-full hover:scale-110 transition-transform shadow-lg"
                 aria-label="Facebook"
               >
-                <Facebook size={20} />
+                <Facebook size={20} className="text-white" />
               </a>
             </div>
           </div>
