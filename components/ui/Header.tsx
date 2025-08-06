@@ -31,22 +31,31 @@ export default function Header() {
     element?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setIsMenuOpen(false);
+  };
+
   return (
     <header className={`fixed top-0 w-full z-40 transition-all duration-300 ${
       isScrolled ? 'bg-white shadow-lg py-2' : 'bg-white/95 backdrop-blur-sm py-3'
     }`}>
       <div className="container-custom mx-auto px-4 flex justify-between items-center">
-        {/* Logo */}
-        <div className="flex items-center">
+        {/* Logo cliccabile */}
+        <button 
+          onClick={scrollToTop}
+          className="flex items-center transition-transform hover:scale-105"
+          aria-label="Torna all'inizio"
+        >
           <Image
             src="/images/logo/logo-tribu.png"
             alt="Tribù Personal Training Studio"
             width={180}
             height={60}
-            className="h-12 md:h-14 w-auto"
+            className="h-12 md:h-14 w-auto cursor-pointer"
             priority
           />
-        </div>
+        </button>
 
         {/* Desktop Navigation */}
         <nav className="hidden lg:flex items-center space-x-6 xl:space-x-8">
