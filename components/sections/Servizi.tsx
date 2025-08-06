@@ -3,8 +3,75 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import { Users, User, UsersRound, Apple, Heart, Monitor, X, ExternalLink } from 'lucide-react';
-import { SERVIZI } from '../../lib/constants';
+import { Users, User, UsersRound, Apple, Heart, Monitor, X, ExternalLink, Calendar, Clock } from 'lucide-react';
+
+const SERVIZI = [
+  {
+    id: 'individuale',
+    titolo: 'Lezioni Individuali',
+    descrizione: 'Allenamenti 1-to-1 per risultati massimi',
+    prezzi: [
+      { lezioni: 10, prezzo: 55, label: '10 lezioni → 55€/lez' },
+      { lezioni: 20, prezzo: 50, label: '20 lezioni → 50€/lez' },
+      { lezioni: 30, prezzo: 45, label: '30 lezioni → 45€/lez' }
+    ],
+    dettagli: 'Allenamento completamente personalizzato con un personal trainer dedicato esclusivamente a te. Massima attenzione, correzione immediata della tecnica e progressi rapidi.'
+  },
+  {
+    id: 'coppia',
+    titolo: 'Lezioni di Coppia',
+    descrizione: 'Allenati con un amico/a e condividi motivazione',
+    prezzi: [
+      { lezioni: 10, prezzo: 35, label: '10 lezioni → 35€/lez/pers' },
+      { lezioni: 20, prezzo: 30, label: '20 lezioni → 30€/lez/pers' },
+      { lezioni: 30, prezzo: 25, label: '30 lezioni → 25€/lez/pers' }
+    ],
+    dettagli: 'Perfetto per chi vuole allenarsi con un partner. Motivazione reciproca, divertimento e risparmio, mantenendo sempre la supervisione professionale.'
+  },
+  {
+    id: 'miniclass',
+    titolo: 'Miniclass (3-5 persone)',
+    descrizione: 'Functional e Posturale - Gruppi ristretti con orari fissi',
+    prezzi: [
+      { lezioni: 10, prezzo: 15, label: '10 lezioni → 15€/lez' }
+    ],
+    dettagli: 'Il giusto equilibrio tra personalizzazione e dinamica di gruppo. Ideale per chi cerca motivazione e socialità senza rinunciare alla qualità.',
+    orari: {
+      functional: [
+        { giorno: 'Lunedì', ora: '17:30' },
+        { giorno: 'Martedì', ora: '10:00' },
+        { giorno: 'Giovedì', ora: '17:30' },
+        { giorno: 'Sabato', ora: '10:00' }
+      ],
+      posturale: [
+        { giorno: 'Mercoledì', ora: '18:30' },
+        { giorno: 'Sabato', ora: '09:00' }
+      ]
+    }
+  },
+  {
+    id: 'nutrizionista',
+    titolo: 'Nutrizionista',
+    descrizione: 'Consulenza nutrizionale integrata all\'allenamento',
+    prezzi: null,
+    dettagli: 'Piano alimentare personalizzato che si integra perfettamente con il tuo programma di allenamento per risultati ottimali.'
+  },
+  {
+    id: 'massaggi',
+    titolo: 'Massaggi',
+    descrizione: 'Recupero muscolare e benessere',
+    prezzi: null,
+    dettagli: 'Massaggi professionali per il recupero post-allenamento, riduzione delle tensioni muscolari e miglioramento del benessere generale.'
+  },
+  {
+    id: 'online',
+    titolo: 'Coaching Online',
+    descrizione: 'Allenati ovunque con il nostro supporto',
+    link: 'https://www.tornoinforma.it',
+    prezzi: null,
+    dettagli: 'Programmi di allenamento online personalizzati con supporto costante del tuo personal trainer, ovunque tu sia.'
+  }
+];
 
 const serviceIcons: { [key: string]: React.ElementType } = {
   individuale: User,
@@ -57,7 +124,21 @@ export default function Servizi() {
                   <Icon size={32} className="text-primary group-hover:text-white" />
                 </div>
                 <h3 className="font-montserrat font-bold text-xl mb-2">{servizio.titolo}</h3>
-                <p className="text-gray mb-4">{servizio.descrizione}</p>
+                <p className="text-gray mb-4 text-sm">{servizio.descrizione}</p>
+                
+                {/* Speciale per Miniclass - mostra i tipi */}
+                {servizio.id === 'miniclass' && (
+                  <div className="mb-4 space-y-1">
+                    <div className="flex items-center gap-2 text-sm">
+                      <div className="w-2 h-2 bg-primary rounded-full"></div>
+                      <span className="font-semibold text-primary">Functional Training</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <div className="w-2 h-2 bg-primary rounded-full"></div>
+                      <span className="font-semibold text-primary">Posturale</span>
+                    </div>
+                  </div>
+                )}
                 
                 {servizio.prezzi && servizio.prezzi.length > 0 && (
                   <div className="border-t pt-4 mb-4">
@@ -94,7 +175,7 @@ export default function Servizi() {
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-white rounded-xl max-w-lg w-full p-8 relative"
+            className="bg-white rounded-xl max-w-lg w-full p-8 relative max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <button
@@ -107,8 +188,47 @@ export default function Servizi() {
             <h3 className="font-montserrat font-bold text-2xl mb-4">{selectedService.titolo}</h3>
             <p className="text-gray mb-6">{selectedService.dettagli}</p>
             
+            {/* Orari Miniclass */}
+            {selectedService.id === 'miniclass' && selectedService.orari && (
+              <div className="bg-gray-light rounded-lg p-4 mb-6">
+                <h4 className="font-semibold mb-4 flex items-center gap-2">
+                  <Calendar size={18} className="text-primary" />
+                  Orari Miniclass
+                </h4>
+                
+                <div className="space-y-4">
+                  <div>
+                    <h5 className="font-semibold text-primary mb-2">🏋️ Functional Training</h5>
+                    <p className="text-sm text-gray mb-2">Allenamento funzionale ad alta intensità per migliorare forza, resistenza e coordinazione.</p>
+                    <div className="grid grid-cols-2 gap-2">
+                      {selectedService.orari.functional.map((orario, idx) => (
+                        <div key={idx} className="flex items-center gap-2 text-sm">
+                          <Clock size={14} className="text-gray" />
+                          <span>{orario.giorno}: <strong>{orario.ora}</strong></span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <h5 className="font-semibold text-primary mb-2">🧘 Posturale</h5>
+                    <p className="text-sm text-gray mb-2">Esercizi mirati per migliorare la postura, ridurre tensioni e prevenire dolori.</p>
+                    <div className="grid grid-cols-2 gap-2">
+                      {selectedService.orari.posturale.map((orario, idx) => (
+                        <div key={idx} className="flex items-center gap-2 text-sm">
+                          <Clock size={14} className="text-gray" />
+                          <span>{orario.giorno}: <strong>{orario.ora}</strong></span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {/* Prezzi */}
             {selectedService.prezzi && (
-              <div className="bg-gray-light rounded-lg p-4">
+              <div className="bg-gray-light rounded-lg p-4 mb-6">
                 <p className="font-semibold mb-3">Listino prezzi:</p>
                 {selectedService.prezzi.map((prezzo, idx) => (
                   <div key={idx} className="flex justify-between items-center py-2 border-b border-gray/10 last:border-0">
@@ -119,7 +239,7 @@ export default function Servizi() {
             )}
             
             <button 
-              className="btn-primary w-full mt-6"
+              className="btn-primary w-full"
               onClick={() => {
                 setSelectedService(null);
                 document.getElementById('contatti')?.scrollIntoView({ behavior: 'smooth' });
