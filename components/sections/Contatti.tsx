@@ -17,6 +17,9 @@ const ORARI = {
   saturday: 'Sabato: mattina'
 };
 
+// Endpoint Formspree per il form di contatto
+const FORMSPREE_ENDPOINT = 'https://formspree.io/f/mnnzgeva';
+
 export default function Contatti() {
   const { ref, inView } = useInView({
     threshold: 0.1,
@@ -32,6 +35,7 @@ export default function Contatti() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
@@ -43,18 +47,35 @@ export default function Contatti() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setSubmitError(false);
     
-    // Simula invio form (sostituisci con la tua logica di invio)
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    setIsSubmitting(false);
-    setIsSubmitted(true);
-    
-    // Reset form dopo 5 secondi
-    setTimeout(() => {
-      setIsSubmitted(false);
-      setFormData({ nome: '', email: '', telefono: '', messaggio: '' });
-    }, 5000);
+    try {
+      const response = await fetch(FORMSPREE_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
+
+      if (response.ok) {
+        setIsSubmitted(true);
+        setFormData({ nome: '', email: '', telefono: '', messaggio: '' });
+        
+        // Reset dopo 5 secondi
+        setTimeout(() => {
+          setIsSubmitted(false);
+        }, 5000);
+      } else {
+        setSubmitError(true);
+      }
+    } catch (error) {
+      console.error('Errore invio form:', error);
+      setSubmitError(true);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -102,88 +123,98 @@ export default function Contatti() {
                 </p>
               </motion.div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <label htmlFor="nome" className="block text-sm font-medium text-gray mb-2">
-                    Nome e Cognome *
-                  </label>
-                  <input
-                    type="text"
-                    id="nome"
-                    name="nome"
-                    value={formData.nome}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                    placeholder="Mario Rossi"
-                  />
-                </div>
+              <>
+                {submitError && (
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+                    <p className="text-red-600 text-sm">
+                      Si è verificato un errore. Riprova o contattaci telefonicamente.
+                    </p>
+                  </div>
+                )}
+                
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div>
+                    <label htmlFor="nome" className="block text-sm font-medium text-gray mb-2">
+                      Nome e Cognome *
+                    </label>
+                    <input
+                      type="text"
+                      id="nome"
+                      name="nome"
+                      value={formData.nome}
+                      onChange={handleInputChange}
+                      required
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                      placeholder="Mario Rossi"
+                    />
+                  </div>
 
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray mb-2">
-                    Email *
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                    placeholder="mario.rossi@email.com"
-                  />
-                </div>
+                  <div>
+                    <label htmlFor="email" className="block text-sm font-medium text-gray mb-2">
+                      Email *
+                    </label>
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      required
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                      placeholder="mario.rossi@email.com"
+                    />
+                  </div>
 
-                <div>
-                  <label htmlFor="telefono" className="block text-sm font-medium text-gray mb-2">
-                    Telefono
-                  </label>
-                  <input
-                    type="tel"
-                    id="telefono"
-                    name="telefono"
-                    value={formData.telefono}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                    placeholder="333 1234567"
-                  />
-                </div>
+                  <div>
+                    <label htmlFor="telefono" className="block text-sm font-medium text-gray mb-2">
+                      Telefono
+                    </label>
+                    <input
+                      type="tel"
+                      id="telefono"
+                      name="telefono"
+                      value={formData.telefono}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                      placeholder="333 1234567"
+                    />
+                  </div>
 
-                <div>
-                  <label htmlFor="messaggio" className="block text-sm font-medium text-gray mb-2">
-                    Messaggio *
-                  </label>
-                  <textarea
-                    id="messaggio"
-                    name="messaggio"
-                    value={formData.messaggio}
-                    onChange={handleInputChange}
-                    required
-                    rows={4}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
-                    placeholder="Vorrei informazioni su..."
-                  />
-                </div>
+                  <div>
+                    <label htmlFor="messaggio" className="block text-sm font-medium text-gray mb-2">
+                      Messaggio *
+                    </label>
+                    <textarea
+                      id="messaggio"
+                      name="messaggio"
+                      value={formData.messaggio}
+                      onChange={handleInputChange}
+                      required
+                      rows={4}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
+                      placeholder="Vorrei informazioni su..."
+                    />
+                  </div>
 
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="btn-primary w-full flex items-center justify-center gap-2"
-                >
-                  {isSubmitting ? (
-                    <>
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                      Invio in corso...
-                    </>
-                  ) : (
-                    <>
-                      <Send size={20} />
-                      Invia messaggio
-                    </>
-                  )}
-                </button>
-              </form>
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="btn-primary w-full flex items-center justify-center gap-2"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                        Invio in corso...
+                      </>
+                    ) : (
+                      <>
+                        <Send size={20} />
+                        Invia messaggio
+                      </>
+                    )}
+                  </button>
+                </form>
+              </>
             )}
           </motion.div>
 
@@ -212,7 +243,9 @@ export default function Contatti() {
                   <Phone className="text-primary flex-shrink-0 mt-1" size={20} />
                   <div>
                     <p className="font-semibold">Telefono</p>
-                    <p className="text-gray">{CONTACT_INFO.phoneDisplay}</p>
+                    <a href={`tel:+39${CONTACT_INFO.phone}`} className="text-gray hover:text-primary transition-colors">
+                      {CONTACT_INFO.phoneDisplay}
+                    </a>
                   </div>
                 </div>
 
@@ -220,7 +253,9 @@ export default function Contatti() {
                   <Mail className="text-primary flex-shrink-0 mt-1" size={20} />
                   <div>
                     <p className="font-semibold">Email</p>
-                    <p className="text-gray">{CONTACT_INFO.email}</p>
+                    <a href={`mailto:${CONTACT_INFO.email}`} className="text-gray hover:text-primary transition-colors">
+                      {CONTACT_INFO.email}
+                    </a>
                   </div>
                 </div>
 
