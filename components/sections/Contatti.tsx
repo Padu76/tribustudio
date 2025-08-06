@@ -4,7 +4,18 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { MapPin, Phone, Mail, Clock, Send, CheckCircle } from 'lucide-react';
-import { CONTACT_INFO, ORARI } from '../../lib/constants';
+
+const CONTACT_INFO = {
+  phone: '3478881515',
+  phoneDisplay: '347 888 1515',
+  email: 'info@tribustudio.it',
+  address: 'Via Albere 27/B – Verona',
+};
+
+const ORARI = {
+  weekdays: 'Lun–Ven: 7:00 – 21:00',
+  saturday: 'Sabato: mattina'
+};
 
 export default function Contatti() {
   const { ref, inView } = useInView({
@@ -224,10 +235,10 @@ export default function Contatti() {
               </div>
             </div>
 
-            {/* Mappa Google */}
+            {/* Mappa Google con coordinate corrette */}
             <div className="rounded-lg overflow-hidden shadow-lg h-[400px]">
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2799.3967531084!2d10.9944!3d45.4384!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDXCsDI2JzE4LjIiTiAxMMKwNTknMzkuOCJF!5e0!3m2!1sit!2sit!4v1234567890"
+                src={`https://maps.google.com/maps?q=45.43253383632741,10.975025538647104&t=&z=17&ie=UTF8&iwloc=&output=embed`}
                 width="100%"
                 height="100%"
                 style={{ border: 0 }}
