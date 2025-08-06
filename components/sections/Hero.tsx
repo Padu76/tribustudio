@@ -2,27 +2,25 @@
 
 import { motion } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
-import Image from 'next/image';
 
 export default function Hero() {
   return (
     <section className="relative h-[70vh] min-h-[500px] flex items-center justify-center overflow-hidden">
-      {/* Background Image/Video Placeholder */}
+      {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/90 to-primary-dark/90 z-10" />
-        {/* Sostituisci con l'immagine dello studio quando disponibile */}
-        <div className="w-full h-full bg-gray-dark">
-          {/* Per usare l'immagine reale, sostituisci con:
-          <Image 
-            src="/images/hero/hero-bg.jpg" 
-            alt="Tribù Personal Training Studio"
-            fill
-            className="object-cover"
-            priority
-          />
-          */}
-          <div className="w-full h-full bg-gray-600"></div>
-        </div>
+        {/* Immagine di sfondo */}
+        <img 
+          src="/images/hero/hero-bg.jpg" 
+          alt="Tribù Personal Training Studio"
+          className="w-full h-full object-cover"
+          onError={(e) => {
+            // Se l'immagine non si carica, usa un colore di sfondo
+            e.currentTarget.style.display = 'none';
+          }}
+        />
+        {/* Fallback background se l'immagine non c'è */}
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-900"></div>
       </div>
 
       {/* Content */}

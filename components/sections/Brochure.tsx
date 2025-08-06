@@ -3,7 +3,6 @@
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { Download, FileText, Calendar, Euro, Clock } from 'lucide-react';
-import Image from 'next/image';
 
 const brochureContent = [
   { icon: FileText, label: 'Programmi dettagliati' },
@@ -20,11 +19,7 @@ export default function Brochure() {
 
   const handleDownload = () => {
     // Link alla brochure PDF
-    const pdfUrl = '/brochure-tribu.pdf';
-    const link = document.createElement('a');
-    link.href = pdfUrl;
-    link.download = 'Tribu-Personal-Training-Brochure.pdf';
-    link.click();
+    window.open('/brochure-tribu.pdf', '_blank');
   };
 
   return (
@@ -76,65 +71,51 @@ export default function Brochure() {
             </motion.button>
           </motion.div>
 
-          {/* Right side - Visual preview */}
+          {/* Right side - Brochure preview */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             animate={inView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.2 }}
             className="relative"
           >
-            <div className="bg-gradient-to-br from-primary/10 to-primary/5 rounded-2xl p-8">
-              {/* Mockup brochure preview */}
-              <div className="bg-white rounded-lg shadow-xl p-6 transform rotate-3 hover:rotate-0 transition-transform duration-300">
-                <div className="space-y-4">
-                  <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                  <div className="h-3 bg-gray-100 rounded w-full"></div>
-                  <div className="h-3 bg-gray-100 rounded w-5/6"></div>
-                  
-                  <div className="pt-4">
-                    <div className="h-32 bg-gradient-to-br from-primary/20 to-primary/10 rounded"></div>
-                  </div>
-                  
-                  <div className="space-y-2 pt-4">
-                    <div className="h-3 bg-gray-100 rounded w-full"></div>
-                    <div className="h-3 bg-gray-100 rounded w-4/5"></div>
-                    <div className="h-3 bg-gray-100 rounded w-5/6"></div>
-                  </div>
-                </div>
-                
-                {/* Logo */}
-                <div className="mt-6 flex items-center justify-center">
-                  <Image
-                    src="/images/logo/logo-tribu.png"
-                    alt="Tribù Logo"
-                    width={120}
-                    height={40}
-                    className="h-8 w-auto opacity-50"
-                  />
+            {/* Anteprima reale della brochure */}
+            <div className="relative group cursor-pointer" onClick={handleDownload}>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent rounded-lg opacity-0 group-hover:opacity-100 transition-opacity z-10 flex items-center justify-center">
+                <div className="bg-white/90 text-primary rounded-full p-4">
+                  <Download size={32} />
                 </div>
               </div>
               
-              {/* Second page preview */}
-              <div className="bg-white rounded-lg shadow-xl p-6 -mt-20 ml-12 transform -rotate-3 hover:rotate-0 transition-transform duration-300">
-                <div className="space-y-3">
-                  <div className="h-3 bg-gray-200 rounded w-2/3"></div>
-                  <div className="h-2 bg-gray-100 rounded w-full"></div>
-                  <div className="h-2 bg-gray-100 rounded w-5/6"></div>
-                  <div className="h-2 bg-gray-100 rounded w-4/5"></div>
+              {/* Immagine anteprima brochure */}
+              <img
+                src="/images/brochure/brochure-preview.jpg"
+                alt="Anteprima Brochure Tribù"
+                className="w-full rounded-lg shadow-2xl"
+                onError={(e) => {
+                  // Se l'immagine non si carica, mostra un placeholder
+                  e.currentTarget.style.display = 'none';
+                  e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                }}
+              />
+              
+              {/* Placeholder se l'immagine non c'è */}
+              <div className="hidden bg-gradient-to-br from-primary/10 to-primary/5 rounded-lg p-8 min-h-[400px] flex items-center justify-center">
+                <div className="text-center">
+                  <FileText size={64} className="text-primary mx-auto mb-4" />
+                  <h4 className="text-xl font-bold text-gray mb-2">Brochure Tribù</h4>
+                  <p className="text-gray mb-4">Personal Training Studio</p>
+                  <button className="btn-primary inline-flex items-center gap-2">
+                    <Download size={20} />
+                    Scarica PDF
+                  </button>
                 </div>
               </div>
             </div>
             
-            {/* Download icon overlay */}
-            <motion.div
-              animate={{ y: [0, -10, 0] }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-            >
-              <div className="bg-primary text-white rounded-full p-4 shadow-xl">
-                <Download size={32} />
-              </div>
-            </motion.div>
+            {/* Testo sotto l'anteprima */}
+            <p className="text-center text-gray mt-4 text-sm">
+              Clicca sull&apos;anteprima per scaricare la brochure completa
+            </p>
           </motion.div>
         </div>
       </div>
