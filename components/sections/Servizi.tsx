@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { Users, User, UsersRound, Apple, Heart, Monitor, X, ExternalLink, Calendar, Clock } from 'lucide-react';
+import Image from 'next/image';
 
 const SERVIZI = [
   {
@@ -31,7 +32,7 @@ const SERVIZI = [
   {
     id: 'miniclass',
     titolo: 'Miniclass (3-5 persone)',
-    descrizione: 'Functional e Posturale - Gruppi ristretti con orari fissi',
+    descrizione: 'Functional, Posturale e Terza Età - Gruppi ristretti con orari fissi',
     prezzi: [
       { lezioni: 10, prezzo: 15, label: '10 lezioni → 15€/lez' }
     ],
@@ -46,6 +47,11 @@ const SERVIZI = [
       posturale: [
         { giorno: 'Mercoledì', ora: '18:30' },
         { giorno: 'Sabato', ora: '09:00' }
+      ],
+      terzaeta: [
+        { giorno: 'Martedì', ora: '10:00' },
+        { giorno: 'Giovedì', ora: '10:00' },
+        { giorno: 'Sabato', ora: '11:00' }
       ]
     }
   },
@@ -137,6 +143,10 @@ export default function Servizi() {
                       <div className="w-2 h-2 bg-primary rounded-full"></div>
                       <span className="font-semibold text-primary">Posturale</span>
                     </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <div className="w-2 h-2 bg-primary rounded-full"></div>
+                      <span className="font-semibold text-primary">Ginnastica Terza Età</span>
+                    </div>
                   </div>
                 )}
                 
@@ -175,7 +185,7 @@ export default function Servizi() {
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-white rounded-xl max-w-lg w-full p-8 relative max-h-[90vh] overflow-y-auto"
+            className="bg-white rounded-xl max-w-2xl w-full p-8 relative max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <button
@@ -188,38 +198,97 @@ export default function Servizi() {
             <h3 className="font-montserrat font-bold text-2xl mb-4">{selectedService.titolo}</h3>
             <p className="text-gray mb-6">{selectedService.dettagli}</p>
             
-            {/* Orari Miniclass */}
+            {/* Orari Miniclass con immagini */}
             {selectedService.id === 'miniclass' && selectedService.orari && (
-              <div className="bg-gray-light rounded-lg p-4 mb-6">
-                <h4 className="font-semibold mb-4 flex items-center gap-2">
-                  <Calendar size={18} className="text-primary" />
-                  Orari Miniclass
+              <div className="space-y-6 mb-6">
+                <h4 className="font-semibold text-lg flex items-center gap-2">
+                  <Calendar size={20} className="text-primary" />
+                  Le nostre Miniclass
                 </h4>
                 
-                <div className="space-y-4">
-                  <div>
-                    <h5 className="font-semibold text-primary mb-2">🏋️ Functional Training</h5>
-                    <p className="text-sm text-gray mb-2">Allenamento funzionale ad alta intensità per migliorare forza, resistenza e coordinazione.</p>
-                    <div className="grid grid-cols-2 gap-2">
-                      {selectedService.orari.functional.map((orario, idx) => (
-                        <div key={idx} className="flex items-center gap-2 text-sm">
-                          <Clock size={14} className="text-gray" />
-                          <span>{orario.giorno}: <strong>{orario.ora}</strong></span>
-                        </div>
-                      ))}
+                {/* Functional Training */}
+                <div className="bg-gray-light rounded-lg p-4">
+                  <div className="flex flex-col md:flex-row gap-4">
+                    <div className="md:w-1/3">
+                      <div className="relative h-32 md:h-full rounded-lg overflow-hidden">
+                        <Image
+                          src="/images/servizi/miniclass-functional.jpg"
+                          alt="Miniclass Functional"
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                    </div>
+                    <div className="md:w-2/3">
+                      <h5 className="font-semibold text-primary mb-2">🏋️ Functional Training</h5>
+                      <p className="text-sm text-gray mb-3">Allenamento funzionale ad alta intensità per migliorare forza, resistenza e coordinazione.</p>
+                      <div className="grid grid-cols-2 gap-2">
+                        {selectedService.orari.functional.map((orario, idx) => (
+                          <div key={idx} className="flex items-center gap-2 text-sm">
+                            <Clock size={14} className="text-gray" />
+                            <span>{orario.giorno}: <strong>{orario.ora}</strong></span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                  
-                  <div>
-                    <h5 className="font-semibold text-primary mb-2">🧘 Posturale</h5>
-                    <p className="text-sm text-gray mb-2">Esercizi mirati per migliorare la postura, ridurre tensioni e prevenire dolori.</p>
-                    <div className="grid grid-cols-2 gap-2">
-                      {selectedService.orari.posturale.map((orario, idx) => (
-                        <div key={idx} className="flex items-center gap-2 text-sm">
-                          <Clock size={14} className="text-gray" />
-                          <span>{orario.giorno}: <strong>{orario.ora}</strong></span>
-                        </div>
-                      ))}
+                </div>
+                
+                {/* Posturale */}
+                <div className="bg-gray-light rounded-lg p-4">
+                  <div className="flex flex-col md:flex-row gap-4">
+                    <div className="md:w-1/3">
+                      <div className="relative h-32 md:h-full rounded-lg overflow-hidden">
+                        <Image
+                          src="/images/servizi/miniclass-postural.jpg"
+                          alt="Miniclass Posturale"
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                    </div>
+                    <div className="md:w-2/3">
+                      <h5 className="font-semibold text-primary mb-2">🧘 Posturale</h5>
+                      <p className="text-sm text-gray mb-3">Esercizi mirati per migliorare la postura, ridurre tensioni e prevenire dolori.</p>
+                      <div className="grid grid-cols-2 gap-2">
+                        {selectedService.orari.posturale.map((orario, idx) => (
+                          <div key={idx} className="flex items-center gap-2 text-sm">
+                            <Clock size={14} className="text-gray" />
+                            <span>{orario.giorno}: <strong>{orario.ora}</strong></span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Terza Età */}
+                <div className="bg-gray-light rounded-lg p-4">
+                  <div className="flex flex-col md:flex-row gap-4">
+                    <div className="md:w-1/3">
+                      <div className="relative h-32 md:h-full rounded-lg overflow-hidden">
+                        <Image
+                          src="/images/servizi/miniclass-aged.jpg"
+                          alt="Ginnastica Terza Età"
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                    </div>
+                    <div className="md:w-2/3">
+                      <h5 className="font-semibold text-primary mb-2">👥 Ginnastica Dolce Terza Età</h5>
+                      <p className="text-sm text-gray mb-3">
+                        Ginnastica leggera con obiettivo di recuperare e mantenere la muscolatura. 
+                        Fai il primo passo verso una nuova vita piena di energia ed indipendente!
+                      </p>
+                      <div className="grid grid-cols-2 gap-2">
+                        {selectedService.orari.terzaeta.map((orario, idx) => (
+                          <div key={idx} className="flex items-center gap-2 text-sm">
+                            <Clock size={14} className="text-gray" />
+                            <span>{orario.giorno}: <strong>{orario.ora}</strong></span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>
