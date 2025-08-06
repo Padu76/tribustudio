@@ -4,9 +4,9 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { Users, User, UsersRound, Apple, Heart, Monitor, X, ExternalLink } from 'lucide-react';
-import { SERVIZI } from '@/lib/constants';
+import { SERVIZI } from '../../lib/constants';
 
-const serviceIcons: { [key: string]: any } = {
+const serviceIcons: { [key: string]: React.ElementType } = {
   individuale: User,
   coppia: Users,
   miniclass: UsersRound,
