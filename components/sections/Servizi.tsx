@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { Users, User, UsersRound, Apple, Heart, Monitor, X, ExternalLink, Calendar, Clock } from 'lucide-react';
-import Image from 'next/image';
 
 const SERVIZI = [
   {
@@ -210,12 +209,14 @@ export default function Servizi() {
                 <div className="bg-gray-light rounded-lg p-4">
                   <div className="flex flex-col md:flex-row gap-4">
                     <div className="md:w-1/3">
-                      <div className="relative h-32 md:h-full rounded-lg overflow-hidden">
-                        <Image
+                      <div className="relative h-32 md:h-full rounded-lg overflow-hidden bg-gray-200">
+                        <img
                           src="/images/servizi/miniclass-functional.jpg"
                           alt="Miniclass Functional"
-                          fill
-                          className="object-cover"
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                          }}
                         />
                       </div>
                     </div>
@@ -238,12 +239,14 @@ export default function Servizi() {
                 <div className="bg-gray-light rounded-lg p-4">
                   <div className="flex flex-col md:flex-row gap-4">
                     <div className="md:w-1/3">
-                      <div className="relative h-32 md:h-full rounded-lg overflow-hidden">
-                        <Image
+                      <div className="relative h-32 md:h-full rounded-lg overflow-hidden bg-gray-200">
+                        <img
                           src="/images/servizi/miniclass-postural.jpg"
                           alt="Miniclass Posturale"
-                          fill
-                          className="object-cover"
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                          }}
                         />
                       </div>
                     </div>
@@ -266,12 +269,14 @@ export default function Servizi() {
                 <div className="bg-gray-light rounded-lg p-4">
                   <div className="flex flex-col md:flex-row gap-4">
                     <div className="md:w-1/3">
-                      <div className="relative h-32 md:h-full rounded-lg overflow-hidden">
-                        <Image
+                      <div className="relative h-32 md:h-full rounded-lg overflow-hidden bg-gray-200">
+                        <img
                           src="/images/servizi/miniclass-aged.jpg"
                           alt="Ginnastica Terza Età"
-                          fill
-                          className="object-cover"
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                          }}
                         />
                       </div>
                     </div>
