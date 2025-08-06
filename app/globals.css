@@ -117,7 +117,40 @@ h1, h2, h3, h4, h5, h6 {
   background: var(--color-primary-dark);
 }
 
-/* Button base styles */
+/* Parallax e animazioni avanzate */
+.parallax-container {
+  position: relative;
+  overflow: hidden;
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+/* Disabilita parallax su mobile per performance */
+@media (max-width: 768px) {
+  .parallax-container {
+    background-attachment: scroll;
+  }
+}
+
+/* Animazioni smooth */
+.hover-lift {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-lift:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, #F37021 0%, #D95E16 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
 .btn-primary {
   @apply bg-primary text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:bg-primary-dark hover:scale-105 hover:shadow-xl;
 }
