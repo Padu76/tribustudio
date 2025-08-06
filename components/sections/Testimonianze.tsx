@@ -63,7 +63,7 @@ export default function Testimonianze() {
 
               {/* Testimonianza */}
               <p className="text-xl md:text-2xl text-center text-gray italic mb-6">
-                "{TESTIMONIANZE[currentIndex].testo}"
+                &ldquo;{TESTIMONIANZE[currentIndex].testo}&rdquo;
               </p>
 
               {/* Nome */}
@@ -119,6 +119,7 @@ export default function Testimonianze() {
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 text-primary font-semibold hover:text-primary-dark transition-colors"
           >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="https://www.google.com/favicon.ico" alt="Google" className="w-5 h-5" />
             Google Reviews
           </a>

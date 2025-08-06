@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
+import Image from 'next/image';
 
 export default function Hero() {
   return (
@@ -9,13 +10,9 @@ export default function Hero() {
       {/* Background Image/Video Placeholder */}
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/90 to-primary-dark/90 z-10" />
-        {/* Sostituisci con video o immagine */}
+        {/* Sostituisci con video o immagine reale */}
         <div className="w-full h-full bg-gray-dark">
-          <img 
-            src="/api/placeholder/1920/1080" 
-            alt="Training"
-            className="w-full h-full object-cover"
-          />
+          <div className="w-full h-full bg-gray-600"></div>
         </div>
       </div>
 

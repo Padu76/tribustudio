@@ -42,7 +42,7 @@ export default function OffertaSpeciale() {
           </h2>
           
           <p className="text-xl max-w-3xl mx-auto mb-8 opacity-95">
-            Prova l'esperienza completa di Tribù: allenamento personalizzato + massaggio localizzato post-lezione.
+            Prova l&apos;esperienza completa di Tribù: allenamento personalizzato + massaggio localizzato post-lezione.
             Il modo migliore per cominciare a trasformare il tuo corpo, senza rischi e con un beneficio immediato.
           </p>
         </motion.div>
@@ -55,7 +55,7 @@ export default function OffertaSpeciale() {
             transition={{ duration: 0.6, delay: 0.2 }}
           >
             <h3 className="text-2xl font-montserrat font-bold mb-6">
-              Cosa include l'offerta:
+              Cosa include l&apos;offerta:
             </h3>
             <ul className="space-y-4">
               {benefits.map((benefit, index) => (
