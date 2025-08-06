@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { Download, FileText, Calendar, Euro, Clock } from 'lucide-react';
+import Image from 'next/image';
 
 const brochureContent = [
   { icon: FileText, label: 'Programmi dettagliati' },
@@ -18,7 +19,7 @@ export default function Brochure() {
   });
 
   const handleDownload = () => {
-    // Sostituisci con il link reale della brochure PDF
+    // Link alla brochure PDF
     const pdfUrl = '/brochure-tribu.pdf';
     const link = document.createElement('a');
     link.href = pdfUrl;
@@ -101,9 +102,15 @@ export default function Brochure() {
                   </div>
                 </div>
                 
-                {/* Logo placeholder */}
+                {/* Logo */}
                 <div className="mt-6 flex items-center justify-center">
-                  <span className="text-2xl font-montserrat font-bold text-primary">TRIBÙ</span>
+                  <Image
+                    src="/images/logo/logo-tribu.png"
+                    alt="Tribù Logo"
+                    width={120}
+                    height={40}
+                    className="h-8 w-auto opacity-50"
+                  />
                 </div>
               </div>
               
