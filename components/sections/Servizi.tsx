@@ -122,56 +122,144 @@ export default function Servizi() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
-                className="bg-white rounded-xl p-6 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer group"
+                className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer group"
                 onClick={() => servizio.id !== 'online' && setSelectedService(servizio)}
               >
-                <div className="bg-primary/10 rounded-full w-16 h-16 mb-4 flex items-center justify-center group-hover:bg-primary transition-colors">
-                  <Icon size={32} className="text-primary group-hover:text-white" />
-                </div>
-                <h3 className="font-montserrat font-bold text-xl mb-2">{servizio.titolo}</h3>
-                <p className="text-gray mb-4 text-sm">{servizio.descrizione}</p>
-                
-                {/* Speciale per Miniclass - mostra i tipi */}
+                {/* Immagine in cima alla card */}
                 {servizio.id === 'miniclass' && (
-                  <div className="mb-4 space-y-1">
-                    <div className="flex items-center gap-2 text-sm">
-                      <div className="w-2 h-2 bg-primary rounded-full"></div>
-                      <span className="font-semibold text-primary">Functional Training</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm">
-                      <div className="w-2 h-2 bg-primary rounded-full"></div>
-                      <span className="font-semibold text-primary">Posturale</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm">
-                      <div className="w-2 h-2 bg-primary rounded-full"></div>
-                      <span className="font-semibold text-primary">Ginnastica Terza Età</span>
-                    </div>
+                  <div className="relative h-48 overflow-hidden bg-gray-200">
+                    <img
+                      src="/images/servizi/miniclass-functional.jpg"
+                      alt={servizio.titolo}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
                 )}
                 
-                {servizio.prezzi && servizio.prezzi.length > 0 && (
-                  <div className="border-t pt-4 mb-4">
-                    <p className="text-sm font-semibold text-primary mb-2">A partire da:</p>
-                    <p className="text-2xl font-bold text-dark">
-                      {servizio.prezzi[servizio.prezzi.length - 1].prezzo}€<span className="text-sm font-normal">/lezione</span>
-                    </p>
+                {servizio.id === 'individuale' && (
+                  <div className="relative h-48 overflow-hidden bg-gray-200">
+                    <img
+                      src="/images/servizi/personal.jpg"
+                      alt={servizio.titolo}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
                 )}
                 
-                {servizio.id === 'online' ? (
-                  <a
-                    href={servizio.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-primary font-semibold hover:gap-3 transition-all"
-                  >
-                    Vai al sito <ExternalLink size={16} />
-                  </a>
-                ) : (
-                  <button className="text-primary font-semibold hover:text-primary-dark transition-colors">
-                    Scopri di più →
-                  </button>
+                {servizio.id === 'coppia' && (
+                  <div className="relative h-48 overflow-hidden bg-gray-200">
+                    <img
+                      src="/images/servizi/coppia.jpg"
+                      alt={servizio.titolo}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </div>
                 )}
+                
+                {servizio.id === 'nutrizionista' && (
+                  <div className="relative h-48 overflow-hidden bg-gray-200">
+                    <img
+                      src="/images/servizi/nutrizionista.jpg"
+                      alt={servizio.titolo}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </div>
+                )}
+                
+                {servizio.id === 'massaggi' && (
+                  <div className="relative h-48 overflow-hidden bg-gray-200">
+                    <img
+                      src="/images/servizi/massaggi.jpg"
+                      alt={servizio.titolo}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </div>
+                )}
+                
+                {servizio.id === 'online' && (
+                  <div className="relative h-48 overflow-hidden bg-gray-200">
+                    <img
+                      src="/images/servizi/online.jpg"
+                      alt={servizio.titolo}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </div>
+                )}
+                
+                {/* Contenuto della card */}
+                <div className="p-6">
+                  <div className="bg-primary/10 rounded-full w-16 h-16 mb-4 flex items-center justify-center group-hover:bg-primary transition-colors">
+                    <Icon size={32} className="text-primary group-hover:text-white" />
+                  </div>
+                  <h3 className="font-montserrat font-bold text-xl mb-2">{servizio.titolo}</h3>
+                  <p className="text-gray mb-4 text-sm">{servizio.descrizione}</p>
+                  
+                  {/* Speciale per Miniclass - mostra i tipi */}
+                  {servizio.id === 'miniclass' && (
+                    <div className="mb-4 space-y-1">
+                      <div className="flex items-center gap-2 text-sm">
+                        <div className="w-2 h-2 bg-primary rounded-full"></div>
+                        <span className="font-semibold text-primary">Functional Training</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm">
+                        <div className="w-2 h-2 bg-primary rounded-full"></div>
+                        <span className="font-semibold text-primary">Posturale</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm">
+                        <div className="w-2 h-2 bg-primary rounded-full"></div>
+                        <span className="font-semibold text-primary">Ginnastica Terza Età</span>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {servizio.prezzi && servizio.prezzi.length > 0 && (
+                    <div className="border-t pt-4 mb-4">
+                      <p className="text-sm font-semibold text-primary mb-2">A partire da:</p>
+                      <p className="text-2xl font-bold text-dark">
+                        {servizio.prezzi[servizio.prezzi.length - 1].prezzo}€<span className="text-sm font-normal">/lezione</span>
+                      </p>
+                    </div>
+                  )}
+                  
+                  {servizio.id === 'online' ? (
+                    <a
+                      href={servizio.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 text-primary font-semibold hover:gap-3 transition-all"
+                    >
+                      Vai al sito <ExternalLink size={16} />
+                    </a>
+                  ) : (
+                    <button className="text-primary font-semibold hover:text-primary-dark transition-colors">
+                      Scopri di più →
+                    </button>
+                  )}
+                </div>
               </motion.div>
             );
           })}
