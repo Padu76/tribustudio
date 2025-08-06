@@ -162,8 +162,9 @@ export default function Contatti() {
             <div className="bg-gray-light rounded-lg p-6">
               <h4 className="font-semibold mb-3">Come raggiungerci:</h4>
               <ul className="space-y-2 text-gray text-sm">
-                <li>• A 5 minuti dall&apos;uscita Verona Est</li>
-                <li>• Fermata autobus linea 11 a 100 metri</li>
+                <li>• A 2 minuti dalla tangenziale Nord</li>
+                <li>• A 5 minuti dal centro</li>
+                <li>• Fermata autobus linea 11 e 12 a 30 metri</li>
                 <li>• Ampio parcheggio gratuito</li>
                 <li>• Accessibile ai disabili</li>
               </ul>
