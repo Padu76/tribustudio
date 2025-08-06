@@ -207,21 +207,21 @@ export default function Servizi() {
                 
                 {/* Functional Training */}
                 <div className="bg-gray-light rounded-lg p-4">
-                  <div className="flex flex-col md:flex-row gap-4">
-                    <div className="md:w-1/3">
-                      <div className="relative h-32 md:h-full rounded-lg overflow-hidden bg-gray-200">
+                  <div className="flex flex-col gap-4">
+                    <div className="w-full">
+                      <div className="relative h-48 md:h-64 rounded-lg overflow-hidden bg-gray-200">
                         <img
                           src="/images/servizi/miniclass-functional.jpg"
                           alt="Miniclass Functional"
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                           onError={(e) => {
                             e.currentTarget.style.display = 'none';
                           }}
                         />
                       </div>
                     </div>
-                    <div className="md:w-2/3">
-                      <h5 className="font-semibold text-primary mb-2">🏋️ Functional Training</h5>
+                    <div className="w-full">
+                      <h5 className="font-semibold text-primary mb-2 text-lg">🏋️ Functional Training</h5>
                       <p className="text-sm text-gray mb-3">Allenamento funzionale ad alta intensità per migliorare forza, resistenza e coordinazione.</p>
                       <div className="grid grid-cols-2 gap-2">
                         {selectedService.orari.functional.map((orario, idx) => (
@@ -237,21 +237,21 @@ export default function Servizi() {
                 
                 {/* Posturale */}
                 <div className="bg-gray-light rounded-lg p-4">
-                  <div className="flex flex-col md:flex-row gap-4">
-                    <div className="md:w-1/3">
-                      <div className="relative h-32 md:h-full rounded-lg overflow-hidden bg-gray-200">
+                  <div className="flex flex-col gap-4">
+                    <div className="w-full">
+                      <div className="relative h-48 md:h-64 rounded-lg overflow-hidden bg-gray-200">
                         <img
                           src="/images/servizi/miniclass-postural.jpg"
                           alt="Miniclass Posturale"
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                           onError={(e) => {
                             e.currentTarget.style.display = 'none';
                           }}
                         />
                       </div>
                     </div>
-                    <div className="md:w-2/3">
-                      <h5 className="font-semibold text-primary mb-2">🧘 Posturale</h5>
+                    <div className="w-full">
+                      <h5 className="font-semibold text-primary mb-2 text-lg">🧘 Posturale</h5>
                       <p className="text-sm text-gray mb-3">Esercizi mirati per migliorare la postura, ridurre tensioni e prevenire dolori.</p>
                       <div className="grid grid-cols-2 gap-2">
                         {selectedService.orari.posturale.map((orario, idx) => (
@@ -267,21 +267,21 @@ export default function Servizi() {
                 
                 {/* Terza Età */}
                 <div className="bg-gray-light rounded-lg p-4">
-                  <div className="flex flex-col md:flex-row gap-4">
-                    <div className="md:w-1/3">
-                      <div className="relative h-32 md:h-full rounded-lg overflow-hidden bg-gray-200">
+                  <div className="flex flex-col gap-4">
+                    <div className="w-full">
+                      <div className="relative h-48 md:h-64 rounded-lg overflow-hidden bg-gray-200">
                         <img
                           src="/images/servizi/miniclass-aged.jpg"
                           alt="Ginnastica Terza Età"
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                           onError={(e) => {
                             e.currentTarget.style.display = 'none';
                           }}
                         />
                       </div>
                     </div>
-                    <div className="md:w-2/3">
-                      <h5 className="font-semibold text-primary mb-2">👥 Ginnastica Dolce Terza Età</h5>
+                    <div className="w-full">
+                      <h5 className="font-semibold text-primary mb-2 text-lg">👥 Ginnastica Dolce Terza Età</h5>
                       <p className="text-sm text-gray mb-3">
                         Ginnastica leggera con obiettivo di recuperare e mantenere la muscolatura. 
                         Fai il primo passo verso una nuova vita piena di energia ed indipendente!
