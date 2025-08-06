@@ -1,4 +1,5 @@
 import { Instagram, Facebook, MapPin, Phone, Mail } from 'lucide-react';
+import Image from 'next/image';
 
 const CONTACT_INFO = {
   phone: '3478881515',
@@ -28,7 +29,13 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Logo e descrizione */}
           <div className="md:col-span-1">
-            <h3 className="text-3xl font-montserrat font-bold text-primary mb-4">TRIBÙ</h3>
+            <Image
+              src="/images/logo/logo-tribu-white.png"
+              alt="Tribù Personal Training Studio"
+              width={150}
+              height={50}
+              className="h-12 w-auto mb-4"
+            />
             <p className="text-gray-400 text-sm">
               Il tuo studio di Personal Training a Verona dove ogni allenamento è su misura.
             </p>
@@ -56,15 +63,15 @@ export default function Footer() {
             <h4 className="font-montserrat font-semibold mb-4">Contatti</h4>
             <ul className="space-y-3 text-sm">
               <li className="flex items-center gap-2 text-gray-400">
-                <MapPin size={16} className="text-primary" />
+                <MapPin size={16} className="text-primary flex-shrink-0" />
                 {CONTACT_INFO.address}
               </li>
               <li className="flex items-center gap-2 text-gray-400">
-                <Phone size={16} className="text-primary" />
+                <Phone size={16} className="text-primary flex-shrink-0" />
                 {CONTACT_INFO.phoneDisplay}
               </li>
               <li className="flex items-center gap-2 text-gray-400">
-                <Mail size={16} className="text-primary" />
+                <Mail size={16} className="text-primary flex-shrink-0" />
                 {CONTACT_INFO.email}
               </li>
             </ul>
