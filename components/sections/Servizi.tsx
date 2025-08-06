@@ -96,24 +96,24 @@ export default function Servizi() {
   const [selectedService, setSelectedService] = useState<typeof SERVIZI[0] | null>(null);
 
   return (
-    <section id="servizi" className="section-padding bg-gray-light" ref={ref}>
+    <section id="servizi" className="py-12 md:py-16 lg:py-24 px-4 md:px-8 bg-gray-light" ref={ref}>
       <div className="container-custom mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
-          className="text-center mb-12"
+          className="text-center mb-8 md:mb-12"
         >
-          <h2 className="text-4xl md:text-5xl font-montserrat font-bold mb-6">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-montserrat font-bold mb-4 md:mb-6">
             I Nostri Servizi
           </h2>
-          <div className="w-24 h-1 bg-primary mx-auto mb-8"></div>
-          <p className="text-lg text-gray max-w-2xl mx-auto">
+          <div className="w-24 h-1 bg-primary mx-auto mb-6 md:mb-8"></div>
+          <p className="text-base md:text-lg text-gray max-w-2xl mx-auto px-4">
             Scegli il percorso più adatto a te. Ogni servizio è pensato per offrirti il massimo supporto nel raggiungimento dei tuoi obiettivi.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {SERVIZI.map((servizio, index) => {
             const Icon = serviceIcons[servizio.id];
             return (
@@ -127,7 +127,7 @@ export default function Servizi() {
               >
                 {/* Immagine in cima alla card */}
                 {servizio.id === 'miniclass' && (
-                  <div className="relative h-48 overflow-hidden bg-gray-200">
+                  <div className="relative h-40 sm:h-48 overflow-hidden bg-gray-200">
                     <img
                       src="/images/servizi/miniclass-functional.jpg"
                       alt={servizio.titolo}
@@ -141,7 +141,7 @@ export default function Servizi() {
                 )}
                 
                 {servizio.id === 'individuale' && (
-                  <div className="relative h-48 overflow-hidden bg-gray-200">
+                  <div className="relative h-40 sm:h-48 overflow-hidden bg-gray-200">
                     <img
                       src="/images/servizi/personal.jpg"
                       alt={servizio.titolo}
@@ -155,7 +155,7 @@ export default function Servizi() {
                 )}
                 
                 {servizio.id === 'coppia' && (
-                  <div className="relative h-48 overflow-hidden bg-gray-200">
+                  <div className="relative h-40 sm:h-48 overflow-hidden bg-gray-200">
                     <img
                       src="/images/servizi/coppia.jpg"
                       alt={servizio.titolo}
@@ -169,7 +169,7 @@ export default function Servizi() {
                 )}
                 
                 {servizio.id === 'nutrizionista' && (
-                  <div className="relative h-48 overflow-hidden bg-gray-200">
+                  <div className="relative h-40 sm:h-48 overflow-hidden bg-gray-200">
                     <img
                       src="/images/servizi/nutrizionista.jpg"
                       alt={servizio.titolo}
@@ -183,7 +183,7 @@ export default function Servizi() {
                 )}
                 
                 {servizio.id === 'massaggi' && (
-                  <div className="relative h-48 overflow-hidden bg-gray-200">
+                  <div className="relative h-40 sm:h-48 overflow-hidden bg-gray-200">
                     <img
                       src="/images/servizi/massaggi.jpg"
                       alt={servizio.titolo}
@@ -197,7 +197,7 @@ export default function Servizi() {
                 )}
                 
                 {servizio.id === 'online' && (
-                  <div className="relative h-48 overflow-hidden bg-gray-200">
+                  <div className="relative h-40 sm:h-48 overflow-hidden bg-gray-200">
                     <img
                       src="/images/servizi/online.jpg"
                       alt={servizio.titolo}
@@ -211,25 +211,25 @@ export default function Servizi() {
                 )}
                 
                 {/* Contenuto della card */}
-                <div className="p-6">
-                  <div className="bg-primary/10 rounded-full w-16 h-16 mb-4 flex items-center justify-center group-hover:bg-primary transition-colors">
-                    <Icon size={32} className="text-primary group-hover:text-white" />
+                <div className="p-4 sm:p-6">
+                  <div className="bg-primary/10 rounded-full w-12 h-12 sm:w-16 sm:h-16 mb-3 sm:mb-4 flex items-center justify-center group-hover:bg-primary transition-colors">
+                    <Icon size={24} className="text-primary group-hover:text-white sm:w-8 sm:h-8" />
                   </div>
-                  <h3 className="font-montserrat font-bold text-xl mb-2">{servizio.titolo}</h3>
-                  <p className="text-gray mb-4 text-sm">{servizio.descrizione}</p>
+                  <h3 className="font-montserrat font-bold text-lg sm:text-xl mb-2">{servizio.titolo}</h3>
+                  <p className="text-gray mb-3 sm:mb-4 text-xs sm:text-sm">{servizio.descrizione}</p>
                   
                   {/* Speciale per Miniclass - mostra i tipi */}
                   {servizio.id === 'miniclass' && (
-                    <div className="mb-4 space-y-1">
-                      <div className="flex items-center gap-2 text-sm">
+                    <div className="mb-3 sm:mb-4 space-y-1">
+                      <div className="flex items-center gap-2 text-xs sm:text-sm">
                         <div className="w-2 h-2 bg-primary rounded-full"></div>
                         <span className="font-semibold text-primary">Functional Training</span>
                       </div>
-                      <div className="flex items-center gap-2 text-sm">
+                      <div className="flex items-center gap-2 text-xs sm:text-sm">
                         <div className="w-2 h-2 bg-primary rounded-full"></div>
                         <span className="font-semibold text-primary">Posturale</span>
                       </div>
-                      <div className="flex items-center gap-2 text-sm">
+                      <div className="flex items-center gap-2 text-xs sm:text-sm">
                         <div className="w-2 h-2 bg-primary rounded-full"></div>
                         <span className="font-semibold text-primary">Ginnastica Terza Età</span>
                       </div>
@@ -237,10 +237,10 @@ export default function Servizi() {
                   )}
                   
                   {servizio.prezzi && servizio.prezzi.length > 0 && (
-                    <div className="border-t pt-4 mb-4">
-                      <p className="text-sm font-semibold text-primary mb-2">A partire da:</p>
-                      <p className="text-2xl font-bold text-dark">
-                        {servizio.prezzi[servizio.prezzi.length - 1].prezzo}€<span className="text-sm font-normal">/lezione</span>
+                    <div className="border-t pt-3 sm:pt-4 mb-3 sm:mb-4">
+                      <p className="text-xs sm:text-sm font-semibold text-primary mb-1 sm:mb-2">A partire da:</p>
+                      <p className="text-xl sm:text-2xl font-bold text-dark">
+                        {servizio.prezzi[servizio.prezzi.length - 1].prezzo}€<span className="text-xs sm:text-sm font-normal">/lezione</span>
                       </p>
                     </div>
                   )}
@@ -250,12 +250,13 @@ export default function Servizi() {
                       href={servizio.link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-primary font-semibold hover:gap-3 transition-all"
+                      className="inline-flex items-center gap-2 text-primary font-semibold hover:gap-3 transition-all text-sm"
+                      onClick={(e) => e.stopPropagation()}
                     >
-                      Vai al sito <ExternalLink size={16} />
+                      Vai al sito <ExternalLink size={14} />
                     </a>
                   ) : (
-                    <button className="text-primary font-semibold hover:text-primary-dark transition-colors">
+                    <button className="text-primary font-semibold hover:text-primary-dark transition-colors text-sm">
                       Scopri di più →
                     </button>
                   )}
@@ -266,149 +267,154 @@ export default function Servizi() {
         </div>
       </div>
 
-      {/* Modal Dettagli */}
+      {/* Modal Dettagli - Ottimizzato per mobile */}
       {selectedService && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setSelectedService(null)}>
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-white rounded-xl max-w-2xl w-full p-8 relative max-h-[90vh] overflow-y-auto"
+            className="bg-white rounded-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
-            <button
-              onClick={() => setSelectedService(null)}
-              className="absolute top-4 right-4 text-gray hover:text-primary transition-colors"
-            >
-              <X size={24} />
-            </button>
+            {/* Header mobile sticky */}
+            <div className="sticky top-0 bg-white border-b p-4 flex justify-between items-center">
+              <h3 className="font-montserrat font-bold text-xl sm:text-2xl">{selectedService.titolo}</h3>
+              <button
+                onClick={() => setSelectedService(null)}
+                className="text-gray hover:text-primary transition-colors p-1"
+              >
+                <X size={24} />
+              </button>
+            </div>
             
-            <h3 className="font-montserrat font-bold text-2xl mb-4">{selectedService.titolo}</h3>
-            <p className="text-gray mb-6">{selectedService.dettagli}</p>
-            
-            {/* Orari Miniclass con immagini */}
-            {selectedService.id === 'miniclass' && selectedService.orari && (
-              <div className="space-y-6 mb-6">
-                <h4 className="font-semibold text-lg flex items-center gap-2">
-                  <Calendar size={20} className="text-primary" />
-                  Le nostre Miniclass
-                </h4>
-                
-                {/* Functional Training */}
-                <div className="bg-gray-light rounded-lg p-4">
-                  <div className="flex flex-col gap-4">
-                    <div className="w-full">
-                      <div className="relative h-48 md:h-64 rounded-lg overflow-hidden bg-gray-200">
-                        <img
-                          src="/images/servizi/miniclass-functional.jpg"
-                          alt="Miniclass Functional"
-                          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                          onError={(e) => {
-                            e.currentTarget.style.display = 'none';
-                          }}
-                        />
+            <div className="p-4 sm:p-6 md:p-8">
+              <p className="text-gray mb-6 text-sm sm:text-base">{selectedService.dettagli}</p>
+              
+              {/* Orari Miniclass con immagini - Mobile optimized */}
+              {selectedService.id === 'miniclass' && selectedService.orari && (
+                <div className="space-y-4 sm:space-y-6 mb-6">
+                  <h4 className="font-semibold text-base sm:text-lg flex items-center gap-2">
+                    <Calendar size={18} className="text-primary" />
+                    Le nostre Miniclass
+                  </h4>
+                  
+                  {/* Functional Training */}
+                  <div className="bg-gray-light rounded-lg p-3 sm:p-4">
+                    <div className="flex flex-col gap-3 sm:gap-4">
+                      <div className="w-full">
+                        <div className="relative h-32 sm:h-48 md:h-64 rounded-lg overflow-hidden bg-gray-200">
+                          <img
+                            src="/images/servizi/miniclass-functional.jpg"
+                            alt="Miniclass Functional"
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none';
+                            }}
+                          />
+                        </div>
+                      </div>
+                      <div className="w-full">
+                        <h5 className="font-semibold text-primary mb-2 text-base sm:text-lg">🏋️ Functional Training</h5>
+                        <p className="text-xs sm:text-sm text-gray mb-3">Allenamento funzionale ad alta intensità per migliorare forza, resistenza e coordinazione.</p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 sm:gap-2">
+                          {selectedService.orari.functional.map((orario, idx) => (
+                            <div key={idx} className="flex items-center gap-2 text-xs sm:text-sm">
+                              <Clock size={12} className="text-gray" />
+                              <span>{orario.giorno}: <strong>{orario.ora}</strong></span>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     </div>
-                    <div className="w-full">
-                      <h5 className="font-semibold text-primary mb-2 text-lg">🏋️ Functional Training</h5>
-                      <p className="text-sm text-gray mb-3">Allenamento funzionale ad alta intensità per migliorare forza, resistenza e coordinazione.</p>
-                      <div className="grid grid-cols-2 gap-2">
-                        {selectedService.orari.functional.map((orario, idx) => (
-                          <div key={idx} className="flex items-center gap-2 text-sm">
-                            <Clock size={14} className="text-gray" />
-                            <span>{orario.giorno}: <strong>{orario.ora}</strong></span>
-                          </div>
-                        ))}
+                  </div>
+                  
+                  {/* Posturale */}
+                  <div className="bg-gray-light rounded-lg p-3 sm:p-4">
+                    <div className="flex flex-col gap-3 sm:gap-4">
+                      <div className="w-full">
+                        <div className="relative h-32 sm:h-48 md:h-64 rounded-lg overflow-hidden bg-gray-200">
+                          <img
+                            src="/images/servizi/miniclass-postural.jpg"
+                            alt="Miniclass Posturale"
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none';
+                            }}
+                          />
+                        </div>
+                      </div>
+                      <div className="w-full">
+                        <h5 className="font-semibold text-primary mb-2 text-base sm:text-lg">🧘 Posturale</h5>
+                        <p className="text-xs sm:text-sm text-gray mb-3">Esercizi mirati per migliorare la postura, ridurre tensioni e prevenire dolori.</p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 sm:gap-2">
+                          {selectedService.orari.posturale.map((orario, idx) => (
+                            <div key={idx} className="flex items-center gap-2 text-xs sm:text-sm">
+                              <Clock size={12} className="text-gray" />
+                              <span>{orario.giorno}: <strong>{orario.ora}</strong></span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Terza Età */}
+                  <div className="bg-gray-light rounded-lg p-3 sm:p-4">
+                    <div className="flex flex-col gap-3 sm:gap-4">
+                      <div className="w-full">
+                        <div className="relative h-32 sm:h-48 md:h-64 rounded-lg overflow-hidden bg-gray-200">
+                          <img
+                            src="/images/servizi/miniclass-aged.jpg"
+                            alt="Ginnastica Terza Età"
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none';
+                            }}
+                          />
+                        </div>
+                      </div>
+                      <div className="w-full">
+                        <h5 className="font-semibold text-primary mb-2 text-base sm:text-lg">👥 Ginnastica Dolce Terza Età</h5>
+                        <p className="text-xs sm:text-sm text-gray mb-3">
+                          Ginnastica leggera con obiettivo di recuperare e mantenere la muscolatura. 
+                          Fai il primo passo verso una nuova vita piena di energia ed indipendente!
+                        </p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 sm:gap-2">
+                          {selectedService.orari.terzaeta.map((orario, idx) => (
+                            <div key={idx} className="flex items-center gap-2 text-xs sm:text-sm">
+                              <Clock size={12} className="text-gray" />
+                              <span>{orario.giorno}: <strong>{orario.ora}</strong></span>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-                
-                {/* Posturale */}
-                <div className="bg-gray-light rounded-lg p-4">
-                  <div className="flex flex-col gap-4">
-                    <div className="w-full">
-                      <div className="relative h-48 md:h-64 rounded-lg overflow-hidden bg-gray-200">
-                        <img
-                          src="/images/servizi/miniclass-postural.jpg"
-                          alt="Miniclass Posturale"
-                          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                          onError={(e) => {
-                            e.currentTarget.style.display = 'none';
-                          }}
-                        />
-                      </div>
+              )}
+              
+              {/* Prezzi */}
+              {selectedService.prezzi && (
+                <div className="bg-gray-light rounded-lg p-3 sm:p-4 mb-6">
+                  <p className="font-semibold mb-3 text-sm sm:text-base">Listino prezzi:</p>
+                  {selectedService.prezzi.map((prezzo, idx) => (
+                    <div key={idx} className="flex justify-between items-center py-2 border-b border-gray/10 last:border-0">
+                      <span className="text-gray text-xs sm:text-sm">{prezzo.label}</span>
                     </div>
-                    <div className="w-full">
-                      <h5 className="font-semibold text-primary mb-2 text-lg">🧘 Posturale</h5>
-                      <p className="text-sm text-gray mb-3">Esercizi mirati per migliorare la postura, ridurre tensioni e prevenire dolori.</p>
-                      <div className="grid grid-cols-2 gap-2">
-                        {selectedService.orari.posturale.map((orario, idx) => (
-                          <div key={idx} className="flex items-center gap-2 text-sm">
-                            <Clock size={14} className="text-gray" />
-                            <span>{orario.giorno}: <strong>{orario.ora}</strong></span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
+                  ))}
                 </div>
-                
-                {/* Terza Età */}
-                <div className="bg-gray-light rounded-lg p-4">
-                  <div className="flex flex-col gap-4">
-                    <div className="w-full">
-                      <div className="relative h-48 md:h-64 rounded-lg overflow-hidden bg-gray-200">
-                        <img
-                          src="/images/servizi/miniclass-aged.jpg"
-                          alt="Ginnastica Terza Età"
-                          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                          onError={(e) => {
-                            e.currentTarget.style.display = 'none';
-                          }}
-                        />
-                      </div>
-                    </div>
-                    <div className="w-full">
-                      <h5 className="font-semibold text-primary mb-2 text-lg">👥 Ginnastica Dolce Terza Età</h5>
-                      <p className="text-sm text-gray mb-3">
-                        Ginnastica leggera con obiettivo di recuperare e mantenere la muscolatura. 
-                        Fai il primo passo verso una nuova vita piena di energia ed indipendente!
-                      </p>
-                      <div className="grid grid-cols-2 gap-2">
-                        {selectedService.orari.terzaeta.map((orario, idx) => (
-                          <div key={idx} className="flex items-center gap-2 text-sm">
-                            <Clock size={14} className="text-gray" />
-                            <span>{orario.giorno}: <strong>{orario.ora}</strong></span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-            
-            {/* Prezzi */}
-            {selectedService.prezzi && (
-              <div className="bg-gray-light rounded-lg p-4 mb-6">
-                <p className="font-semibold mb-3">Listino prezzi:</p>
-                {selectedService.prezzi.map((prezzo, idx) => (
-                  <div key={idx} className="flex justify-between items-center py-2 border-b border-gray/10 last:border-0">
-                    <span className="text-gray">{prezzo.label}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-            
-            <button 
-              className="btn-primary w-full"
-              onClick={() => {
-                setSelectedService(null);
-                document.getElementById('contatti')?.scrollIntoView({ behavior: 'smooth' });
-              }}
-            >
-              Prenota ora
-            </button>
+              )}
+              
+              <button 
+                className="btn-primary w-full text-sm sm:text-base py-3 sm:py-4"
+                onClick={() => {
+                  setSelectedService(null);
+                  document.getElementById('contatti')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+              >
+                Prenota ora
+              </button>
+            </div>
           </motion.div>
         </div>
       )}
