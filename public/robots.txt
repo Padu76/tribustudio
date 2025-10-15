@@ -1,20 +1,17 @@
+# *
 User-agent: *
 Allow: /
 Disallow: /api/
 Disallow: /_next/
 Disallow: /admin/
 
-Sitemap: https://tribustudio.it/sitemap.xml
-
-# Google
+# Googlebot
 User-agent: Googlebot
 Allow: /
-Crawl-delay: 0
 
-# Google Images
+# Googlebot-Image
 User-agent: Googlebot-Image
 Allow: /images/
-Allow: *.jpg
-Allow: *.jpeg
-Allow: *.png
-Allow: *.webp
+
+# Sitemaps
+Sitemap: https://www.tribustudio.it/sitemap.xml
