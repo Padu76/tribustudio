@@ -13,5 +13,8 @@ Allow: /
 User-agent: Googlebot-Image
 Allow: /images/
 
+# Host
+Host: https://www.tribustudio.it
+
 # Sitemaps
 Sitemap: https://www.tribustudio.it/sitemap.xml

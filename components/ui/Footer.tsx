@@ -107,9 +107,9 @@ export default function Footer() {
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-400">
           <p>&copy; 2024 Tribù Personal Training Studio. Tutti i diritti riservati.</p>
           <p className="mt-2">
-            <a href="/privacy" className="hover:text-primary transition-colors">Privacy Policy</a>
+            <a href="/privacy-policy" className="hover:text-primary transition-colors">Privacy Policy</a>
             {' • '}
-            <a href="/cookie" className="hover:text-primary transition-colors">Cookie Policy</a>
+            <a href="/cookie-policy" className="hover:text-primary transition-colors">Cookie Policy</a>
           </p>
         </div>
       </div>

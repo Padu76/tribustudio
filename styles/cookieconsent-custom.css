@@ -1,0 +1,150 @@
+/* Custom styling per Cookie Consent Banner */
+
+/* Override del tema di default */
+:root {
+  --cc-bg: #fff;
+  --cc-text: #2d3748;
+  --cc-btn-primary-bg: #2563eb;
+  --cc-btn-primary-text: #fff;
+  --cc-btn-primary-hover-bg: #1d4ed8;
+  --cc-btn-secondary-bg: #e5e7eb;
+  --cc-btn-secondary-text: #374151;
+  --cc-btn-secondary-hover-bg: #d1d5db;
+  --cc-separator-border-color: #e5e7eb;
+  --cc-cookie-category-block-bg: #f9fafb;
+  --cc-cookie-category-block-bg-hover: #f3f4f6;
+  --cc-overlay-bg: rgba(0, 0, 0, 0.5);
+  --cc-webkit-scrollbar-bg: #e5e7eb;
+  --cc-webkit-scrollbar-bg-hover: #d1d5db;
+}
+
+/* Migliora il posizionamento del banner */
+#cc-main .cm {
+  border-radius: 12px !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15) !important;
+  max-width: 450px !important;
+  padding: 24px !important;
+}
+
+/* Migliora i pulsanti */
+#cc-main .cm__btn {
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  padding: 12px 24px !important;
+  transition: all 0.2s ease !important;
+}
+
+#cc-main .cm__btn:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Migliora il titolo */
+#cc-main .cm__title {
+  font-size: 1.25rem !important;
+  font-weight: 700 !important;
+  margin-bottom: 12px !important;
+}
+
+/* Migliora il testo della descrizione */
+#cc-main .cm__desc {
+  line-height: 1.6 !important;
+  color: #4b5563 !important;
+}
+
+/* Link nel footer */
+#cc-main .cm__footer a {
+  color: #2563eb !important;
+  text-decoration: none !important;
+  font-weight: 500 !important;
+}
+
+#cc-main .cm__footer a:hover {
+  text-decoration: underline !important;
+}
+
+/* Preferenze Modal */
+#cc-main .pm {
+  border-radius: 12px !important;
+}
+
+#cc-main .pm__section {
+  margin-bottom: 24px !important;
+}
+
+#cc-main .pm__section-title {
+  font-weight: 600 !important;
+  color: #1f2937 !important;
+}
+
+#cc-main .pm__section-desc {
+  line-height: 1.6 !important;
+  color: #4b5563 !important;
+}
+
+/* Badge "Sempre Abilitati" */
+#cc-main .pm__badge {
+  background-color: #dbeafe !important;
+  color: #1e40af !important;
+  font-size: 0.75rem !important;
+  padding: 4px 8px !important;
+  border-radius: 4px !important;
+  font-weight: 600 !important;
+  margin-left: 8px !important;
+}
+
+/* Toggle switch styling */
+#cc-main .section__toggle {
+  margin-top: 12px !important;
+}
+
+/* Tabella cookie */
+#cc-main .cm__table {
+  margin-top: 16px !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+}
+
+#cc-main .cm__table th {
+  background-color: #f3f4f6 !important;
+  font-weight: 600 !important;
+  padding: 12px !important;
+}
+
+#cc-main .cm__table td {
+  padding: 12px !important;
+  border-bottom: 1px solid #e5e7eb !important;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  #cc-main .cm {
+    max-width: calc(100% - 32px) !important;
+    margin: 16px !important;
+  }
+  
+  #cc-main .cm__btns {
+    flex-direction: column !important;
+  }
+  
+  #cc-main .cm__btn {
+    width: 100% !important;
+    margin: 4px 0 !important;
+  }
+}
+
+/* Animazioni */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+#cc-main .cm {
+  animation: fadeIn 0.3s ease-out !important;
+}

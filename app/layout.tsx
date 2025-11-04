@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import '@/styles/cookieconsent-custom.css';
 import WebsiteTracker from '@/components/WebsiteTracker';
+import CookieConsent from '@/components/CookieConsent';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.tribustudio.it'),
@@ -56,6 +58,7 @@ export default function RootLayout({
       <body>
         <WebsiteTracker websiteId="tribu-studio" />
         {children}
+        <CookieConsent />
       </body>
     </html>
   );
