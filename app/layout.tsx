@@ -1,8 +1,10 @@
+// app/layout.tsx
 import type { Metadata } from 'next';
 import './globals.css';
 import '@/styles/cookieconsent-custom.css';
 import WebsiteTracker from '@/components/WebsiteTracker';
 import CookieConsent from '@/components/CookieConsent';
+import Script from 'next/script';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.tribustudio.it'),
@@ -55,6 +57,21 @@ export default function RootLayout({
 }) {
   return (
     <html lang="it">
+      <head>
+        {/* Google Analytics */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-3N4DQKS9KK"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-3N4DQKS9KK');
+          `}
+        </Script>
+      </head>
       <body>
         <WebsiteTracker websiteId="tribu-studio" />
         {children}
