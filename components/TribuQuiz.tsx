@@ -284,15 +284,15 @@ export default function TribuQuiz() {
               <button onClick={handleBack} className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors"><ChevronLeft className="w-5 h-5" />Indietro</button>
               <div className="text-sm text-gray-400">Domanda {currentStep} di {totalQuestions}</div>
               <div className="space-y-2">
-                <h2 className="text-2xl md:text-4xl font-bold">{questions[currentStep - 1].question}</h2>
-                {questions[currentStep - 1].subtitle && <p className="text-gray-400 text-lg">{questions[currentStep - 1].subtitle}</p>}
+                <h2 className="text-2xl md:text-4xl font-bold text-white">{questions[currentStep - 1].question}</h2>
+                {questions[currentStep - 1].subtitle && <p className="text-gray-300 text-lg">{questions[currentStep - 1].subtitle}</p>}
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {questions[currentStep - 1].options.map((opt) => (
-                  <motion.button key={opt.id} onClick={() => handleSelectOption(questions[currentStep - 1].id, opt.id)} className={`p-6 rounded-2xl border-2 text-left transition-all ${answers[questions[currentStep - 1].id] === opt.id ? 'border-orange-500 bg-orange-500/20' : 'border-gray-700 hover:border-gray-500 bg-gray-800/50'}`} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                  <motion.button key={opt.id} onClick={() => handleSelectOption(questions[currentStep - 1].id, opt.id)} className={`p-6 rounded-2xl border-2 text-left transition-all ${answers[questions[currentStep - 1].id] === opt.id ? 'border-orange-500 bg-orange-500/20' : 'border-gray-600 hover:border-orange-400 bg-gray-800/80'}`} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                     <div className="flex items-start gap-4">
-                      <div className={`p-3 rounded-xl ${answers[questions[currentStep - 1].id] === opt.id ? 'bg-orange-500 text-white' : 'bg-gray-700 text-gray-300'}`}>{opt.icon}</div>
-                      <div className="flex-1"><h3 className="text-lg font-semibold">{opt.label}</h3>{opt.description && <p className="text-sm text-gray-400 mt-1">{opt.description}</p>}</div>
+                      <div className={`p-3 rounded-xl ${answers[questions[currentStep - 1].id] === opt.id ? 'bg-orange-500 text-white' : 'bg-gray-700 text-orange-400'}`}>{opt.icon}</div>
+                      <div className="flex-1"><h3 className="text-lg font-semibold text-white">{opt.label}</h3>{opt.description && <p className="text-sm text-gray-300 mt-1">{opt.description}</p>}</div>
                     </div>
                   </motion.button>
                 ))}
