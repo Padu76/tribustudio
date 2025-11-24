@@ -13,6 +13,7 @@ import Brochure from '../components/sections/Brochure';
 import FAQ from '../components/sections/FAQ';
 import Contatti from '../components/sections/Contatti';
 import QuizCTA from '../components/QuizCTA';
+import CalcolatoreTraformazione from '../components/CalcolatoreTraformazione';
 
 export default function Home() {
   return (
@@ -31,6 +32,10 @@ export default function Home() {
         
         <Servizi />
         <ComeFunziona />
+        
+        {/* Calcolatore Trasformazione */}
+        <CalcolatoreTraformazione />
+        
         <Contatore />
         <Testimonianze />
         <OffertaSpeciale />
