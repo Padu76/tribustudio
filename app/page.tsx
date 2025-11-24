@@ -12,15 +12,23 @@ import OffertaSpeciale from '../components/sections/OffertaSpeciale';
 import Brochure from '../components/sections/Brochure';
 import FAQ from '../components/sections/FAQ';
 import Contatti from '../components/sections/Contatti';
+import QuizCTA from '../components/QuizCTA';
 
 export default function Home() {
   return (
     <>
+      {/* Banner Quiz in alto */}
+      <QuizCTA variant="banner" />
+      
       <Header />
       <main>
         <Hero />
         <ChiSiamo />
         <PercheTributu />
+        
+        {/* Sezione Quiz dopo PercheTributu */}
+        <QuizCTA variant="section" />
+        
         <Servizi />
         <ComeFunziona />
         <Contatore />
@@ -32,6 +40,9 @@ export default function Home() {
       </main>
       <Footer />
       <WhatsAppButton />
+      
+      {/* Bottone floating Quiz */}
+      <QuizCTA variant="floating" />
     </>
   );
 }
