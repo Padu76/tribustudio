@@ -240,6 +240,15 @@ export default function TribuQuiz() {
         })
 
       if (supabaseError && supabaseError.code !== '23505') throw supabaseError
+
+      // Invia notifica WhatsApp
+      try {
+        const message = `🆕 *NUOVO LEAD QUIZ*%0A%0A👤 *Nome:* ${name.trim()}%0A📧 *Email:* ${email.trim()}%0A📱 *Tel:* ${phone.trim() || 'Non fornito'}%0A%0A🎯 *Profilo:* ${results.profile}%0A📋 *Programma:* ${results.program}%0A%0A⏰ ${new Date().toLocaleString('it-IT')}`
+        await fetch(`https://api.callmebot.com/whatsapp.php?phone=393478881515&text=${message}&apikey=8911845`)
+      } catch (whatsappError) {
+        console.error('Errore WhatsApp:', whatsappError)
+      }
+
       setSubmitted(true)
     } catch (err: unknown) {
       console.error('Errore:', err)
