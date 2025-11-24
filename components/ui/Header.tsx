@@ -1,13 +1,15 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Calculator, Target } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 const NAVIGATION_ITEMS = [
   { label: 'Chi siamo', href: '#chi-siamo' },
   { label: 'Servizi', href: '#servizi' },
   { label: 'Come funziona', href: '#come-funziona' },
+  { label: 'Calcola Trasformazione', href: '#calcolatore', icon: Calculator, highlight: true },
   { label: 'Testimonianze', href: '#testimonianze' },
   { label: 'FAQ', href: '#faq' },
   { label: 'Contatti', href: '#contatti' }
@@ -58,7 +60,7 @@ export default function Header() {
         </button>
 
         {/* Desktop Navigation */}
-        <nav className="hidden lg:flex items-center space-x-6 xl:space-x-8">
+        <nav className="hidden lg:flex items-center space-x-4 xl:space-x-6">
           {NAVIGATION_ITEMS.map((item) => (
             <a
               key={item.href}
@@ -67,11 +69,26 @@ export default function Header() {
                 e.preventDefault();
                 handleNavClick(item.href);
               }}
-              className="text-gray hover:text-primary transition-colors duration-300 font-medium text-sm xl:text-base"
+              className={`transition-colors duration-300 font-medium text-sm xl:text-base flex items-center gap-1 ${
+                item.highlight 
+                  ? 'text-orange-500 hover:text-orange-600' 
+                  : 'text-gray hover:text-primary'
+              }`}
             >
+              {item.icon && <item.icon className="w-4 h-4" />}
               {item.label}
             </a>
           ))}
+          
+          {/* Quiz Button */}
+          <Link 
+            href="/quiz"
+            className="flex items-center gap-1 text-orange-500 hover:text-orange-600 transition-colors duration-300 font-medium text-sm xl:text-base"
+          >
+            <Target className="w-4 h-4" />
+            Trova il Tuo Percorso
+          </Link>
+          
           <button 
             onClick={() => document.getElementById('contatti')?.scrollIntoView({ behavior: 'smooth' })}
             className="bg-primary text-white px-5 py-2 rounded-full font-semibold hover:bg-primary-dark transition-all duration-300 hover:scale-105 text-sm xl:text-base"
@@ -103,11 +120,27 @@ export default function Header() {
                 e.preventDefault();
                 handleNavClick(item.href);
               }}
-              className="text-gray hover:text-primary transition-colors duration-300 font-medium py-2"
+              className={`transition-colors duration-300 font-medium py-2 flex items-center gap-2 ${
+                item.highlight 
+                  ? 'text-orange-500 hover:text-orange-600' 
+                  : 'text-gray hover:text-primary'
+              }`}
             >
+              {item.icon && <item.icon className="w-5 h-5" />}
               {item.label}
             </a>
           ))}
+          
+          {/* Quiz Link Mobile */}
+          <Link
+            href="/quiz"
+            onClick={() => setIsMenuOpen(false)}
+            className="text-orange-500 hover:text-orange-600 transition-colors duration-300 font-medium py-2 flex items-center gap-2"
+          >
+            <Target className="w-5 h-5" />
+            Trova il Tuo Percorso
+          </Link>
+          
           <button 
             onClick={() => {
               setIsMenuOpen(false);
