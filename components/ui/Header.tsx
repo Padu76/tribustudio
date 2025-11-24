@@ -43,10 +43,10 @@ export default function Header() {
       isScrolled ? 'bg-white shadow-lg py-2' : 'bg-white/95 backdrop-blur-sm py-3'
     }`}>
       <div className="container-custom mx-auto px-4 flex justify-between items-center">
-        {/* Logo cliccabile */}
+        {/* Logo cliccabile - più a sinistra */}
         <button 
           onClick={scrollToTop}
-          className="flex items-center transition-transform hover:scale-105"
+          className="flex items-center transition-transform hover:scale-105 mr-8"
           aria-label="Torna all'inizio"
         >
           <Image
@@ -60,7 +60,7 @@ export default function Header() {
         </button>
 
         {/* Desktop Navigation */}
-        <nav className="hidden lg:flex items-center space-x-4 xl:space-x-6">
+        <nav className="hidden lg:flex items-center space-x-6 xl:space-x-8">
           {NAVIGATION_ITEMS.map((item) => (
             <a
               key={item.href}
