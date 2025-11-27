@@ -2,16 +2,27 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import Link from 'next/link';
-import { supabase } from '@/lib/blog/supabaseClient';
+import { createClient } from '@supabase/supabase-js';
 
-export const revalidate = 60; // ISR: refresh max ogni 60s
+export const revalidate = 60;
+
+// Usiamo lo stesso Supabase "admin" usato nella route API
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+if (!supabaseUrl || !supabaseServiceKey) {
+  throw new Error(
+    'SUPABASE_URL o SUPABASE_SERVICE_ROLE_KEY non configurati per la pagina /blog.'
+  );
+}
+
+const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
 async function getPublishedPosts(): Promise<any[]> {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from('blog_posts')
     .select('*')
     .eq('status', 'published')
-    .lte('published_at', new Date().toISOString())
     .order('published_at', { ascending: false });
 
   if (error) {
@@ -73,17 +84,18 @@ export default async function BlogPage() {
                   </Link>
                   <div className="text-sm text-gray-500 mt-1">
                     {post.published_at
-                      ? new Date(post.published_at).toLocaleDateString('it-IT', {
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric',
-                        })
+                      ? new Date(post.published_at).toLocaleDateString(
+                          'it-IT',
+                          {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                          }
+                        )
                       : null}
                   </div>
                   {post.excerpt && (
-                    <p className="mt-3 text-gray-700">
-                      {post.excerpt}
-                    </p>
+                    <p className="mt-3 text-gray-700">{post.excerpt}</p>
                   )}
                   <div className="mt-3">
                     <Link
