@@ -14,7 +14,7 @@ if (!supabaseUrl || !supabaseServiceKey) {
   );
 }
 
-// NESSUN generic qui → niente "never" su insert
+// client admin senza generics per evitare rotture TS
 const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
 export const runtime = 'nodejs';
@@ -45,10 +45,7 @@ export async function GET(request: Request) {
 
     if (topicError) {
       console.error('Errore nel recupero topic:', topicError);
-      return NextResponse.json(
-        { error: 'Errore nel recupero topic' },
-        { status: 500 }
-      );
+      throw new Error(`Errore nel recupero topic: ${topicError.message}`);
     }
 
     const topic = topics?.[0];
@@ -64,10 +61,7 @@ export async function GET(request: Request) {
 
     if (!generated.content_markdown || generated.content_markdown.length < 500) {
       console.error('Articolo generato troppo corto o vuoto:', generated);
-      return NextResponse.json(
-        { error: 'Articolo generato non valido.' },
-        { status: 500 }
-      );
+      throw new Error('Articolo generato non valido (troppo corto o vuoto).');
     }
 
     // 3. Genera immagine di copertina
@@ -98,10 +92,7 @@ export async function GET(request: Request) {
 
     if (insertError) {
       console.error('Errore inserimento blog_post:', insertError);
-      return NextResponse.json(
-        { error: 'Errore inserimento articolo' },
-        { status: 500 }
-      );
+      throw new Error(`Errore inserimento articolo: ${insertError.message}`);
     }
 
     const newPost = insertedPosts?.[0];
@@ -117,7 +108,7 @@ export async function GET(request: Request) {
 
     if (updateTopicError) {
       console.error('Errore aggiornamento topic:', updateTopicError);
-      // non blocco la pubblicazione se va storto questo
+      // non blocco la risposta, ma lo segnalo
     }
 
     return NextResponse.json({
@@ -127,10 +118,17 @@ export async function GET(request: Request) {
       slug: newPost?.slug,
       image_url: newPost?.image_url,
     });
-  } catch (err: any) {
-    console.error('Errore in generate-and-publish:', err);
+  } catch (error: unknown) {
+    console.error('Errore in generate-and-publish:', error);
+    const message =
+      error instanceof Error
+        ? error.message
+        : 'Errore interno nella generazione del blog.';
     return NextResponse.json(
-      { error: 'Errore interno nella generazione del blog.' },
+      {
+        error: message,
+        details: String(error),
+      },
       { status: 500 }
     );
   }

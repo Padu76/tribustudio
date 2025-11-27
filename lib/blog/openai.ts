@@ -94,21 +94,31 @@ Se non sei sicuro della categoria, usa "${topic.category}".
   if (!response.ok) {
     const text = await response.text();
     console.error('Errore OpenAI (testo):', text);
-    throw new Error('Errore nella chiamata OpenAI per generare l\'articolo.');
+    throw new Error(`Errore OpenAI chat: ${text}`);
   }
 
   const json = await response.json();
 
-  const content = json.choices?.[0]?.message?.content;
+  const content = json.choices?.[0]?.message?.content as string | undefined;
   if (!content) {
     throw new Error('Risposta OpenAI senza contenuto.');
   }
 
+  // 💣 Fix classico: rimuovi ```json ... ``` se presente
+  let cleaned = content.trim();
+  if (cleaned.startsWith('```')) {
+    cleaned = cleaned.replace(/^```[a-zA-Z]*\s*/, ''); // rimuove ```json o ```ts ecc
+    if (cleaned.endsWith('```')) {
+      cleaned = cleaned.slice(0, -3);
+    }
+    cleaned = cleaned.trim();
+  }
+
   let parsed: any;
   try {
-    parsed = JSON.parse(content);
-  } catch (err) {
-    console.error('JSON non valido da OpenAI:', content);
+    parsed = JSON.parse(cleaned);
+  } catch (error) {
+    console.error('JSON non valido da OpenAI:', cleaned, error);
     throw new Error('OpenAI ha restituito un JSON non valido.');
   }
 
@@ -147,23 +157,26 @@ export async function generateImageForPost(
   style: 'photo' | 'illustration' = 'photo'
 ): Promise<string | null> {
   try {
-    const response = await fetch('https://api.openai.com/v1/images', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${OPENAI_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-image-1',
-        prompt: `${prompt}. Stile: ${
-          style === 'photo'
-            ? 'fotografia realistica, pulita, luminosa, senza testo'
-            : 'illustrazione moderna, pulita, luminosa, senza testo'
-        }. Rapporto 16:9.`,
-        size: '1024x576',
-        n: 1,
-      }),
-    });
+    const response = await fetch(
+      'https://api.openai.com/v1/images/generations',
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${OPENAI_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'gpt-image-1',
+          prompt: `${prompt}. Stile: ${
+            style === 'photo'
+              ? 'fotografia realistica, pulita, luminosa, senza testo'
+              : 'illustrazione moderna, pulita, luminosa, senza testo'
+          }. Rapporto 16:9.`,
+          size: '1024x576',
+          n: 1,
+        }),
+      }
+    );
 
     if (!response.ok) {
       const text = await response.text();
@@ -180,8 +193,8 @@ export async function generateImageForPost(
     }
 
     return url;
-  } catch (err) {
-    console.error('Eccezione durante generazione immagine:', err);
+  } catch (error) {
+    console.error('Eccezione durante generazione immagine:', error);
     return null;
   }
 }

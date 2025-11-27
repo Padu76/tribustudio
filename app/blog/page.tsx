@@ -1,12 +1,12 @@
-// app/blog/page.tsx
+/* eslint-disable @next/next/no-img-element */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import Link from 'next/link';
 import { supabase } from '@/lib/blog/supabaseClient';
-import type { BlogPost } from '@/lib/blog/types';
 
 export const revalidate = 60; // ISR: refresh max ogni 60s
 
-async function getPublishedPosts(): Promise<BlogPost[]> {
+async function getPublishedPosts(): Promise<any[]> {
   const { data, error } = await supabase
     .from('blog_posts')
     .select('*')
@@ -81,7 +81,7 @@ export default async function BlogPage() {
                       : null}
                   </div>
                   {post.excerpt && (
-                    <p className="mt-3 text-gray-700 line-clamp-3">
+                    <p className="mt-3 text-gray-700">
                       {post.excerpt}
                     </p>
                   )}
