@@ -2,8 +2,8 @@
 
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
-import { supabase } from '@/lib/blog/supabaseClient';
-import type { BlogPost } from '@/lib/blog/types';
+import { supabase } from '../../../lib/blog/supabaseClient';
+import type { BlogPost } from '../../../lib/blog/types';
 import React from 'react';
 
 export const revalidate = 60;

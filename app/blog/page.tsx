@@ -2,8 +2,8 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { supabase } from '@/lib/blog/supabaseClient';
-import type { BlogPost } from '@/lib/blog/types';
+import { supabase } from '../../lib/blog/supabaseClient';
+import type { BlogPost } from '../../lib/blog/types';
 
 export const revalidate = 60; // ISR: refresh max ogni 60s
 

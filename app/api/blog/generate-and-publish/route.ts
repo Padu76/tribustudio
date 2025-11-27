@@ -2,7 +2,7 @@
 
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { generateBlogPostFromTopic, generateImageForPost } from '@/lib/blog/openai';
+import { generateBlogPostFromTopic, generateImageForPost } from '../../../../lib/blog/openai';
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
