@@ -121,7 +121,7 @@ export async function GET(request: Request) {
       slug: newPost?.slug,
       image_url: newPost?.image_url,
     });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('Errore in generate-and-publish:', err);
     return NextResponse.json(
       { error: 'Errore interno nella generazione del blog.' },
