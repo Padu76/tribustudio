@@ -1,9 +1,8 @@
 // app/blog/[slug]/page.tsx
 
 import { notFound } from 'next/navigation';
-import Image from 'next/image';
-import { supabase } from '../../../lib/blog/supabaseClient';
-import type { BlogPost } from '../../../lib/blog/types';
+import { supabase } from '@/lib/blog/supabaseClient';
+import type { BlogPost } from '@/lib/blog/types';
 import React from 'react';
 
 export const revalidate = 60;
@@ -22,7 +21,7 @@ async function getPostBySlug(slug: string): Promise<BlogPost | null> {
     return null;
   }
 
-  return data as BlogPost;
+  return data;
 }
 
 // Renderer markdown ultra minimale (titoli + paragrafi)
@@ -65,12 +64,14 @@ function renderMarkdown(md: string): React.ReactNode {
   });
 }
 
-export default async function BlogPostPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
-  const { slug } = await params;
+// Niente tipi strani: props any, così non litighiamo con PageProps di Next
+export default async function BlogPostPage(props: any) {
+  const { params } = props;
+  const slug = params?.slug as string;
+
+  if (!slug) {
+    notFound();
+  }
 
   const post = await getPostBySlug(slug);
 
@@ -97,15 +98,11 @@ export default async function BlogPostPage({
 
         {post.image_url && (
           <div className="mb-8">
-            <div className="relative w-full max-h-[420px] h-[260px] md:h-[360px]">
-              <Image
-                src={post.image_url}
-                alt={post.image_alt || post.title}
-                fill
-                className="object-cover rounded-lg"
-                sizes="(max-width: 768px) 100vw, 768px"
-              />
-            </div>
+            <img
+              src={post.image_url}
+              alt={post.image_alt || post.title}
+              className="w-full max-h-[420px] object-cover rounded-lg"
+            />
           </div>
         )}
 

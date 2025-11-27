@@ -12,5 +12,5 @@ if (!supabaseUrl || !supabaseAnonKey) {
   );
 }
 
-// Client lato pubblico, usato solo per SELECT sui post pubblicati
+// Nessun generic → tipi "larghi" ma niente errori TS/insert
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);

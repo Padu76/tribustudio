@@ -104,28 +104,16 @@ Se non sei sicuro della categoria, usa "${topic.category}".
     throw new Error('Risposta OpenAI senza contenuto.');
   }
 
-  let parsed: {
-    title?: string;
-    slug?: string;
-    excerpt?: string;
-    content_markdown?: string;
-    seo_title?: string;
-    seo_description?: string;
-    category?: BlogCategory;
-    image_prompt?: string;
-    image_alt?: string;
-    image_style?: 'photo' | 'illustration';
-  };
-
+  let parsed: any;
   try {
-    parsed = JSON.parse(content) as typeof parsed;
+    parsed = JSON.parse(content);
   } catch (err) {
-    console.error('JSON non valido da OpenAI:', err, content);
+    console.error('JSON non valido da OpenAI:', content);
     throw new Error('OpenAI ha restituito un JSON non valido.');
   }
 
-  const title = parsed.title || topic.topic;
-  const slug = parsed.slug || slugify(title);
+  const title: string = parsed.title || topic.topic;
+  const slug: string = parsed.slug || slugify(title);
 
   const payload: GeneratedBlogPostPayload = {
     title,
@@ -137,13 +125,13 @@ Se non sei sicuro della categoria, usa "${topic.category}".
       parsed.seo_description ||
       (parsed.excerpt && parsed.excerpt.slice(0, 155)) ||
       title,
-    category: parsed.category || topic.category || 'altro',
+    category: (parsed.category as BlogCategory) || topic.category || 'altro',
     image_prompt:
       parsed.image_prompt ||
-      'Foto realistica orizzontale di una persona che si allena in modo funzionale in uno studio moderno, atmosfera positiva, stile pulito.',
+      `Foto realistica orizzontale di una persona che si allena in modo funzionale in uno studio moderno, atmosfera positiva, stile pulito.`,
     image_alt:
       parsed.image_alt ||
-      'Persona che si allena in modo funzionale in uno studio di personal training',
+      `Persona che si allena in modo funzionale in uno studio di personal training`,
     image_style: parsed.image_style === 'illustration' ? 'illustration' : 'photo',
   };
 

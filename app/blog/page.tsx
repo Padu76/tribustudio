@@ -1,9 +1,8 @@
 // app/blog/page.tsx
 
 import Link from 'next/link';
-import Image from 'next/image';
-import { supabase } from '../../lib/blog/supabaseClient';
-import type { BlogPost } from '../../lib/blog/types';
+import { supabase } from '@/lib/blog/supabaseClient';
+import type { BlogPost } from '@/lib/blog/types';
 
 export const revalidate = 60; // ISR: refresh max ogni 60s
 
@@ -20,7 +19,7 @@ async function getPublishedPosts(): Promise<BlogPost[]> {
     return [];
   }
 
-  return (data as BlogPost[]) || [];
+  return data || [];
 }
 
 export default async function BlogPage() {
@@ -52,15 +51,12 @@ export default async function BlogPage() {
                 {post.image_url && (
                   <div className="md:w-1/3 w-full">
                     <Link href={`/blog/${post.slug}`}>
-                      <div className="relative w-full h-40">
-                        <Image
-                          src={post.image_url}
-                          alt={post.image_alt || post.title}
-                          fill
-                          className="object-cover rounded-md"
-                          sizes="(max-width: 768px) 100vw, 33vw"
-                        />
-                      </div>
+                      <img
+                        src={post.image_url}
+                        alt={post.image_alt || post.title}
+                        className="w-full h-40 object-cover rounded-md"
+                        loading="lazy"
+                      />
                     </Link>
                   </div>
                 )}
@@ -85,7 +81,7 @@ export default async function BlogPage() {
                       : null}
                   </div>
                   {post.excerpt && (
-                    <p className="mt-3 text-gray-700">
+                    <p className="mt-3 text-gray-700 line-clamp-3">
                       {post.excerpt}
                     </p>
                   )}
