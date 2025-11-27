@@ -1,4 +1,4 @@
-// app/api/blog/generate-and-publish/route.ts
+// BLOG ROUTE V2 - IMPORT RELATIVO OK
 
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
