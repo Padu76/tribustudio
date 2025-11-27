@@ -6,14 +6,11 @@ import { createClient } from '@supabase/supabase-js';
 
 export const revalidate = 60;
 
-// Usiamo lo stesso Supabase "admin" usato nella route API
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl || !supabaseServiceKey) {
-  throw new Error(
-    'SUPABASE_URL o SUPABASE_SERVICE_ROLE_KEY non configurati per la pagina /blog.'
-  );
+  throw new Error('Supabase config missing for blog index.');
 }
 
 const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
@@ -26,11 +23,26 @@ async function getPublishedPosts(): Promise<any[]> {
     .order('published_at', { ascending: false });
 
   if (error) {
-    console.error('Errore nel caricamento dei post del blog:', error);
+    console.error('Errore caricamento posts:', error);
     return [];
   }
 
   return data || [];
+}
+
+function getPostImageUrl(post: any): string {
+  if (post.image_url) return post.image_url;
+
+  switch (post.category) {
+    case 'allenamento':
+      return '/images/blog/allenamento.jpg';
+    case 'alimentazione':
+      return '/images/blog/alimentazione.jpg';
+    case 'motivazione':
+      return '/images/blog/motivazione.jpg';
+    default:
+      return '/images/blog/generico.jpg';
+  }
 }
 
 export default async function BlogPage() {
@@ -44,70 +56,55 @@ export default async function BlogPage() {
             Blog Tribù Studio
           </h1>
           <p className="text-gray-600">
-            Allenamento, alimentazione e motivazione spiegati in modo semplice
-            e applicabile alla vita reale. Niente fuffa, solo consigli che puoi
-            usare da subito.
+            Allenamento, alimentazione e motivazione senza fuffa.
           </p>
         </header>
 
         {posts.length === 0 ? (
-          <p>Nessun articolo pubblicato al momento. Torna a trovarci presto 🚀</p>
+          <p>Nessun articolo pubblicato al momento.</p>
         ) : (
           <ul className="space-y-8">
-            {posts.map((post) => (
-              <li
-                key={post.id}
-                className="border-b border-gray-200 pb-6 flex flex-col md:flex-row gap-4"
-              >
-                {post.image_url && (
+            {posts.map((post) => {
+              const imageUrl = getPostImageUrl(post);
+
+              return (
+                <li
+                  key={post.id}
+                  className="border-b border-gray-200 pb-6 flex flex-col md:flex-row gap-4"
+                >
                   <div className="md:w-1/3 w-full">
                     <Link href={`/blog/${post.slug}`}>
                       <img
-                        src={post.image_url}
+                        src={imageUrl}
                         alt={post.image_alt || post.title}
                         className="w-full h-40 object-cover rounded-md"
-                        loading="lazy"
                       />
                     </Link>
                   </div>
-                )}
 
-                <div className={post.image_url ? 'md:w-2/3 w-full' : 'w-full'}>
-                  <div className="text-xs uppercase tracking-wide text-gray-500 mb-1">
-                    {post.category}
-                  </div>
-                  <Link
-                    href={`/blog/${post.slug}`}
-                    className="text-2xl font-semibold hover:underline"
-                  >
-                    {post.title}
-                  </Link>
-                  <div className="text-sm text-gray-500 mt-1">
-                    {post.published_at
-                      ? new Date(post.published_at).toLocaleDateString(
-                          'it-IT',
-                          {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric',
-                          }
-                        )
-                      : null}
-                  </div>
-                  {post.excerpt && (
-                    <p className="mt-3 text-gray-700">{post.excerpt}</p>
-                  )}
-                  <div className="mt-3">
+                  <div className="md:w-2/3 w-full">
+                    <div className="text-xs uppercase tracking-wide text-gray-500 mb-1">
+                      {post.category}
+                    </div>
                     <Link
                       href={`/blog/${post.slug}`}
-                      className="text-sm font-medium text-blue-600 hover:underline"
+                      className="text-2xl font-semibold hover:underline"
                     >
-                      Leggi l&apos;articolo →
+                      {post.title}
+                    </Link>
+                    <p className="mt-2 text-gray-600">
+                      {post.excerpt}
+                    </p>
+                    <Link
+                      href={`/blog/${post.slug}`}
+                      className="mt-2 inline-block text-sm font-medium text-blue-600 hover:underline"
+                    >
+                      Leggi →
                     </Link>
                   </div>
-                </div>
-              </li>
-            ))}
+                </li>
+              );
+            })}
           </ul>
         )}
       </section>

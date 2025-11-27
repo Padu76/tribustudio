@@ -36,3 +36,4 @@ public/sitemap*.xml.gz
 # Misc
 *.swp
 *.swo
+.vercel

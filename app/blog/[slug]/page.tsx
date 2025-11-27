@@ -13,71 +13,57 @@ async function getPostBySlug(slug: string): Promise<any | null> {
     .select('*')
     .eq('slug', slug)
     .eq('status', 'published')
-    .lte('published_at', new Date().toISOString())
     .single();
 
   if (error) {
-    console.error('Errore nel caricamento del post del blog:', error);
+    console.error('Errore caricamento singolo post:', error);
     return null;
   }
 
   return data;
 }
 
-// Renderer markdown ultra minimale (titoli + paragrafi)
+function getFallbackImage(category: string | null | undefined): string {
+  switch (category) {
+    case 'allenamento':
+      return '/images/blog/allenamento.jpg';
+    case 'alimentazione':
+      return '/images/blog/alimentazione.jpg';
+    case 'motivazione':
+      return '/images/blog/motivazione.jpg';
+    default:
+      return '/images/blog/generico.jpg';
+  }
+}
+
 function renderMarkdown(md: string): React.ReactNode {
   const lines = md.split('\n');
 
-  return lines.map((line, index) => {
+  return lines.map((line, i) => {
     const trimmed = line.trim();
 
     if (trimmed.startsWith('### ')) {
-      return (
-        <h3 key={index} className="text-xl font-semibold mt-6 mb-2">
-          {trimmed.replace(/^###\s+/, '')}
-        </h3>
-      );
+      return <h3 key={i} className="text-xl font-semibold mt-6 mb-2">{trimmed.replace(/^###\s+/, '')}</h3>;
     }
-
     if (trimmed.startsWith('## ')) {
-      return (
-        <h2 key={index} className="text-2xl font-bold mt-8 mb-3">
-          {trimmed.replace(/^##\s+/, '')}
-        </h2>
-      );
+      return <h2 key={i} className="text-2xl font-bold mt-8 mb-3">{trimmed.replace(/^##\s+/, '')}</h2>;
     }
+    if (trimmed.startsWith('# ')) return null;
+    if (trimmed === '') return <br key={i} />;
 
-    if (trimmed.startsWith('# ')) {
-      // H1 lo ignoriamo perché usiamo il titolo del post
-      return null;
-    }
-
-    if (trimmed === '') {
-      return <br key={index} />;
-    }
-
-    return (
-      <p key={index} className="mb-3 leading-relaxed">
-        {trimmed}
-      </p>
-    );
+    return <p key={i} className="mb-3 leading-relaxed">{trimmed}</p>;
   });
 }
 
-// props:any + eslint disabilitato = niente casini con PageProps custom del progetto
 export default async function BlogPostPage(props: any) {
-  const { params } = props;
-  const slug = params?.slug as string;
+  const slug = props?.params?.slug;
 
-  if (!slug) {
-    notFound();
-  }
+  if (!slug) notFound();
 
   const post = await getPostBySlug(slug);
+  if (!post) notFound();
 
-  if (!post) {
-    notFound();
-  }
+  const imageUrl = post.image_url || getFallbackImage(post.category);
 
   return (
     <main className="min-h-screen px-4 py-12 md:px-8 lg:px-16">
@@ -85,21 +71,15 @@ export default async function BlogPostPage(props: any) {
         <div className="text-xs uppercase tracking-wide text-gray-500 mb-1">
           {post.category}
         </div>
-        <h1 className="text-3xl md:text-4xl font-bold mb-3">{post.title}</h1>
-        <div className="text-sm text-gray-500 mb-6">
-          {post.published_at
-            ? new Date(post.published_at).toLocaleDateString('it-IT', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-              })
-            : null}
-        </div>
 
-        {post.image_url && (
+        <h1 className="text-3xl md:text-4xl font-bold mb-3">
+          {post.title}
+        </h1>
+
+        {imageUrl && (
           <div className="mb-8">
             <img
-              src={post.image_url}
+              src={imageUrl}
               alt={post.image_alt || post.title}
               className="w-full max-h-[420px] object-cover rounded-lg"
             />
