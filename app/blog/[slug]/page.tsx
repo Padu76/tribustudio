@@ -1,24 +1,25 @@
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { notFound } from 'next/navigation';
-import { supabase } from '@/lib/blog/supabaseClient';
-import React from 'react';
-import type { Metadata } from 'next';
-import Link from 'next/link';
+import { notFound } from "next/navigation";
+import { supabase } from "@/lib/blog/supabaseClient";
+import React from "react";
+import type { Metadata } from "next";
+import Link from "next/link";
+import NewsletterSignup from "@/components/NewsletterSignup";
 
 export const revalidate = 60;
 
 async function getPostBySlug(slug: string): Promise<any | null> {
   const { data, error } = await supabase
-    .from('blog_posts')
-    .select('*')
-    .eq('slug', slug)
-    .eq('status', 'published')
+    .from("blog_posts")
+    .select("*")
+    .eq("slug", slug)
+    .eq("status", "published")
     .single();
 
   if (error) {
-    console.error('Errore caricamento singolo post:', error);
+    console.error("Errore caricamento singolo post:", error);
     return null;
   }
 
@@ -27,14 +28,14 @@ async function getPostBySlug(slug: string): Promise<any | null> {
 
 function getFallbackImage(category: string | null | undefined): string {
   switch (category) {
-    case 'allenamento':
-      return '/images/blog/allenamento.jpg';
-    case 'alimentazione':
-      return '/images/blog/alimentazione.jpg';
-    case 'motivazione':
-      return '/images/blog/motivazione.jpg';
+    case "allenamento":
+      return "/images/blog/allenamento.jpg";
+    case "alimentazione":
+      return "/images/blog/alimentazione.jpg";
+    case "motivazione":
+      return "/images/blog/motivazione.jpg";
     default:
-      return '/images/blog/generico.jpg';
+      return "/images/blog/generico.jpg";
   }
 }
 
@@ -47,9 +48,9 @@ export async function generateMetadata(
 
   if (!slug) {
     return {
-      title: 'Articolo non trovato | Tribù Studio',
+      title: "Articolo non trovato | Tribù Studio",
       description:
-        'L’articolo che stai cercando non è disponibile. Scopri gli altri contenuti del blog Tribù Studio.',
+        "L’articolo che stai cercando non è disponibile. Scopri gli altri contenuti del blog Tribù Studio.",
     };
   }
 
@@ -57,9 +58,9 @@ export async function generateMetadata(
 
   if (!post) {
     return {
-      title: 'Articolo non trovato | Tribù Studio',
+      title: "Articolo non trovato | Tribù Studio",
       description:
-        'L’articolo che stai cercando non è disponibile. Scopri gli altri contenuti del blog Tribù Studio.',
+        "L’articolo che stai cercando non è disponibile. Scopri gli altri contenuti del blog Tribù Studio.",
     };
   }
 
@@ -67,7 +68,7 @@ export async function generateMetadata(
   const description: string =
     post.seo_description ||
     post.excerpt ||
-    'Allenamento, alimentazione e motivazione per chi ha poco tempo ma vuole risultati reali.';
+    "Allenamento, alimentazione e motivazione per chi ha poco tempo ma vuole risultati reali.";
 
   const url = `https://www.tribustudio.it/blog/${post.slug}`;
   const image =
@@ -83,7 +84,7 @@ export async function generateMetadata(
       title,
       description,
       url,
-      type: 'article',
+      type: "article",
       images: image ? [{ url: image }] : undefined,
     },
   };
@@ -91,27 +92,27 @@ export async function generateMetadata(
 
 // Renderer markdown ultra minimale (titoli + paragrafi)
 function renderMarkdown(md: string): React.ReactNode {
-  const lines = md.split('\n');
+  const lines = md.split("\n");
 
   return lines.map((line, i) => {
     const trimmed = line.trim();
 
-    if (trimmed.startsWith('### ')) {
+    if (trimmed.startsWith("### ")) {
       return (
         <h3 key={i} className="text-xl font-semibold mt-6 mb-2">
-          {trimmed.replace(/^###\s+/, '')}
+          {trimmed.replace(/^###\s+/, "")}
         </h3>
       );
     }
-    if (trimmed.startsWith('## ')) {
+    if (trimmed.startsWith("## ")) {
       return (
         <h2 key={i} className="text-2xl font-bold mt-8 mb-3">
-          {trimmed.replace(/^##\s+/, '')}
+          {trimmed.replace(/^##\s+/, "")}
         </h2>
       );
     }
-    if (trimmed.startsWith('# ')) return null;
-    if (trimmed === '') return <br key={i} />;
+    if (trimmed.startsWith("# ")) return null;
+    if (trimmed === "") return <br key={i} />;
 
     return (
       <p key={i} className="mb-3 leading-relaxed">
@@ -159,6 +160,7 @@ export default async function BlogPostPage(props: any) {
             </Link>
           </div>
 
+          {/* Articolo */}
           <article className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
             {imageUrl && (
               <div className="mb-0">
@@ -177,10 +179,10 @@ export default async function BlogPostPage(props: any) {
                 </span>
                 {post.published_at && (
                   <span className="text-xs text-gray-500">
-                    {new Date(post.published_at).toLocaleDateString('it-IT', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
+                    {new Date(post.published_at).toLocaleDateString("it-IT", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
                     })}
                   </span>
                 )}
@@ -212,6 +214,11 @@ export default async function BlogPostPage(props: any) {
               </div>
             </div>
           </article>
+
+          {/* Box newsletter sotto l'articolo */}
+          <div className="mt-10">
+            <NewsletterSignup />
+          </div>
         </div>
       </section>
     </main>
