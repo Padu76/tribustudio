@@ -22,7 +22,11 @@ if (!supabaseUrl || !supabaseServiceKey) {
 
 const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
-type BlogCategoryFilter = 'tutte' | 'allenamento' | 'alimentazione' | 'motivazione';
+type BlogCategoryFilter =
+  | 'tutte'
+  | 'allenamento'
+  | 'alimentazione'
+  | 'motivazione';
 
 async function getPublishedPosts(
   category: BlogCategoryFilter
@@ -64,17 +68,20 @@ function getPostImageUrl(post: any): string {
 
 function normalizeCategory(input?: string): BlogCategoryFilter {
   if (!input) return 'tutte';
-  if (input === 'allenamento' || input === 'alimentazione' || input === 'motivazione') {
+  if (
+    input === 'allenamento' ||
+    input === 'alimentazione' ||
+    input === 'motivazione'
+  ) {
     return input;
   }
   return 'tutte';
 }
 
-// ⚠️ props:any così non rompe il PageProps custom (searchParams come Promise)
+// props:any per non litigare con PageProps custom (searchParams come Promise)
 export default async function BlogPage(props: any) {
   let rawParams: any = {};
   if (props && props.searchParams) {
-    // nel tuo setup Next lo tipizza come Promise, quindi facciamo await difensivo
     rawParams = await props.searchParams;
   }
 
@@ -94,6 +101,17 @@ export default async function BlogPage(props: any) {
   return (
     <main className="min-h-screen px-4 py-12 md:px-8 lg:px-16">
       <section className="max-w-5xl mx-auto">
+        {/* 🔙 Link per tornare in homepage */}
+        <div className="mb-4">
+          <Link
+            href="/"
+            className="inline-flex items-center text-sm text-blue-600 hover:text-blue-700 hover:underline"
+          >
+            <span className="mr-1">←</span>
+            Torna alla home
+          </Link>
+        </div>
+
         <header className="mb-6">
           <h1 className="text-3xl md:text-4xl font-bold mb-3">
             Blog Tribù Studio
