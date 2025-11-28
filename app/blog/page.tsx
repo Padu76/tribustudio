@@ -27,7 +27,8 @@ type BlogCategoryFilter =
   | "tutte"
   | "allenamento"
   | "alimentazione"
-  | "motivazione";
+  | "motivazione"
+  | "generico";
 
 async function getPublishedPosts(
   category: BlogCategoryFilter
@@ -53,7 +54,7 @@ async function getPublishedPosts(
 }
 
 function getPostImageUrl(post: any): string {
-  if (post.image_url) return post.image_url;
+  if (post.image_url) return post.image_url as string;
 
   switch (post.category) {
     case "allenamento":
@@ -61,7 +62,10 @@ function getPostImageUrl(post: any): string {
     case "alimentazione":
       return "/images/blog/alimentazione.jpg";
     case "motivazione":
-      return "/images/blog/motivazione.jpg";
+      // 👉 il tuo file è .jpeg, non .jpg
+      return "/images/blog/motivazione.jpeg";
+    case "generico":
+      return "/images/blog/generico.jpg";
     default:
       return "/images/blog/generico.jpg";
   }
@@ -72,7 +76,8 @@ function normalizeCategory(input?: string): BlogCategoryFilter {
   if (
     input === "allenamento" ||
     input === "alimentazione" ||
-    input === "motivazione"
+    input === "motivazione" ||
+    input === "generico"
   ) {
     return input;
   }

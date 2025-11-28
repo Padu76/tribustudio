@@ -33,7 +33,10 @@ function getFallbackImage(category: string | null | undefined): string {
     case "alimentazione":
       return "/images/blog/alimentazione.jpg";
     case "motivazione":
-      return "/images/blog/motivazione.jpg";
+      // 👉 anche qui usiamo .jpeg
+      return "/images/blog/motivazione.jpeg";
+    case "generico":
+      return "/images/blog/generico.jpg";
     default:
       return "/images/blog/generico.jpg";
   }
