@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation';
 import { supabase } from '@/lib/blog/supabaseClient';
 import React from 'react';
 import type { Metadata } from 'next';
+import Link from 'next/link';
 
 export const revalidate = 60;
 
@@ -37,7 +38,7 @@ function getFallbackImage(category: string | null | undefined): string {
   }
 }
 
-// ✅ SEO dinamica compatibile con il tuo PageProps (params è un Promise<any>)
+// ✅ SEO dinamica compatibile col tuo PageProps (params come Promise)
 export async function generateMetadata(
   props: { params: Promise<any> }
 ): Promise<Metadata> {
@@ -120,7 +121,7 @@ function renderMarkdown(md: string): React.ReactNode {
   });
 }
 
-// ⚠️ Page component: props:any così non litiga con il PageProps custom del progetto
+// ⚠️ Page component: props:any così non litiga con PageProps custom
 export default async function BlogPostPage(props: any) {
   const slug: string | undefined = props?.params?.slug;
 
@@ -139,6 +140,17 @@ export default async function BlogPostPage(props: any) {
   return (
     <main className="min-h-screen px-4 py-12 md:px-8 lg:px-16">
       <article className="max-w-3xl mx-auto">
+        {/* 🔙 Link per tornare al blog */}
+        <div className="mb-4">
+          <Link
+            href="/blog"
+            className="inline-flex items-center text-sm text-blue-600 hover:text-blue-700 hover:underline"
+          >
+            <span className="mr-1">←</span>
+            Torna al blog
+          </Link>
+        </div>
+
         <div className="text-xs uppercase tracking-wide text-gray-500 mb-1">
           {post.category}
         </div>
@@ -169,6 +181,17 @@ export default async function BlogPostPage(props: any) {
 
         <div className="prose prose-neutral max-w-none">
           {renderMarkdown(post.content_markdown)}
+        </div>
+
+        {/* 🔙 Link anche in fondo all’articolo */}
+        <div className="mt-10">
+          <Link
+            href="/blog"
+            className="inline-flex items-center text-sm text-blue-600 hover:text-blue-700 hover:underline"
+          >
+            <span className="mr-1">←</span>
+            Torna alla lista articoli
+          </Link>
         </div>
       </article>
     </main>
