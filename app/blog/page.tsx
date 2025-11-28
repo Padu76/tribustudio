@@ -3,8 +3,15 @@
 
 import Link from 'next/link';
 import { createClient } from '@supabase/supabase-js';
+import type { Metadata } from 'next';
 
 export const revalidate = 60;
+
+export const metadata: Metadata = {
+  title: 'Blog Tribù Studio – Allenamento, Alimentazione, Motivazione',
+  description:
+    'Articoli pratici su allenamento, alimentazione e motivazione, pensati per chi ha poco tempo ma vuole risultati reali. Nessuna fuffa, solo consigli applicabili.',
+};
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -15,12 +22,22 @@ if (!supabaseUrl || !supabaseServiceKey) {
 
 const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
-async function getPublishedPosts(): Promise<any[]> {
-  const { data, error } = await supabaseAdmin
+type BlogCategoryFilter = 'tutte' | 'allenamento' | 'alimentazione' | 'motivazione';
+
+async function getPublishedPosts(
+  category: BlogCategoryFilter
+): Promise<any[]> {
+  let query = supabaseAdmin
     .from('blog_posts')
     .select('*')
     .eq('status', 'published')
     .order('published_at', { ascending: false });
+
+  if (category !== 'tutte') {
+    query = query.eq('category', category);
+  }
+
+  const { data, error } = await query;
 
   if (error) {
     console.error('Errore caricamento posts:', error);
@@ -45,20 +62,73 @@ function getPostImageUrl(post: any): string {
   }
 }
 
-export default async function BlogPage() {
-  const posts = await getPublishedPosts();
+function normalizeCategory(input?: string): BlogCategoryFilter {
+  if (!input) return 'tutte';
+  if (input === 'allenamento' || input === 'alimentazione' || input === 'motivazione') {
+    return input;
+  }
+  return 'tutte';
+}
+
+// ⚠️ props:any così non rompe il PageProps custom (searchParams come Promise)
+export default async function BlogPage(props: any) {
+  let rawParams: any = {};
+  if (props && props.searchParams) {
+    // nel tuo setup Next lo tipizza come Promise, quindi facciamo await difensivo
+    rawParams = await props.searchParams;
+  }
+
+  const currentCategory = normalizeCategory(
+    (rawParams?.category as string | undefined) ?? undefined
+  );
+
+  const posts = await getPublishedPosts(currentCategory);
+
+  const filterButtons: { label: string; value: BlogCategoryFilter }[] = [
+    { label: 'Tutti gli articoli', value: 'tutte' },
+    { label: 'Allenamento', value: 'allenamento' },
+    { label: 'Alimentazione', value: 'alimentazione' },
+    { label: 'Motivazione', value: 'motivazione' },
+  ];
 
   return (
     <main className="min-h-screen px-4 py-12 md:px-8 lg:px-16">
       <section className="max-w-5xl mx-auto">
-        <header className="mb-10">
+        <header className="mb-6">
           <h1 className="text-3xl md:text-4xl font-bold mb-3">
             Blog Tribù Studio
           </h1>
           <p className="text-gray-600">
-            Allenamento, alimentazione e motivazione senza fuffa.
+            Allenamento, alimentazione e motivazione spiegati in modo semplice
+            e applicabile alla vita reale. Niente fuffa, solo consigli che puoi
+            usare da subito.
           </p>
         </header>
+
+        {/* Filtri categoria */}
+        <div className="mb-8 flex flex-wrap gap-2">
+          {filterButtons.map((btn) => {
+            const isActive = currentCategory === btn.value;
+            const href =
+              btn.value === 'tutte'
+                ? '/blog'
+                : `/blog?category=${encodeURIComponent(btn.value)}`;
+
+            return (
+              <Link
+                key={btn.value}
+                href={href}
+                className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${
+                  isActive
+                    ? 'bg-blue-600 text-white border-blue-600'
+                    : 'bg-white text-gray-700 border-gray-300 hover:border-blue-400'
+                }`}
+              >
+                {btn.label}
+              </Link>
+            );
+          })}
+        </div>
 
         {posts.length === 0 ? (
           <p>Nessun articolo pubblicato al momento.</p>
@@ -92,9 +162,21 @@ export default async function BlogPage() {
                     >
                       {post.title}
                     </Link>
-                    <p className="mt-2 text-gray-600">
-                      {post.excerpt}
-                    </p>
+                    <div className="text-sm text-gray-500 mt-1">
+                      {post.published_at
+                        ? new Date(post.published_at).toLocaleDateString(
+                            'it-IT',
+                            {
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric',
+                            }
+                          )
+                        : null}
+                    </div>
+                    {post.excerpt && (
+                      <p className="mt-2 text-gray-700">{post.excerpt}</p>
+                    )}
                     <Link
                       href={`/blog/${post.slug}`}
                       className="mt-2 inline-block text-sm font-medium text-blue-600 hover:underline"

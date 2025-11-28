@@ -192,3 +192,111 @@ export async function generateImageForPost(
     return null;
   }
 }
+
+/**
+ * AUTO-RIPOPOLAZIONE TOPIC
+ * Genera un batch di nuovi topic da inserire in blog_topics.
+ */
+export interface GeneratedTopicSeed {
+  topic: string;
+  category: BlogCategory;
+  target_persona: string;
+}
+
+export async function generateBlogTopicsBatch(
+  desiredCount: number
+): Promise<GeneratedTopicSeed[]> {
+  const systemPrompt = `
+Sei un content strategist per un personal training studio a Verona (Tribù Studio).
+Devi proporre argomenti per il blog su:
+- allenamento
+- alimentazione
+- motivazione
+
+Regole:
+- Scrivi in ITALIANO.
+- Ogni topic deve essere molto concreto e specifico (no "come allenarsi" generico).
+- Target: adulti 30-55 anni con poco tempo e lavoro sedentario.
+- Mix equilibrato tra le categorie.
+- Nessuna promessa miracolosa, niente clickbait estremo.
+- Non nominare Tribù Studio nel titolo, è un argomento, non un post già scritto.
+
+Output SOLO JSON valido, formato:
+
+[
+  {
+    "topic": "Titolo/argomento chiaro e specifico",
+    "category": "allenamento" | "alimentazione" | "motivazione",
+    "target_persona": "breve descrizione della persona ideale"
+  },
+  ...
+]
+`;
+
+  const userPrompt = `
+Genera ${desiredCount} nuovi topic per il blog, bilanciati tra allenamento, alimentazione e motivazione.
+Rispondi SOLO con l'array JSON.
+`;
+
+  const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${OPENAI_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: MODEL,
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt },
+      ],
+      temperature: 0.8,
+    }),
+  });
+
+  if (!response.ok) {
+    const text = await response.text();
+    console.error('Errore OpenAI (topic):', text);
+    throw new Error(`Errore OpenAI nella generazione topic: ${text}`);
+  }
+
+  const json = await response.json();
+  const raw = json.choices?.[0]?.message?.content;
+
+  if (!raw) {
+    throw new Error('Risposta OpenAI topic vuota.');
+  }
+
+  let cleaned = raw.trim();
+  if (cleaned.startsWith('```')) {
+    cleaned = cleaned.replace(/^```[a-zA-Z]*\s*/, '');
+    if (cleaned.endsWith('```')) cleaned = cleaned.slice(0, -3);
+    cleaned = cleaned.trim();
+  }
+
+  let parsed: any;
+  try {
+    parsed = JSON.parse(cleaned);
+  } catch (error) {
+    console.error('Errore parsing JSON topic:', cleaned, error);
+    throw new Error('OpenAI ha generato JSON topic non valido.');
+  }
+
+  if (!Array.isArray(parsed)) {
+    throw new Error('OpenAI topic: output non è un array.');
+  }
+
+  const seeds: GeneratedTopicSeed[] = parsed
+    .map((item: any) => ({
+      topic: String(item.topic || '').trim(),
+      category:
+        (item.category as BlogCategory) || 'allenamento',
+      target_persona: String(
+        item.target_persona ||
+          'adulto 30-55 anni, lavoro sedentario, poco tempo'
+      ).trim(),
+    }))
+    .filter((t) => t.topic.length > 10);
+
+  return seeds;
+}
