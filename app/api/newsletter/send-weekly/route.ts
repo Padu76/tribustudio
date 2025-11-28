@@ -108,12 +108,12 @@ export async function GET(request: Request) {
     const postUrl = `${siteUrl}/blog/${post.slug}`;
 
     const templateParams = {
-      to_email: sub.email,
-      to_name: sub.name || '',
-      post_title: post.title,
-      post_excerpt: post.excerpt || '',
-      post_url: postUrl,
-      unsubscribe_url: unsubscribeUrl,
+      email: sub.email,          // → {{email}} nel template
+      name: sub.name || '',      // → {{name}}
+      post_title: post.title,    // → {{post_title}}
+      post_excerpt: post.excerpt || '',  // → {{post_excerpt}}
+      post_url: postUrl,         // → {{post_url}}
+      unsubscribe_url: unsubscribeUrl,   // → {{unsubscribe_url}}
       preview_text: `Nuovo articolo dal blog Tribù Studio: ${post.title}`,
     };
 

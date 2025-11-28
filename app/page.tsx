@@ -1,3 +1,5 @@
+// app/page.tsx
+
 import Link from 'next/link';
 import Header from '../components/ui/Header';
 import Footer from '../components/ui/Footer';
@@ -14,7 +16,7 @@ import Brochure from '../components/sections/Brochure';
 import FAQ from '../components/sections/FAQ';
 import Contatti from '../components/sections/Contatti';
 import QuizCTA from '../components/QuizCTA';
-import CalcolatoreTraformazione from '../components/CalcolatoreTraformazione';
+import CalcolatoreTrasformazione from '../components/CalcolatoreTrasformazione';
 
 export default function Home() {
   return (
@@ -35,7 +37,7 @@ export default function Home() {
         <ComeFunziona />
 
         {/* Calcolatore Trasformazione */}
-        <CalcolatoreTraformazione />
+        <CalcolatoreTrasformazione />
 
         {/* Sezione Blog Tribù Studio */}
         <section className="bg-slate-50 py-12 mt-8">
