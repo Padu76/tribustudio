@@ -1,50 +1,51 @@
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import Link from 'next/link';
-import { createClient } from '@supabase/supabase-js';
-import type { Metadata } from 'next';
+import Link from "next/link";
+import { createClient } from "@supabase/supabase-js";
+import type { Metadata } from "next";
+import NewsletterSignup from "@/components/NewsletterSignup";
 
 export const revalidate = 60;
 
 export const metadata: Metadata = {
-  title: 'Blog Tribù Studio – Allenamento, Alimentazione, Motivazione',
+  title: "Blog Tribù Studio – Allenamento, Alimentazione, Motivazione",
   description:
-    'Articoli pratici su allenamento, alimentazione e motivazione, pensati per chi ha poco tempo ma vuole risultati reali. Nessuna fuffa, solo consigli applicabili.',
+    "Articoli pratici su allenamento, alimentazione e motivazione, pensati per chi ha poco tempo ma vuole risultati reali. Nessuna fuffa, solo consigli applicabili.",
 };
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl || !supabaseServiceKey) {
-  throw new Error('Supabase config missing for blog index.');
+  throw new Error("Supabase config missing for blog index.");
 }
 
 const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
 type BlogCategoryFilter =
-  | 'tutte'
-  | 'allenamento'
-  | 'alimentazione'
-  | 'motivazione';
+  | "tutte"
+  | "allenamento"
+  | "alimentazione"
+  | "motivazione";
 
 async function getPublishedPosts(
   category: BlogCategoryFilter
 ): Promise<any[]> {
   let query = supabaseAdmin
-    .from('blog_posts')
-    .select('*')
-    .eq('status', 'published')
-    .order('published_at', { ascending: false });
+    .from("blog_posts")
+    .select("*")
+    .eq("status", "published")
+    .order("published_at", { ascending: false });
 
-  if (category !== 'tutte') {
-    query = query.eq('category', category);
+  if (category !== "tutte") {
+    query = query.eq("category", category);
   }
 
   const { data, error } = await query;
 
   if (error) {
-    console.error('Errore caricamento posts:', error);
+    console.error("Errore caricamento posts:", error);
     return [];
   }
 
@@ -55,27 +56,27 @@ function getPostImageUrl(post: any): string {
   if (post.image_url) return post.image_url;
 
   switch (post.category) {
-    case 'allenamento':
-      return '/images/blog/allenamento.jpg';
-    case 'alimentazione':
-      return '/images/blog/alimentazione.jpg';
-    case 'motivazione':
-      return '/images/blog/motivazione.jpg';
+    case "allenamento":
+      return "/images/blog/allenamento.jpg";
+    case "alimentazione":
+      return "/images/blog/alimentazione.jpg";
+    case "motivazione":
+      return "/images/blog/motivazione.jpg";
     default:
-      return '/images/blog/generico.jpg';
+      return "/images/blog/generico.jpg";
   }
 }
 
 function normalizeCategory(input?: string): BlogCategoryFilter {
-  if (!input) return 'tutte';
+  if (!input) return "tutte";
   if (
-    input === 'allenamento' ||
-    input === 'alimentazione' ||
-    input === 'motivazione'
+    input === "allenamento" ||
+    input === "alimentazione" ||
+    input === "motivazione"
   ) {
     return input;
   }
-  return 'tutte';
+  return "tutte";
 }
 
 // props:any per non litigare con PageProps custom (searchParams come Promise)
@@ -92,10 +93,10 @@ export default async function BlogPage(props: any) {
   const posts = await getPublishedPosts(currentCategory);
 
   const filterButtons: { label: string; value: BlogCategoryFilter }[] = [
-    { label: 'Tutti gli articoli', value: 'tutte' },
-    { label: 'Allenamento', value: 'allenamento' },
-    { label: 'Alimentazione', value: 'alimentazione' },
-    { label: 'Motivazione', value: 'motivazione' },
+    { label: "Tutti gli articoli", value: "tutte" },
+    { label: "Allenamento", value: "allenamento" },
+    { label: "Alimentazione", value: "alimentazione" },
+    { label: "Motivazione", value: "motivazione" },
   ];
 
   return (
@@ -132,8 +133,8 @@ export default async function BlogPage(props: any) {
             {filterButtons.map((btn) => {
               const isActive = currentCategory === btn.value;
               const href =
-                btn.value === 'tutte'
-                  ? '/blog'
+                btn.value === "tutte"
+                  ? "/blog"
                   : `/blog?category=${encodeURIComponent(btn.value)}`;
 
               return (
@@ -142,8 +143,8 @@ export default async function BlogPage(props: any) {
                   href={href}
                   className={`px-3 py-1.5 rounded-full text-sm border transition-all hover-lift ${
                     isActive
-                      ? 'bg-primary text-white border-primary'
-                      : 'bg-white text-gray-700 border-gray-200 hover:border-primary'
+                      ? "bg-primary text-white border-primary"
+                      : "bg-white text-gray-700 border-gray-200 hover:border-primary"
                   }`}
                 >
                   {btn.label}
@@ -184,10 +185,10 @@ export default async function BlogPage(props: any) {
                             <span className="text-xs text-gray-500">
                               {new Date(
                                 post.published_at
-                              ).toLocaleDateString('it-IT', {
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric',
+                              ).toLocaleDateString("it-IT", {
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
                               })}
                             </span>
                           )}
@@ -221,6 +222,11 @@ export default async function BlogPage(props: any) {
               })}
             </ul>
           )}
+
+          {/* 🔔 Box iscrizione newsletter */}
+          <div className="mt-10">
+            <NewsletterSignup />
+          </div>
         </div>
       </section>
     </main>
