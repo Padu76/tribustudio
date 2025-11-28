@@ -99,114 +99,129 @@ export default async function BlogPage(props: any) {
   ];
 
   return (
-    <main className="min-h-screen px-4 py-12 md:px-8 lg:px-16">
-      <section className="max-w-5xl mx-auto">
-        {/* 🔙 Link per tornare in homepage */}
-        <div className="mb-4">
-          <Link
-            href="/"
-            className="inline-flex items-center text-sm text-blue-600 hover:text-blue-700 hover:underline"
-          >
-            <span className="mr-1">←</span>
-            Torna alla home
-          </Link>
-        </div>
+    <main className="min-h-screen bg-[var(--color-light-gray)]">
+      <section className="section-padding">
+        <div className="container-custom">
+          {/* 🔙 Link per tornare in homepage */}
+          <div className="mb-4">
+            <Link
+              href="/"
+              className="inline-flex items-center text-sm text-primary hover:text-primary-dark hover:underline"
+            >
+              <span className="mr-1">←</span>
+              Torna alla home
+            </Link>
+          </div>
 
-        <header className="mb-6">
-          <h1 className="text-3xl md:text-4xl font-bold mb-3">
-            Blog Tribù Studio
-          </h1>
-          <p className="text-gray-600">
-            Allenamento, alimentazione e motivazione spiegati in modo semplice
-            e applicabile alla vita reale. Niente fuffa, solo consigli che puoi
-            usare da subito.
-          </p>
-        </header>
+          <header className="mb-8">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary mb-2">
+              Contenuti Tribù Studio
+            </p>
+            <h1 className="text-3xl md:text-4xl font-extrabold mb-3 gradient-text">
+              Blog Tribù Studio
+            </h1>
+            <p className="text-gray-600 max-w-2xl">
+              Allenamento, alimentazione e motivazione spiegati in modo semplice
+              e applicabile alla vita reale. Niente fuffa, solo consigli che puoi
+              usare da subito, anche se hai poco tempo.
+            </p>
+          </header>
 
-        {/* Filtri categoria */}
-        <div className="mb-8 flex flex-wrap gap-2">
-          {filterButtons.map((btn) => {
-            const isActive = currentCategory === btn.value;
-            const href =
-              btn.value === 'tutte'
-                ? '/blog'
-                : `/blog?category=${encodeURIComponent(btn.value)}`;
-
-            return (
-              <Link
-                key={btn.value}
-                href={href}
-                className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${
-                  isActive
-                    ? 'bg-blue-600 text-white border-blue-600'
-                    : 'bg-white text-gray-700 border-gray-300 hover:border-blue-400'
-                }`}
-              >
-                {btn.label}
-              </Link>
-            );
-          })}
-        </div>
-
-        {posts.length === 0 ? (
-          <p>Nessun articolo pubblicato al momento.</p>
-        ) : (
-          <ul className="space-y-8">
-            {posts.map((post) => {
-              const imageUrl = getPostImageUrl(post);
+          {/* Filtri categoria */}
+          <div className="mb-8 flex flex-wrap gap-2">
+            {filterButtons.map((btn) => {
+              const isActive = currentCategory === btn.value;
+              const href =
+                btn.value === 'tutte'
+                  ? '/blog'
+                  : `/blog?category=${encodeURIComponent(btn.value)}`;
 
               return (
-                <li
-                  key={post.id}
-                  className="border-b border-gray-200 pb-6 flex flex-col md:flex-row gap-4"
+                <Link
+                  key={btn.value}
+                  href={href}
+                  className={`px-3 py-1.5 rounded-full text-sm border transition-all hover-lift ${
+                    isActive
+                      ? 'bg-primary text-white border-primary'
+                      : 'bg-white text-gray-700 border-gray-200 hover:border-primary'
+                  }`}
                 >
-                  <div className="md:w-1/3 w-full">
-                    <Link href={`/blog/${post.slug}`}>
-                      <img
-                        src={imageUrl}
-                        alt={post.image_alt || post.title}
-                        className="w-full h-40 object-cover rounded-md"
-                      />
-                    </Link>
-                  </div>
-
-                  <div className="md:w-2/3 w-full">
-                    <div className="text-xs uppercase tracking-wide text-gray-500 mb-1">
-                      {post.category}
-                    </div>
-                    <Link
-                      href={`/blog/${post.slug}`}
-                      className="text-2xl font-semibold hover:underline"
-                    >
-                      {post.title}
-                    </Link>
-                    <div className="text-sm text-gray-500 mt-1">
-                      {post.published_at
-                        ? new Date(post.published_at).toLocaleDateString(
-                            'it-IT',
-                            {
-                              year: 'numeric',
-                              month: 'long',
-                              day: 'numeric',
-                            }
-                          )
-                        : null}
-                    </div>
-                    {post.excerpt && (
-                      <p className="mt-2 text-gray-700">{post.excerpt}</p>
-                    )}
-                    <Link
-                      href={`/blog/${post.slug}`}
-                      className="mt-2 inline-block text-sm font-medium text-blue-600 hover:underline"
-                    >
-                      Leggi →
-                    </Link>
-                  </div>
-                </li>
+                  {btn.label}
+                </Link>
               );
             })}
-          </ul>
-        )}
+          </div>
+
+          {posts.length === 0 ? (
+            <p>Nessun articolo pubblicato al momento.</p>
+          ) : (
+            <ul className="space-y-6">
+              {posts.map((post) => {
+                const imageUrl = getPostImageUrl(post);
+
+                return (
+                  <li
+                    key={post.id}
+                    className="hover-lift bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col md:flex-row"
+                  >
+                    <div className="md:w-1/3 w-full">
+                      <Link href={`/blog/${post.slug}`}>
+                        <img
+                          src={imageUrl}
+                          alt={post.image_alt || post.title}
+                          className="w-full h-48 md:h-full object-cover"
+                        />
+                      </Link>
+                    </div>
+
+                    <div className="md:w-2/3 w-full p-5 md:p-6 flex flex-col justify-between">
+                      <div>
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="inline-flex items-center px-3 py-1 rounded-full bg-orange-50 text-xs font-semibold text-primary uppercase tracking-wide">
+                            {post.category}
+                          </span>
+                          {post.published_at && (
+                            <span className="text-xs text-gray-500">
+                              {new Date(
+                                post.published_at
+                              ).toLocaleDateString('it-IT', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                              })}
+                            </span>
+                          )}
+                        </div>
+
+                        <Link
+                          href={`/blog/${post.slug}`}
+                          className="text-xl md:text-2xl font-semibold hover:underline"
+                        >
+                          {post.title}
+                        </Link>
+
+                        {post.excerpt && (
+                          <p className="mt-3 text-gray-700 text-sm md:text-base">
+                            {post.excerpt}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="mt-4">
+                        <Link
+                          href={`/blog/${post.slug}`}
+                          className="text-sm font-semibold text-primary hover:text-primary-dark"
+                        >
+                          Leggi l&apos;articolo →
+                        </Link>
+                      </div>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
       </section>
     </main>
   );

@@ -38,7 +38,7 @@ function getFallbackImage(category: string | null | undefined): string {
   }
 }
 
-// ✅ SEO dinamica compatibile col tuo PageProps (params come Promise)
+// SEO dinamica compatibile col tuo PageProps (params come Promise)
 export async function generateMetadata(
   props: { params: Promise<any> }
 ): Promise<Metadata> {
@@ -121,7 +121,7 @@ function renderMarkdown(md: string): React.ReactNode {
   });
 }
 
-// ⚠️ Page component: props:any così non litiga con PageProps custom
+// Page component
 export default async function BlogPostPage(props: any) {
   const slug: string | undefined = props?.params?.slug;
 
@@ -138,62 +138,82 @@ export default async function BlogPostPage(props: any) {
     (post.image_url as string | null) || getFallbackImage(post.category);
 
   return (
-    <main className="min-h-screen px-4 py-12 md:px-8 lg:px-16">
-      <article className="max-w-3xl mx-auto">
-        {/* 🔙 Link per tornare al blog */}
-        <div className="mb-4">
-          <Link
-            href="/blog"
-            className="inline-flex items-center text-sm text-blue-600 hover:text-blue-700 hover:underline"
-          >
-            <span className="mr-1">←</span>
-            Torna al blog
-          </Link>
-        </div>
+    <main className="min-h-screen bg-[var(--color-light-gray)]">
+      <section className="section-padding">
+        <div className="container-custom">
+          {/* Link back */}
+          <div className="mb-4 flex items-center justify-between">
+            <Link
+              href="/blog"
+              className="inline-flex items-center text-sm text-primary hover:text-primary-dark hover:underline"
+            >
+              <span className="mr-1">←</span>
+              Torna al blog
+            </Link>
 
-        <div className="text-xs uppercase tracking-wide text-gray-500 mb-1">
-          {post.category}
-        </div>
-
-        <h1 className="text-3xl md:text-4xl font-bold mb-3">
-          {post.title}
-        </h1>
-
-        <div className="text-sm text-gray-500 mb-6">
-          {post.published_at
-            ? new Date(post.published_at).toLocaleDateString('it-IT', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-              })
-            : null}
-        </div>
-
-        {imageUrl && (
-          <div className="mb-8">
-            <img
-              src={imageUrl}
-              alt={post.image_alt || post.title}
-              className="w-full max-h-[420px] object-cover rounded-lg"
-            />
+            <Link
+              href="/"
+              className="hidden md:inline-flex items-center text-xs text-gray-500 hover:text-primary hover:underline"
+            >
+              Torna alla home
+            </Link>
           </div>
-        )}
 
-        <div className="prose prose-neutral max-w-none">
-          {renderMarkdown(post.content_markdown)}
-        </div>
+          <article className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            {imageUrl && (
+              <div className="mb-0">
+                <img
+                  src={imageUrl}
+                  alt={post.image_alt || post.title}
+                  className="w-full max-h-[420px] object-cover"
+                />
+              </div>
+            )}
 
-        {/* 🔙 Link anche in fondo all’articolo */}
-        <div className="mt-10">
-          <Link
-            href="/blog"
-            className="inline-flex items-center text-sm text-blue-600 hover:text-blue-700 hover:underline"
-          >
-            <span className="mr-1">←</span>
-            Torna alla lista articoli
-          </Link>
+            <div className="p-6 md:p-10">
+              <div className="flex items-center justify-between mb-4">
+                <span className="inline-flex items-center px-3 py-1 rounded-full bg-orange-50 text-xs font-semibold text-primary uppercase tracking-wide">
+                  {post.category}
+                </span>
+                {post.published_at && (
+                  <span className="text-xs text-gray-500">
+                    {new Date(post.published_at).toLocaleDateString('it-IT', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    })}
+                  </span>
+                )}
+              </div>
+
+              <h1 className="text-3xl md:text-4xl font-extrabold mb-4 gradient-text">
+                {post.title}
+              </h1>
+
+              <div className="prose prose-neutral max-w-none">
+                {renderMarkdown(post.content_markdown)}
+              </div>
+
+              <div className="mt-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <Link
+                  href="/blog"
+                  className="inline-flex items-center text-sm text-primary hover:text-primary-dark hover:underline"
+                >
+                  <span className="mr-1">←</span>
+                  Torna alla lista articoli
+                </Link>
+
+                <Link
+                  href="/#contatti"
+                  className="btn-primary text-sm md:text-base"
+                >
+                  Parla con un trainer Tribù
+                </Link>
+              </div>
+            </div>
+          </article>
         </div>
-      </article>
+      </section>
     </main>
   );
 }
