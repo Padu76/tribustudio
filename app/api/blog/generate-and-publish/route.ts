@@ -3,7 +3,6 @@ import { createClient } from '@supabase/supabase-js';
 import {
   generateBlogPostFromTopic,
   generateImageForPost,
-  // generateBlogTopicsBatch, // se in futuro vuoi usare auto-ripopolazione
 } from '@/lib/blog/openai';
 
 const supabaseUrl = process.env.SUPABASE_URL;
@@ -19,6 +18,18 @@ if (!supabaseUrl || !supabaseServiceKey) {
 const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
 export const runtime = 'nodejs';
+
+interface GeneratedPost {
+  title: string;
+  content_markdown: string;
+  excerpt?: string;
+  category?: string;
+  slug?: string;
+  seo_title?: string;
+  seo_description?: string;
+  image_alt?: string;
+  image_url?: string | null;
+}
 
 // Slug sempre univoco: base dallo slug/titolo e suffisso random
 function makeUniqueSlug(baseInput: string): string {
@@ -72,7 +83,9 @@ export async function GET(request: Request) {
     }
 
     // 2) Genera contenuto articolo con OpenAI
-    const generated: any = await generateBlogPostFromTopic(topic);
+    const generated = (await generateBlogPostFromTopic(
+      topic
+    )) as GeneratedPost;
 
     if (!generated || !generated.title || !generated.content_markdown) {
       throw new Error('Risultato generazione articolo non valido.');
@@ -80,16 +93,15 @@ export async function GET(request: Request) {
 
     // 3) Slug univoco
     const baseForSlug =
-      (generated.slug as string | undefined) ||
-      (generated.title as string) ||
-      (topic.topic as string);
+      generated.slug || generated.title || (topic.topic as string);
     const slug = makeUniqueSlug(baseForSlug);
 
-    // 4) Immagine: prova a generarne una, altrimenti fallback front-end
+    // 4) Immagine: generateImageForPost accetta una stringa (es. titolo)
     let imageUrl: string | null = null;
     try {
-      // la firma di generateImageForPost è libera, gener è any → nessun problema
-      imageUrl = (await generateImageForPost(generated)) ?? null;
+      const imagePrompt = generated.title || baseForSlug;
+      const maybeImage = await generateImageForPost(imagePrompt);
+      imageUrl = maybeImage ?? null;
     } catch (imgErr) {
       console.error('Errore generazione immagine, uso fallback:', imgErr);
       imageUrl = null;
@@ -97,11 +109,10 @@ export async function GET(request: Request) {
 
     const publishedAt = new Date().toISOString();
 
-    const seoTitle: string =
-      (generated.seo_title as string | undefined) || generated.title;
+    const seoTitle: string = generated.seo_title || generated.title;
     const seoDescription: string =
-      (generated.seo_description as string | undefined) ||
-      (generated.excerpt as string | undefined) ||
+      generated.seo_description ||
+      generated.excerpt ||
       'Articolo del blog Tribù Studio su allenamento, alimentazione e motivazione.';
 
     // 5) Inserisci articolo in blog_posts
@@ -120,7 +131,6 @@ export async function GET(request: Request) {
         image_alt: generated.image_alt || generated.title,
         seo_title: seoTitle,
         seo_description: seoDescription,
-        // newsletter_sent_at rimane null finché la weekly non lo usa
       })
       .select('id')
       .single();
@@ -128,7 +138,9 @@ export async function GET(request: Request) {
     if (insertError) {
       console.error('Errore inserimento blog_posts:', insertError);
       throw new Error(
-        `Errore inserimento articolo: ${insertError.message || String(insertError)}`
+        `Errore inserimento articolo: ${
+          insertError.message || String(insertError)
+        }`
       );
     }
 
