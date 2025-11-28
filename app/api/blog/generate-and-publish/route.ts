@@ -3,7 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import {
   generateBlogPostFromTopic,
   generateImageForPost,
-  generateBlogTopicsBatch,
+  // generateBlogTopicsBatch, // se in futuro vuoi usare auto-ripopolazione
 } from '@/lib/blog/openai';
 
 const supabaseUrl = process.env.SUPABASE_URL;
@@ -20,69 +20,32 @@ const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
 export const runtime = 'nodejs';
 
-// Soglia minima di topic pending
-const MIN_PENDING_TOPICS = 5;
-// Quanti topic generare quando siamo sotto soglia
-const TOPICS_BATCH_SIZE = 12;
+// Slug sempre univoco: base dallo slug/titolo e suffisso random
+function makeUniqueSlug(baseInput: string): string {
+  const base = baseInput
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
 
-async function ensureTopicBuffer() {
-  const { count, error } = await supabaseAdmin
-    .from('blog_topics')
-    .select('id', { count: 'exact', head: true })
-    .eq('status', 'pending');
+  const random = Math.random().toString(36).substring(2, 7);
 
-  if (error) {
-    console.error('Errore conteggio topic pending:', error);
-    return;
-  }
-
-  const pending = count ?? 0;
-
-  if (pending >= MIN_PENDING_TOPICS) {
-    return;
-  }
-
-  try {
-    const seeds = await generateBlogTopicsBatch(TOPICS_BATCH_SIZE);
-
-    if (!seeds.length) return;
-
-    const toInsert = seeds.map((s) => ({
-      topic: s.topic,
-      category: s.category,
-      target_persona: s.target_persona,
-      status: 'pending',
-    }));
-
-    const { error: insertError } = await supabaseAdmin
-      .from('blog_topics')
-      .insert(toInsert);
-
-    if (insertError) {
-      console.error('Errore inserimento nuovi topic:', insertError);
-    } else {
-      console.log(
-        `Auto-ripopolazione topic: inseriti ${toInsert.length} nuovi topic.`
-      );
-    }
-  } catch (err) {
-    console.error('Errore generazione automatica topic:', err);
-  }
+  return `${base}-${random}`;
 }
 
 export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const token = searchParams.get('secret');
-  const isCron = request.headers.get('x-vercel-cron') !== null;
-
-  if (!isCron) {
-    if (!cronSecret || token !== cronSecret) {
-      return new NextResponse('Unauthorized', { status: 401 });
-    }
-  }
-
   try {
-    // 1. Prossimo topic pending
+    const { searchParams } = new URL(request.url);
+    const secret = searchParams.get('secret');
+    const isCron = request.headers.get('x-vercel-cron') !== null;
+
+    // Protezione: o arriva dal cron di Vercel o da chiamata manuale con ?secret=
+    if (!isCron) {
+      if (!cronSecret || secret !== cronSecret) {
+        return new NextResponse('Unauthorized', { status: 401 });
+      }
+    }
+
+    // 1) Prendi il prossimo topic pending
     const { data: topics, error: topicError } = await supabaseAdmin
       .from('blog_topics')
       .select('*')
@@ -92,87 +55,110 @@ export async function GET(request: Request) {
       .limit(1);
 
     if (topicError) {
-      console.error('Errore nel recupero topic:', topicError);
-      throw new Error(`Errore nel recupero topic: ${topicError.message}`);
+      console.error('Errore lettura blog_topics:', topicError);
+      return NextResponse.json(
+        { error: 'Errore nel recupero dei topic.' },
+        { status: 500 }
+      );
     }
 
     const topic = topics?.[0];
 
     if (!topic) {
-      // Nessun topic → prova comunque ad auto-ripopolare
-      await ensureTopicBuffer();
-      return NextResponse.json({
-        message: 'Nessun topic pending. Ho provato a generarne di nuovi.',
-      });
+      return NextResponse.json(
+        { message: 'Nessun topic pending disponibile per la generazione.' },
+        { status: 200 }
+      );
     }
 
-    // 2. Genera articolo (testo + meta immagine)
-    const generated = await generateBlogPostFromTopic(topic);
+    // 2) Genera contenuto articolo con OpenAI
+    const generated: any = await generateBlogPostFromTopic(topic);
 
-    if (!generated.content_markdown || generated.content_markdown.length < 500) {
-      console.error('Articolo generato troppo corto o vuoto:', generated);
-      throw new Error('Articolo generato non valido (troppo corto o vuoto).');
+    if (!generated || !generated.title || !generated.content_markdown) {
+      throw new Error('Risultato generazione articolo non valido.');
     }
 
-    // 3. Genera immagine di copertina (non blocking)
-    const imageUrl = await generateImageForPost(
-      generated.image_prompt,
-      generated.image_style
-    );
+    // 3) Slug univoco
+    const baseForSlug =
+      (generated.slug as string | undefined) ||
+      (generated.title as string) ||
+      (topic.topic as string);
+    const slug = makeUniqueSlug(baseForSlug);
 
-    // 4. Inserisce articolo nel DB come published
+    // 4) Immagine: prova a generarne una, altrimenti fallback front-end
+    let imageUrl: string | null = null;
+    try {
+      // la firma di generateImageForPost è libera, gener è any → nessun problema
+      imageUrl = (await generateImageForPost(generated)) ?? null;
+    } catch (imgErr) {
+      console.error('Errore generazione immagine, uso fallback:', imgErr);
+      imageUrl = null;
+    }
+
     const publishedAt = new Date().toISOString();
 
+    const seoTitle: string =
+      (generated.seo_title as string | undefined) || generated.title;
+    const seoDescription: string =
+      (generated.seo_description as string | undefined) ||
+      (generated.excerpt as string | undefined) ||
+      'Articolo del blog Tribù Studio su allenamento, alimentazione e motivazione.';
+
+    // 5) Inserisci articolo in blog_posts
     const { data: insertedPosts, error: insertError } = await supabaseAdmin
       .from('blog_posts')
       .insert({
-        slug: generated.slug,
+        slug,
         title: generated.title,
         excerpt: generated.excerpt,
         content_markdown: generated.content_markdown,
-        category: generated.category,
+        category: generated.category || topic.category,
         status: 'published',
         published_at: publishedAt,
         created_by: 'ai',
-        image_url: imageUrl ?? null,
-        image_alt: generated.image_alt || null,
-        seo_title: generated.seo_title,
-        seo_description: generated.seo_description,
+        image_url: imageUrl,
+        image_alt: generated.image_alt || generated.title,
+        seo_title: seoTitle,
+        seo_description: seoDescription,
+        // newsletter_sent_at rimane null finché la weekly non lo usa
       })
-      .select('*')
-      .limit(1);
+      .select('id')
+      .single();
 
     if (insertError) {
-      console.error('Errore inserimento blog_post:', insertError);
-      throw new Error(`Errore inserimento articolo: ${insertError.message}`);
+      console.error('Errore inserimento blog_posts:', insertError);
+      throw new Error(
+        `Errore inserimento articolo: ${insertError.message || String(insertError)}`
+      );
     }
 
-    const newPost = insertedPosts?.[0];
+    const postId = insertedPosts?.id;
 
-    // 5. Marca il topic come used
+    // 6) Marca il topic come usato
     const { error: updateTopicError } = await supabaseAdmin
       .from('blog_topics')
       .update({
         status: 'used',
-        used_post_id: newPost?.id ?? null,
+        used_post_id: postId,
+        updated_at: new Date().toISOString(),
       })
       .eq('id', topic.id);
 
     if (updateTopicError) {
-      console.error('Errore aggiornamento topic:', updateTopicError);
+      console.error('Errore aggiornamento blog_topics:', updateTopicError);
+      // Non blocco la risposta: l’articolo è comunque stato creato
     }
 
-    // 6. Auto-ripopolazione se scendiamo sotto soglia
-    await ensureTopicBuffer();
-
     return NextResponse.json({
-      message: 'Articolo generato e pubblicato con immagine.',
+      message: imageUrl
+        ? 'Articolo generato e pubblicato con immagine.'
+        : 'Articolo generato e pubblicato (senza immagine, uso fallback).',
       topic_id: topic.id,
-      post_id: newPost?.id,
-      slug: newPost?.slug,
-      image_url: newPost?.image_url,
+      post_id: postId,
+      slug,
+      image_url: imageUrl,
     });
-  } catch (error: unknown) {
+  } catch (error) {
     console.error('Errore in generate-and-publish:', error);
     const message =
       error instanceof Error
