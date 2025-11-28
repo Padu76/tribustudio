@@ -37,7 +37,10 @@ export default function Home() {
         <ComeFunziona />
 
         {/* Calcolatore Trasformazione */}
-        <CalcolatoreTrasformazione />
+        <section id="calcolatore">
+  <CalcolatoreTrasformazione />
+</section>
+
 
         {/* Sezione Blog Tribù Studio */}
         <section className="bg-slate-50 py-12 mt-8">
