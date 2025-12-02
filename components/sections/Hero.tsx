@@ -71,7 +71,7 @@ export default function Hero() {
             onClick={() => document.getElementById('contatti')?.scrollIntoView({ behavior: 'smooth' })}
             className="group relative px-8 py-4 bg-primary text-white rounded-full font-bold text-lg overflow-hidden transition-all hover:scale-105 hover:shadow-2xl"
           >
-            <span className="relative z-10">Prenota la tua prima lezione + massaggio gratuito</span>
+            <span className="relative z-10">Prenota la tua prima lezione </span>
             <div className="absolute inset-0 bg-gradient-to-r from-primary-dark to-primary transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
           </button>
         </motion.div>

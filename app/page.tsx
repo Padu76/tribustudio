@@ -11,7 +11,6 @@ import Servizi from '../components/sections/Servizi';
 import ComeFunziona from '../components/sections/ComeFunziona';
 import Contatore from '../components/sections/Contatore';
 import Testimonianze from '../components/sections/Testimonianze';
-import OffertaSpeciale from '../components/sections/OffertaSpeciale';
 import Brochure from '../components/sections/Brochure';
 import FAQ from '../components/sections/FAQ';
 import Contatti from '../components/sections/Contatti';
@@ -65,7 +64,6 @@ export default function Home() {
 
         <Contatore />
         <Testimonianze />
-        <OffertaSpeciale />
         <Brochure />
         <FAQ />
         <Contatti />
