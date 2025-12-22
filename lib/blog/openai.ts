@@ -1,3 +1,4 @@
+// E:\tribustudio\lib\blog\openai.ts
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import type {
@@ -12,7 +13,7 @@ if (!OPENAI_API_KEY) {
   throw new Error('OPENAI_API_KEY non configurata.');
 }
 
-const MODEL = process.env.BLOG_MODEL_NAME || 'gpt-4.1-mini';
+const MODEL = process.env.BLOG_MODEL_NAME || 'gpt-4o-mini';
 
 function slugify(input: string): string {
   return input
@@ -43,11 +44,6 @@ Regole:
 - Chiudi con: "Da dove iniziare davvero".
 - Aggiungi una CTA soft su Tribù Studio.
 
-Immagine:
-- Copertina 16:9 realistica.
-- Niente testo nell'immagine.
-- Stile pulito, moderno, umano.
-
 Output SOLO JSON valido con questa struttura:
 
 {
@@ -57,10 +53,7 @@ Output SOLO JSON valido con questa struttura:
   "content_markdown": "",
   "seo_title": "",
   "seo_description": "",
-  "category": "",
-  "image_prompt": "",
-  "image_alt": "",
-  "image_style": "photo" | "illustration"
+  "category": ""
 }
 `;
 
@@ -130,67 +123,38 @@ Rispondi SOLO con JSON valido.
       parsed.seo_description ||
       (parsed.excerpt ? parsed.excerpt.slice(0, 150) : title),
     category: (parsed.category as BlogCategory) || topic.category || 'altro',
-    image_prompt:
-      parsed.image_prompt ||
-      `Foto realistica 16:9 di una persona che si allena in uno studio moderno, atmosfera positiva, pulita.`,
-    image_alt:
-      parsed.image_alt ||
-      `Persona che si allena in uno studio di personal training moderno`,
-    image_style: parsed.image_style === 'illustration' ? 'illustration' : 'photo',
+    image_prompt: '',
+    image_alt: `Immagine per articolo: ${title}`,
+    image_style: 'photo',
   };
 
   return payload;
 }
 
 /**
- * Genera immagine con OpenAI Images.
- * Ritorna: URL dell'immagine o null se fallisce.
+ * Ritorna immagine standard basata sulla categoria
  */
 export async function generateImageForPost(
   prompt: string,
   style: 'photo' | 'illustration' = 'photo'
 ): Promise<string | null> {
-  try {
-    const response = await fetch(
-      'https://api.openai.com/v1/images/generations',
-      {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${OPENAI_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'gpt-image-1',
-          prompt: `${prompt}. Stile: ${
-            style === 'photo'
-              ? 'fotografia realistica, illuminazione naturale, senza testo'
-              : 'illustrazione moderna, pulita, senza testo'
-          }. Rapporto 16:9.`,
-          size: '1024x576',
-          n: 1,
-        }),
-      }
-    );
-
-    if (!response.ok) {
-      const text = await response.text();
-      console.error('Errore OpenAI (immagine):', text);
-      return null;
-    }
-
-    const json = await response.json();
-    const url: string | undefined = json.data?.[0]?.url;
-
-    if (!url) {
-      console.error('OpenAI image: URL mancante');
-      return null;
-    }
-
-    return url;
-  } catch (error: unknown) {
-    console.error('Errore generazione immagine:', error);
-    return null;
+  // Estrae categoria dal prompt
+  const lowerPrompt = prompt.toLowerCase();
+  
+  if (lowerPrompt.includes('allena') || lowerPrompt.includes('workout') || lowerPrompt.includes('fitness') || lowerPrompt.includes('palestra') || lowerPrompt.includes('eserciz')) {
+    return '/images/blog/allenamento.jpg';
   }
+  
+  if (lowerPrompt.includes('alimenta') || lowerPrompt.includes('nutri') || lowerPrompt.includes('cibo') || lowerPrompt.includes('dieta') || lowerPrompt.includes('mang')) {
+    return '/images/blog/alimentazione.jpg';
+  }
+  
+  if (lowerPrompt.includes('motiva') || lowerPrompt.includes('mental') || lowerPrompt.includes('obiettiv') || lowerPrompt.includes('mindset')) {
+    return '/images/blog/motivazione.jpeg';
+  }
+  
+  // Default generico
+  return '/images/blog/generico.jpg';
 }
 
 /**
@@ -289,11 +253,9 @@ Rispondi SOLO con l'array JSON.
   const seeds: GeneratedTopicSeed[] = parsed
     .map((item: any) => ({
       topic: String(item.topic || '').trim(),
-      category:
-        (item.category as BlogCategory) || 'allenamento',
+      category: (item.category as BlogCategory) || 'allenamento',
       target_persona: String(
-        item.target_persona ||
-          'adulto 30-55 anni, lavoro sedentario, poco tempo'
+        item.target_persona || 'adulto 30-55 anni, lavoro sedentario, poco tempo'
       ).trim(),
     }))
     .filter((t) => t.topic.length > 10);
