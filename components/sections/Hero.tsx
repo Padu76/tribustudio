@@ -1,19 +1,38 @@
+// E:\\tribustudio\\components\\sections\\Hero.tsx
 'use client';
 
 import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
 
 export default function Hero() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Sfondo fisso con effetto parallax */}
+      {/* Sfondo ottimizzato per mobile */}
       <div 
         className="absolute inset-0 z-0"
         style={{
           backgroundImage: 'url("/images/hero/hero-bg.jpg")',
-          backgroundAttachment: 'fixed',
+          // Rimuovo fixed su mobile perché crea problemi su iOS
+          backgroundAttachment: isMobile ? 'scroll' : 'fixed',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
-          backgroundSize: 'cover'
+          backgroundSize: 'cover',
+          // Aggiungo webkit per compatibilità iOS
+          WebkitBackgroundSize: 'cover',
+          MozBackgroundSize: 'cover',
+          OBackgroundSize: 'cover'
         }}
       >
         {/* Overlay gradiente */}
@@ -27,15 +46,15 @@ export default function Hero() {
         />
       </div>
 
-      {/* Content con animazioni */}
-      <div className="relative z-20 container-custom mx-auto px-4 text-center">
+      {/* Content con padding migliorato per mobile */}
+      <div className="relative z-20 container-custom mx-auto px-4 py-8 text-center">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1, ease: "easeOut" }}
-          className="mb-8"
+          className="mb-6 md:mb-8"
         >
-          <span className="inline-block text-primary bg-white/10 backdrop-blur-sm px-6 py-2 rounded-full text-sm font-semibold mb-6 border border-primary/30">
+          <span className="inline-block text-primary bg-white/10 backdrop-blur-sm px-4 sm:px-6 py-2 rounded-full text-xs sm:text-sm font-semibold mb-4 md:mb-6 border border-primary/30">
             TRASFORMA IL TUO CORPO
           </span>
         </motion.div>
@@ -44,17 +63,17 @@ export default function Hero() {
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-montserrat font-bold mb-6 text-white leading-tight"
+          className="text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-montserrat font-bold mb-4 md:mb-6 text-white leading-tight"
         >
           Allenati, mangia bene
-          <span className="block text-primary">e vivi meglio</span>
+          <span className="block text-primary mt-2">e vivi meglio</span>
         </motion.h1>
 
         <motion.p
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="text-lg md:text-xl lg:text-2xl mb-10 max-w-3xl mx-auto text-gray-200 font-light"
+          className="text-base sm:text-lg md:text-xl lg:text-2xl mb-8 md:mb-10 max-w-3xl mx-auto text-gray-200 font-light px-4 sm:px-0"
         >
           Allenarsi con un personal trainer significa trovare la giusta motivazione 
           ed ottimizzare il tuo tempo. Inizia oggi il tuo percorso su misura 
@@ -65,47 +84,47 @@ export default function Hero() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
-          className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+          className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12 md:mb-0"
         >
           <button 
             onClick={() => document.getElementById('contatti')?.scrollIntoView({ behavior: 'smooth' })}
-            className="group relative px-8 py-4 bg-primary text-white rounded-full font-bold text-lg overflow-hidden transition-all hover:scale-105 hover:shadow-2xl"
+            className="group relative px-6 sm:px-8 py-3 sm:py-4 bg-primary text-white rounded-full font-bold text-base sm:text-lg overflow-hidden transition-all hover:scale-105 hover:shadow-2xl w-full sm:w-auto max-w-xs"
           >
-            <span className="relative z-10">Prenota la tua prima lezione </span>
+            <span className="relative z-10">Prenota la tua prima lezione</span>
             <div className="absolute inset-0 bg-gradient-to-r from-primary-dark to-primary transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
           </button>
         </motion.div>
 
-        {/* Stats mini */}
+        {/* Stats mini con layout responsive migliorato */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 0.8 }}
-          className="mt-16 grid grid-cols-3 gap-8 max-w-2xl mx-auto"
+          className="mt-12 md:mt-16 grid grid-cols-3 gap-4 sm:gap-8 max-w-2xl mx-auto"
         >
           <div className="text-white">
-            <div className="text-3xl font-bold text-primary">1200+</div>
-            <div className="text-sm opacity-80">Clienti Soddisfatti</div>
+            <div className="text-2xl sm:text-3xl font-bold text-primary">1200+</div>
+            <div className="text-xs sm:text-sm opacity-80">Clienti Soddisfatti</div>
           </div>
           <div className="text-white">
-            <div className="text-3xl font-bold text-primary">10+</div>
-            <div className="text-sm opacity-80">Anni Esperienza</div>
+            <div className="text-2xl sm:text-3xl font-bold text-primary">10+</div>
+            <div className="text-xs sm:text-sm opacity-80">Anni Esperienza</div>
           </div>
           <div className="text-white">
-            <div className="text-3xl font-bold text-primary">25k+</div>
-            <div className="text-sm opacity-80">Sessioni Complete</div>
+            <div className="text-2xl sm:text-3xl font-bold text-primary">25k+</div>
+            <div className="text-xs sm:text-sm opacity-80">Sessioni Complete</div>
           </div>
         </motion.div>
 
-        {/* Scroll indicator animato */}
+        {/* Scroll indicator - nascosto su mobile molto piccoli */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 1 }}
-          className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
+          className="absolute bottom-4 sm:bottom-8 left-1/2 transform -translate-x-1/2 hidden sm:flex"
         >
           <div className="flex flex-col items-center gap-2">
-            <span className="text-white/60 text-sm">Scorri per scoprire</span>
+            <span className="text-white/60 text-xs sm:text-sm">Scorri per scoprire</span>
             <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center">
               <div className="w-1 h-3 bg-white rounded-full mt-2 animate-bounce" />
             </div>
