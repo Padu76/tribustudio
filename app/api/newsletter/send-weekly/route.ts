@@ -1,4 +1,4 @@
-// E:\\tribustudio\\app\\api\\newsletter\\send-weekly\\route.ts
+// E:\tribustudio\app\api\newsletter\send-weekly\route.ts
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
@@ -28,7 +28,6 @@ export async function GET(request: Request) {
   const token = searchParams.get('secret');
   const isCron = request.headers.get('x-vercel-cron') !== null;
 
-  // Protezione: solo cron Vercel o chiamata con ?secret=
   if (!isCron) {
     if (!cronSecret || token !== cronSecret) {
       return new NextResponse('Unauthorized', { status: 401 });
@@ -43,8 +42,7 @@ export async function GET(request: Request) {
   ) {
     return NextResponse.json(
       {
-        error:
-          'Config EmailJS mancante: controlla EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID_WEEKLY, EMAILJS_PUBLIC_KEY, EMAILJS_PRIVATE_KEY.',
+        error: 'Config EmailJS mancante',
       },
       { status: 500 }
     );
@@ -72,17 +70,16 @@ export async function GET(request: Request) {
 
   if (!post) {
     return NextResponse.json({
-      message:
-        'Nessun nuovo articolo da inviare in newsletter (tutti già usati).',
+      message: 'Nessun nuovo articolo da inviare in newsletter.',
     });
   }
 
-  // 2) Leggi iscritti attivi - CAMBIATO QUI!
+  // 2) Leggi iscritti attivi
   const { data: subscribers, error: subsError } = await supabaseAdmin
     .from('newsletter_subscribers')
     .select('id, email, name')
-    .eq('is_active', true)  // CAMBIATO DA status = 'active' A is_active = true
-    .is('unsubscribed_at', null);  // Solo quelli non disiscritti
+    .eq('is_active', true)
+    .is('unsubscribed_at', null);
 
   if (subsError) {
     console.error('Errore lettura subscribers:', subsError);
@@ -103,7 +100,6 @@ export async function GET(request: Request) {
 
   // 3) Invio email con EmailJS per ogni iscritto
   for (const sub of subscribers) {
-    // Genera token unsubscribe al volo se non c'è nella tabella
     const unsubscribeToken = Buffer.from(sub.email).toString('base64');
     const unsubscribeUrl = `${siteUrl}/api/newsletter/unsubscribe?email=${encodeURIComponent(
       sub.email
@@ -111,14 +107,14 @@ export async function GET(request: Request) {
 
     const postUrl = `${siteUrl}/blog/${post.slug}`;
 
+    // PARAMETRI CORRETTI per il template EmailJS
     const templateParams = {
-      email: sub.email,
-      name: sub.name || '',
+      to_email: sub.email,  // ← QUESTO MANCAVA!
+      name: sub.name || 'Ciao',
       post_title: post.title,
       post_excerpt: post.excerpt || '',
       post_url: postUrl,
       unsubscribe_url: unsubscribeUrl,
-      preview_text: `Nuovo articolo dal blog Tribù Studio: ${post.title}`,
     };
 
     try {
@@ -149,7 +145,7 @@ export async function GET(request: Request) {
     }
   }
 
-  // 4) Segna l'articolo come "newsletter inviata"
+  // 4) Segna l'articolo come inviato
   const { error: updatePostError } = await supabaseAdmin
     .from('blog_posts')
     .update({
@@ -162,8 +158,9 @@ export async function GET(request: Request) {
   }
 
   return NextResponse.json({
-    message: 'Newsletter settimanale inviata (o tentata) con EmailJS.',
+    message: 'Newsletter settimanale inviata con EmailJS.',
     post_id: post.id,
+    post_title: post.title,
     sent_to: sentTo,
     failed_to: failedTo,
   });
