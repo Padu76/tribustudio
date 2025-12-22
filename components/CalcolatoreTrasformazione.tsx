@@ -1,3 +1,4 @@
+// E:\tribustudio\components\CalcolatoreTrasformazione.tsx
 "use client";
 
 import React, { useState } from "react";
@@ -71,14 +72,11 @@ const CalcolatoreTrasformazione: React.FC = () => {
 
     const differenzaKg = Math.abs(pesoAttuale - pesoObiettivo);
 
-    // Stima semplice del deficit/surplus
     let deficit = 0;
     if (form.obiettivo === "dimagrire") deficit = 500;
     if (form.obiettivo === "tonificare") deficit = 250;
     if (form.obiettivo === "mettere_massa") deficit = -250;
 
-    // Stimiamo la velocità del cambiamento
-    // Formula semplice: 7000 kcal = 1 kg
     const kcalTotali = differenzaKg * 7000;
     const giorniStimati =
       deficit === 0 ? 0 : Math.abs(Math.round(kcalTotali / deficit));
@@ -119,171 +117,211 @@ const CalcolatoreTrasformazione: React.FC = () => {
   };
 
   return (
-    <div className="bg-white shadow-lg rounded-2xl p-6 md:p-8 mt-12">
-      <h2 className="text-2xl font-semibold mb-2 text-gray-900">
-        In quanto tempo puoi trasformarti?
-      </h2>
-      <p className="text-gray-600 mb-6">
-        Inserisci i tuoi dati reali e scopri una stima onesta dei tempi di
-        trasformazione.
-      </p>
+    <section className="relative py-16 md:py-24 bg-gradient-to-br from-gray-50 via-white to-orange-50 overflow-hidden">
+      {/* Pattern decorativo sfondo */}
+      <div className="absolute inset-0 opacity-5">
+        <div className="absolute top-0 left-0 w-96 h-96 bg-primary rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-orange-400 rounded-full blur-3xl"></div>
+      </div>
 
-      <form onSubmit={calcola} className="space-y-4">
-        {/* Riga 1 */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">Sesso</label>
-            <select
-              name="sesso"
-              value={form.sesso}
-              onChange={handleChange}
-              className="w-full border rounded-lg px-3 py-2 text-sm"
-            >
-              <option value="uomo">Uomo</option>
-              <option value="donna">Donna</option>
-            </select>
+      <div className="container-custom mx-auto px-4 relative z-10">
+        <div className="max-w-4xl mx-auto">
+          {/* Header Section */}
+          <div className="text-center mb-12">
+            <span className="inline-block text-primary bg-primary/10 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-semibold mb-4 border border-primary/20">
+              CALCOLATORE TRASFORMAZIONE
+            </span>
+            <h2 className="text-3xl md:text-4xl font-montserrat font-bold mb-4 text-gray-900">
+              In quanto tempo puoi trasformarti?
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Inserisci i tuoi dati reali e scopri una stima onesta dei tempi di trasformazione
+            </p>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-1">Età</label>
-            <input
-              type="number"
-              name="eta"
-              value={form.eta}
-              onChange={handleChange}
-              className="w-full border rounded-lg px-3 py-2 text-sm"
-              placeholder="es. 38"
-            />
-          </div>
+          {/* Form Card */}
+          <div className="bg-white shadow-2xl rounded-3xl p-6 md:p-10 border border-gray-100">
+            <form onSubmit={calcola} className="space-y-6">
+              {/* Riga 1 */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold mb-2 text-gray-700">
+                    Sesso
+                  </label>
+                  <select
+                    name="sesso"
+                    value={form.sesso}
+                    onChange={handleChange}
+                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none"
+                  >
+                    <option value="uomo">Uomo</option>
+                    <option value="donna">Donna</option>
+                  </select>
+                </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-1">Altezza (cm)</label>
-            <input
-              type="number"
-              name="altezza"
-              value={form.altezza}
-              onChange={handleChange}
-              className="w-full border rounded-lg px-3 py-2 text-sm"
-              placeholder="es. 175"
-            />
-          </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-2 text-gray-700">
+                    Età
+                  </label>
+                  <input
+                    type="number"
+                    name="eta"
+                    value={form.eta}
+                    onChange={handleChange}
+                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none"
+                    placeholder="es. 38"
+                  />
+                </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              Livello attività
-            </label>
-            <select
-              name="livelloAttivita"
-              value={form.livelloAttivita}
-              onChange={handleChange}
-              className="w-full border rounded-lg px-3 py-2 text-sm"
-            >
-              <option value="basso">Basso</option>
-              <option value="medio">Medio</option>
-              <option value="alto">Alto</option>
-            </select>
+                <div>
+                  <label className="block text-sm font-semibold mb-2 text-gray-700">
+                    Altezza (cm)
+                  </label>
+                  <input
+                    type="number"
+                    name="altezza"
+                    value={form.altezza}
+                    onChange={handleChange}
+                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none"
+                    placeholder="es. 175"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold mb-2 text-gray-700">
+                    Livello attività
+                  </label>
+                  <select
+                    name="livelloAttivita"
+                    value={form.livelloAttivita}
+                    onChange={handleChange}
+                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none"
+                  >
+                    <option value="basso">Basso</option>
+                    <option value="medio">Medio</option>
+                    <option value="alto">Alto</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Riga 2 */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold mb-2 text-gray-700">
+                    Peso attuale (kg)
+                  </label>
+                  <input
+                    type="number"
+                    name="pesoAttuale"
+                    value={form.pesoAttuale}
+                    onChange={handleChange}
+                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none"
+                    placeholder="es. 82"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold mb-2 text-gray-700">
+                    Peso obiettivo (kg)
+                  </label>
+                  <input
+                    type="number"
+                    name="pesoObiettivo"
+                    value={form.pesoObiettivo}
+                    onChange={handleChange}
+                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none"
+                    placeholder="es. 74"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold mb-2 text-gray-700">
+                    Obiettivo
+                  </label>
+                  <select
+                    name="obiettivo"
+                    value={form.obiettivo}
+                    onChange={handleChange}
+                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none"
+                  >
+                    <option value="dimagrire">Dimagrire</option>
+                    <option value="tonificare">Tonificare</option>
+                    <option value="mettere_massa">Mettere massa</option>
+                  </select>
+                </div>
+              </div>
+
+              {errore && (
+                <div className="bg-red-50 border-2 border-red-200 text-red-700 px-5 py-3 rounded-xl text-sm font-medium">
+                  ⚠️ {errore}
+                </div>
+              )}
+
+              <div className="flex flex-col sm:flex-row gap-3 pt-4">
+                <button
+                  type="submit"
+                  className="flex-1 sm:flex-none group relative bg-primary text-white px-8 py-4 rounded-full text-base font-bold hover:scale-105 transition-all shadow-lg hover:shadow-xl overflow-hidden"
+                >
+                  <span className="relative z-10">Calcola la mia trasformazione</span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-primary-dark to-primary transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
+                </button>
+                <button
+                  type="button"
+                  onClick={reset}
+                  className="border-2 border-gray-300 text-gray-700 px-6 py-4 rounded-full text-base font-semibold hover:bg-gray-50 transition-all"
+                >
+                  Reset
+                </button>
+              </div>
+            </form>
+
+            {/* Risultati */}
+            {risultato && (
+              <div className="mt-10 p-8 bg-gradient-to-br from-primary/5 to-orange-50 border-2 border-primary/20 rounded-2xl">
+                <h3 className="text-2xl font-bold mb-6 text-gray-900 flex items-center gap-2">
+                  <span className="text-primary">📊</span>
+                  La stima per il tuo caso
+                </h3>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                  <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+                    <p className="text-sm text-gray-600 mb-1">Chili di differenza</p>
+                    <p className="text-3xl font-bold text-primary">
+                      {risultato.chiliDaPerdere.toFixed(1)} kg
+                    </p>
+                  </div>
+
+                  <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+                    <p className="text-sm text-gray-600 mb-1">Deficit/Surplus giornaliero</p>
+                    <p className="text-3xl font-bold text-primary">
+                      {risultato.deficitCaloricoGiornaliero > 0
+                        ? `-${risultato.deficitCaloricoGiornaliero}`
+                        : `+${Math.abs(risultato.deficitCaloricoGiornaliero)}`}{" "}
+                      <span className="text-base">kcal</span>
+                    </p>
+                  </div>
+
+                  <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+                    <p className="text-sm text-gray-600 mb-1">Tempo stimato</p>
+                    <p className="text-3xl font-bold text-primary">
+                      {risultato.tempoStimatoSettimane}{" "}
+                      <span className="text-base">settimane</span>
+                    </p>
+                  </div>
+                </div>
+
+                <div className="bg-white p-6 rounded-xl border-l-4 border-primary shadow-sm">
+                  <p className="text-gray-700 leading-relaxed">
+                    <strong className="text-primary">💡 Nota importante:</strong>{" "}
+                    {risultato.nota}
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
-
-        {/* Riga 2 */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              Peso attuale (kg)
-            </label>
-            <input
-              type="number"
-              name="pesoAttuale"
-              value={form.pesoAttuale}
-              onChange={handleChange}
-              className="w-full border rounded-lg px-3 py-2 text-sm"
-              placeholder="es. 82"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              Peso obiettivo (kg)
-            </label>
-            <input
-              type="number"
-              name="pesoObiettivo"
-              value={form.pesoObiettivo}
-              onChange={handleChange}
-              className="w-full border rounded-lg px-3 py-2 text-sm"
-              placeholder="es. 74"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              Obiettivo
-            </label>
-            <select
-              name="obiettivo"
-              value={form.obiettivo}
-              onChange={handleChange}
-              className="w-full border rounded-lg px-3 py-2 text-sm"
-            >
-              <option value="dimagrire">Dimagrire</option>
-              <option value="tonificare">Tonificare</option>
-              <option value="mettere_massa">Mettere massa</option>
-            </select>
-          </div>
-        </div>
-
-        {errore && (
-          <div className="bg-red-50 text-red-700 px-4 py-2 rounded-lg text-sm">
-            {errore}
-          </div>
-        )}
-
-        <div className="flex gap-3 pt-2">
-          <button
-            type="submit"
-            className="bg-[#ff7a21] text-white px-5 py-2 rounded-full text-sm font-semibold hover:opacity-90 transition"
-          >
-            Calcola la mia trasformazione
-          </button>
-          <button
-            type="button"
-            onClick={reset}
-            className="border border-gray-300 text-gray-700 px-4 py-2 rounded-full text-sm hover:bg-gray-50 transition"
-          >
-            Reset
-          </button>
-        </div>
-      </form>
-
-      {risultato && (
-        <div className="mt-8 border-t pt-6">
-          <h3 className="text-xl font-semibold mb-3 text-gray-900">
-            La stima per il tuo caso
-          </h3>
-
-          <p className="text-gray-700 mb-2">
-            <strong>Chili di differenza:</strong>{" "}
-            {risultato.chiliDaPerdere.toFixed(1)} kg
-          </p>
-
-          <p className="text-gray-700 mb-2">
-            <strong>Deficit/surplus:</strong>{" "}
-            {risultato.deficitCaloricoGiornaliero > 0
-              ? `-${risultato.deficitCaloricoGiornaliero} kcal/giorno`
-              : `+${Math.abs(
-                  risultato.deficitCaloricoGiornaliero
-                )} kcal/giorno`}
-          </p>
-
-          <p className="text-gray-700 mb-2">
-            <strong>Tempo stimato:</strong>{" "}
-            {risultato.tempoStimatoSettimane} settimane circa
-          </p>
-
-          <p className="text-gray-700 mt-3">{risultato.nota}</p>
-        </div>
-      )}
-    </div>
+      </div>
+    </section>
   );
 };
 
