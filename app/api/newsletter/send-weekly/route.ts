@@ -109,7 +109,8 @@ export async function GET(request: Request) {
 
     // PARAMETRI CORRETTI per il template EmailJS
     const templateParams = {
-      to_email: sub.email,  // ← QUESTO MANCAVA!
+      email: sub.email,  // EmailJS usa 'email' come destinatario
+      to_email: sub.email,  // Backup per compatibilità
       name: sub.name || 'Ciao',
       post_title: post.title,
       post_excerpt: post.excerpt || '',
