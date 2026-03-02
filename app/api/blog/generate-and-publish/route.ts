@@ -1,3 +1,5 @@
+// app/api/blog/generate-and-publish/route.ts
+
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import {
@@ -5,10 +7,10 @@ import {
   generateImageForPost,
 } from "@/lib/blog/openai";
 
-// NB: niente throw a livello di modulo
 const cronSecret = process.env.CRON_SECRET || "";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 interface GeneratedPost {
   title: string;
@@ -61,16 +63,12 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const secret = searchParams.get("secret");
 
-    // ✅ Soluzione 2:
-    // - Vercel Cron aggiunge header x-vercel-cron (di solito "1")
-    // - Manuale: puoi chiamare con ?secret=CRON_SECRET
-    const cronHeader = request.headers.get("x-vercel-cron");
-    const isCron = cronHeader === "1" || cronHeader !== null;
-
-    if (!isCron) {
-      if (!cronSecret || secret !== cronSecret) {
-        return new NextResponse("Unauthorized", { status: 401 });
-      }
+    // Autorizzazione: accetta solo secret valido nel query param
+    // Il cron Vercel chiama con ?secret=... nel path (configurato in vercel.json)
+    // Le chiamate manuali usano lo stesso meccanismo
+    if (!cronSecret || secret !== cronSecret) {
+      console.warn("Tentativo accesso non autorizzato al blog generator");
+      return new NextResponse("Unauthorized", { status: 401 });
     }
 
     // 1) Prendi il prossimo topic pending
@@ -97,6 +95,8 @@ export async function GET(request: Request) {
         { status: 200 }
       );
     }
+
+    console.log(`Generazione articolo per topic: ${topic.id} - ${topic.topic}`);
 
     // 2) Genera contenuto articolo con OpenAI
     const generated = (await generateBlogPostFromTopic(topic)) as GeneratedPost;
@@ -171,6 +171,8 @@ export async function GET(request: Request) {
       console.error("Errore update ts_blog_topics:", updateTopicError);
       // non blocco: articolo creato comunque
     }
+
+    console.log(`Articolo pubblicato: slug=${slug}, post_id=${postId}`);
 
     return NextResponse.json({
       message: imageUrl
