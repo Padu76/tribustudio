@@ -2,16 +2,34 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { notFound } from "next/navigation";
-import { supabase } from "@/lib/blog/supabaseClient";
+import { createClient } from "@supabase/supabase-js";
 import React from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import NewsletterSignup from "@/components/NewsletterSignup";
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+function getSupabaseAdmin() {
+  const supabaseUrl =
+    process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
+
+  const supabaseServiceKey =
+    process.env.SUPABASE_SERVICE_ROLE_KEY ||
+    process.env.SUPABASE_SERVICE_KEY ||
+    process.env.SUPABASE_SERVICE_ROLE;
+
+  if (!supabaseUrl || !supabaseServiceKey) return null;
+
+  return createClient(supabaseUrl, supabaseServiceKey);
+}
 
 async function getPostBySlug(slug: string): Promise<any | null> {
-  const { data, error } = await supabase
+  const supabaseAdmin = getSupabaseAdmin();
+  if (!supabaseAdmin) return null;
+
+  const { data, error } = await supabaseAdmin
     .from("ts_blog_posts")
     .select("*")
     .eq("slug", slug)
@@ -33,7 +51,6 @@ function getFallbackImage(category: string | null | undefined): string {
     case "alimentazione":
       return "/images/blog/alimentazione.jpg";
     case "motivazione":
-      // 👉 anche qui usiamo .jpeg
       return "/images/blog/motivazione.jpeg";
     case "generico":
       return "/images/blog/generico.jpg";
@@ -42,7 +59,6 @@ function getFallbackImage(category: string | null | undefined): string {
   }
 }
 
-// SEO dinamica compatibile col tuo PageProps (params come Promise)
 export async function generateMetadata(
   props: { params: Promise<any> }
 ): Promise<Metadata> {
@@ -80,9 +96,7 @@ export async function generateMetadata(
   return {
     title,
     description,
-    alternates: {
-      canonical: url,
-    },
+    alternates: { canonical: url },
     openGraph: {
       title,
       description,
@@ -93,7 +107,6 @@ export async function generateMetadata(
   };
 }
 
-// Renderer markdown ultra minimale (titoli + paragrafi)
 function renderMarkdown(md: string): React.ReactNode {
   const lines = md.split("\n");
 
@@ -125,18 +138,13 @@ function renderMarkdown(md: string): React.ReactNode {
   });
 }
 
-// Page component
 export default async function BlogPostPage(props: any) {
   const slug: string | undefined = props?.params?.slug;
 
-  if (!slug) {
-    notFound();
-  }
+  if (!slug) notFound();
 
   const post = await getPostBySlug(slug);
-  if (!post) {
-    notFound();
-  }
+  if (!post) notFound();
 
   const imageUrl: string =
     (post.image_url as string | null) || getFallbackImage(post.category);
@@ -145,7 +153,6 @@ export default async function BlogPostPage(props: any) {
     <main className="min-h-screen bg-[var(--color-light-gray)]">
       <section className="section-padding">
         <div className="container-custom">
-          {/* Link back */}
           <div className="mb-4 flex items-center justify-between">
             <Link
               href="/blog"
@@ -163,7 +170,6 @@ export default async function BlogPostPage(props: any) {
             </Link>
           </div>
 
-          {/* Articolo */}
           <article className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
             {imageUrl && (
               <div className="mb-0">
@@ -218,7 +224,6 @@ export default async function BlogPostPage(props: any) {
             </div>
           </article>
 
-          {/* Box newsletter sotto l'articolo */}
           <div className="mt-10">
             <NewsletterSignup />
           </div>

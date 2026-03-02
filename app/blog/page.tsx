@@ -6,22 +6,14 @@ import { createClient } from "@supabase/supabase-js";
 import type { Metadata } from "next";
 import NewsletterSignup from "@/components/NewsletterSignup";
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export const metadata: Metadata = {
   title: "Blog Tribù Studio – Allenamento, Alimentazione, Motivazione",
   description:
     "Articoli pratici su allenamento, alimentazione e motivazione, pensati per chi ha poco tempo ma vuole risultati reali. Nessuna fuffa, solo consigli applicabili.",
 };
-
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-if (!supabaseUrl || !supabaseServiceKey) {
-  throw new Error("Supabase config missing for blog index.");
-}
-
-const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
 type BlogCategoryFilter =
   | "tutte"
@@ -30,9 +22,57 @@ type BlogCategoryFilter =
   | "motivazione"
   | "generico";
 
-async function getPublishedPosts(
-  category: BlogCategoryFilter
-): Promise<any[]> {
+function normalizeCategory(input?: string): BlogCategoryFilter {
+  if (!input) return "tutte";
+  if (
+    input === "allenamento" ||
+    input === "alimentazione" ||
+    input === "motivazione" ||
+    input === "generico"
+  ) {
+    return input;
+  }
+  return "tutte";
+}
+
+function getPostImageUrl(post: any): string {
+  if (post.image_url) return post.image_url as string;
+
+  switch (post.category) {
+    case "allenamento":
+      return "/images/blog/allenamento.jpg";
+    case "alimentazione":
+      return "/images/blog/alimentazione.jpg";
+    case "motivazione":
+      return "/images/blog/motivazione.jpeg";
+    case "generico":
+      return "/images/blog/generico.jpg";
+    default:
+      return "/images/blog/generico.jpg";
+  }
+}
+
+function getSupabaseAdmin() {
+  const supabaseUrl =
+    process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
+
+  const supabaseServiceKey =
+    process.env.SUPABASE_SERVICE_ROLE_KEY ||
+    process.env.SUPABASE_SERVICE_KEY ||
+    process.env.SUPABASE_SERVICE_ROLE;
+
+  if (!supabaseUrl || !supabaseServiceKey) return null;
+
+  return createClient(supabaseUrl, supabaseServiceKey);
+}
+
+async function getPublishedPosts(category: BlogCategoryFilter): Promise<any[]> {
+  const supabaseAdmin = getSupabaseAdmin();
+  if (!supabaseAdmin) {
+    console.error("Supabase config missing for blog index.");
+    return [];
+  }
+
   let query = supabaseAdmin
     .from("ts_blog_posts")
     .select("*")
@@ -51,37 +91,6 @@ async function getPublishedPosts(
   }
 
   return data || [];
-}
-
-function getPostImageUrl(post: any): string {
-  if (post.image_url) return post.image_url as string;
-
-  switch (post.category) {
-    case "allenamento":
-      return "/images/blog/allenamento.jpg";
-    case "alimentazione":
-      return "/images/blog/alimentazione.jpg";
-    case "motivazione":
-      // 👉 il tuo file è .jpeg, non .jpg
-      return "/images/blog/motivazione.jpeg";
-    case "generico":
-      return "/images/blog/generico.jpg";
-    default:
-      return "/images/blog/generico.jpg";
-  }
-}
-
-function normalizeCategory(input?: string): BlogCategoryFilter {
-  if (!input) return "tutte";
-  if (
-    input === "allenamento" ||
-    input === "alimentazione" ||
-    input === "motivazione" ||
-    input === "generico"
-  ) {
-    return input;
-  }
-  return "tutte";
 }
 
 // props:any per non litigare con PageProps custom (searchParams come Promise)
@@ -108,7 +117,6 @@ export default async function BlogPage(props: any) {
     <main className="min-h-screen bg-[var(--color-light-gray)]">
       <section className="section-padding">
         <div className="container-custom">
-          {/* 🔙 Link per tornare in homepage */}
           <div className="mb-4">
             <Link
               href="/"
@@ -133,7 +141,6 @@ export default async function BlogPage(props: any) {
             </p>
           </header>
 
-          {/* Filtri categoria */}
           <div className="mb-8 flex flex-wrap gap-2">
             {filterButtons.map((btn) => {
               const isActive = currentCategory === btn.value;
@@ -188,13 +195,14 @@ export default async function BlogPage(props: any) {
                           </span>
                           {post.published_at && (
                             <span className="text-xs text-gray-500">
-                              {new Date(
-                                post.published_at
-                              ).toLocaleDateString("it-IT", {
-                                year: "numeric",
-                                month: "long",
-                                day: "numeric",
-                              })}
+                              {new Date(post.published_at).toLocaleDateString(
+                                "it-IT",
+                                {
+                                  year: "numeric",
+                                  month: "long",
+                                  day: "numeric",
+                                }
+                              )}
                             </span>
                           )}
                         </div>
@@ -228,7 +236,6 @@ export default async function BlogPage(props: any) {
             </ul>
           )}
 
-          {/* 🔔 Box iscrizione newsletter */}
           <div className="mt-10">
             <NewsletterSignup />
           </div>
