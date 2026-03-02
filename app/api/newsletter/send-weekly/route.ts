@@ -38,7 +38,7 @@ export async function GET(request: Request) {
 
     // 1) Trova ultimo articolo non ancora inviato
     const { data: posts, error: postsError } = await supabaseAdmin
-      .from('blog_posts')
+      .from('ts_blog_posts')
       .select('*')
       .eq('status', 'published')
       .is('newsletter_sent_at', null)
@@ -65,7 +65,7 @@ export async function GET(request: Request) {
 
     // 2) Leggi iscritti attivi
     const { data: subscribers, error: subsError } = await supabaseAdmin
-      .from('newsletter_subscribers')
+      .from('ts_newsletter_subscribers')
       .select('id, email, name')
       .eq('is_active', true)
       .is('unsubscribed_at', null);
@@ -264,7 +264,7 @@ export async function GET(request: Request) {
 
     // 4) Segna articolo come inviato
     const { error: updatePostError } = await supabaseAdmin
-      .from('blog_posts')
+      .from('ts_blog_posts')
       .update({
         newsletter_sent_at: new Date().toISOString(),
       })

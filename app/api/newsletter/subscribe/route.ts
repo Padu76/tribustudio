@@ -20,7 +20,7 @@ export async function POST(request: Request) {
 
     // Controlla se l'email esiste già
     const { data: existing } = await supabase
-      .from('newsletter_subscribers')
+      .from('ts_newsletter_subscribers')
       .select('id, is_active')
       .eq('email', email)
       .single();
@@ -29,7 +29,7 @@ export async function POST(request: Request) {
       // Se esiste ma è inattivo, riattivalo
       if (!existing.is_active) {
         const { error } = await supabase
-          .from('newsletter_subscribers')
+          .from('ts_newsletter_subscribers')
           .update({ 
             is_active: true,
             name: name || null,
@@ -52,7 +52,7 @@ export async function POST(request: Request) {
 
     // Nuova iscrizione
     const { error } = await supabase
-      .from('newsletter_subscribers')
+      .from('ts_newsletter_subscribers')
       .insert({
         email,
         name: name || null,

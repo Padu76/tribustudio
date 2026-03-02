@@ -226,7 +226,7 @@ export default function TribuQuiz() {
 
     try {
       const { error: supabaseError } = await supabase
-        .from('quiz_leads')
+        .from('ts_quiz_leads')
         .insert({
           name: name.trim(),
           email: email.toLowerCase().trim(),

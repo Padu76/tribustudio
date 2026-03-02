@@ -58,7 +58,7 @@ export async function GET(request: Request) {
 
     // 1) Prendi il prossimo topic pending
     const { data: topics, error: topicError } = await supabaseAdmin
-      .from('blog_topics')
+      .from('ts_blog_topics')
       .select('*')
       .eq('status', 'pending')
       .order('priority', { ascending: false })
@@ -117,7 +117,7 @@ export async function GET(request: Request) {
 
     // 5) Inserisci articolo in blog_posts
     const { data: insertedPosts, error: insertError } = await supabaseAdmin
-      .from('blog_posts')
+      .from('ts_blog_posts')
       .insert({
         slug,
         title: generated.title,
@@ -148,7 +148,7 @@ export async function GET(request: Request) {
 
     // 6) Marca il topic come usato
     const { error: updateTopicError } = await supabaseAdmin
-      .from('blog_topics')
+      .from('ts_blog_topics')
       .update({
         status: 'used',
         used_post_id: postId,

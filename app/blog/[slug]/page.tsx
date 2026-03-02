@@ -12,7 +12,7 @@ export const revalidate = 60;
 
 async function getPostBySlug(slug: string): Promise<any | null> {
   const { data, error } = await supabase
-    .from("blog_posts")
+    .from("ts_blog_posts")
     .select("*")
     .eq("slug", slug)
     .eq("status", "published")

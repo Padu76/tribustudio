@@ -34,7 +34,7 @@ async function getPublishedPosts(
   category: BlogCategoryFilter
 ): Promise<any[]> {
   let query = supabaseAdmin
-    .from("blog_posts")
+    .from("ts_blog_posts")
     .select("*")
     .eq("status", "published")
     .order("published_at", { ascending: false });
