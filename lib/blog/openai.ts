@@ -1,4 +1,5 @@
-// E:\tribustudio\lib\blog\openai.ts
+// lib/blog/openai.ts
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import type {
@@ -8,12 +9,21 @@ import type {
 } from './types';
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+const UNSPLASH_ACCESS_KEY = process.env.UNSPLASH_ACCESS_KEY;
 
 if (!OPENAI_API_KEY) {
   throw new Error('OPENAI_API_KEY non configurata.');
 }
 
 const MODEL = process.env.BLOG_MODEL_NAME || 'gpt-4o-mini';
+
+// Immagini di fallback per categoria (usate solo se Unsplash fallisce)
+const FALLBACK_IMAGES: Record<string, string> = {
+  allenamento: '/images/blog/allenamento.jpg',
+  alimentazione: '/images/blog/alimentazione.jpg',
+  motivazione: '/images/blog/motivazione.jpeg',
+  default: '/images/blog/generico.jpg',
+};
 
 function slugify(input: string): string {
   return input
@@ -23,6 +33,71 @@ function slugify(input: string): string {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
     .slice(0, 80);
+}
+
+/**
+ * Cerca un'immagine su Unsplash basandosi sul titolo e categoria dell'articolo.
+ * Restituisce l'URL dell'immagine o null se fallisce.
+ */
+async function fetchUnsplashImage(
+  title: string,
+  category: string
+): Promise<string | null> {
+  if (!UNSPLASH_ACCESS_KEY) {
+    console.warn('UNSPLASH_ACCESS_KEY non configurata, uso immagine di fallback.');
+    return null;
+  }
+
+  // Query combinata: titolo + categoria fitness per risultati più pertinenti
+  const categoryMap: Record<string, string> = {
+    allenamento: 'workout fitness gym',
+    alimentazione: 'healthy food nutrition',
+    motivazione: 'motivation success mindset',
+  };
+
+  const categoryKeywords = categoryMap[category] || 'fitness wellness';
+  
+  // Usa le prime parole chiave del titolo + categoria
+  const titleKeywords = title
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9\s]/g, '')
+    .split(' ')
+    .filter(w => w.length > 3)
+    .slice(0, 3)
+    .join(' ');
+
+  const query = `${titleKeywords} ${categoryKeywords}`.trim();
+
+  try {
+    const url = `https://api.unsplash.com/photos/random?query=${encodeURIComponent(query)}&orientation=landscape&content_filter=high`;
+    
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `Client-ID ${UNSPLASH_ACCESS_KEY}`,
+      },
+    });
+
+    if (!response.ok) {
+      console.error(`Unsplash API error: ${response.status} ${response.statusText}`);
+      return null;
+    }
+
+    const data = await response.json();
+    
+    // Usa la versione "regular" (1080px) di Unsplash
+    const imageUrl = data?.urls?.regular || data?.urls?.full || null;
+    
+    if (imageUrl) {
+      console.log(`Immagine Unsplash trovata per: "${query}" → ${imageUrl}`);
+    }
+
+    return imageUrl;
+  } catch (err) {
+    console.error('Errore fetch Unsplash:', err);
+    return null;
+  }
 }
 
 /**
@@ -94,7 +169,6 @@ Rispondi SOLO con JSON valido.
     throw new Error('Risposta OpenAI senza contenuto.');
   }
 
-  // Rimuove eventuali ```json … ```
   let cleaned = raw.trim();
   if (cleaned.startsWith('```')) {
     cleaned = cleaned.replace(/^```[a-zA-Z]*\s*/, '');
@@ -132,29 +206,71 @@ Rispondi SOLO con JSON valido.
 }
 
 /**
- * Ritorna immagine standard basata sulla categoria
+ * Cerca immagine pertinente su Unsplash basandosi sul titolo dell'articolo.
+ * Fallback su immagini statiche per categoria se Unsplash non risponde.
  */
 export async function generateImageForPost(
-  prompt: string,
+  titleOrPrompt: string,
+  category?: string,
   style: 'photo' | 'illustration' = 'photo'
 ): Promise<string | null> {
-  // Estrae categoria dal prompt
-  const lowerPrompt = prompt.toLowerCase();
+  // Determina categoria dal testo se non passata esplicitamente
+  const detectedCategory = category || detectCategory(titleOrPrompt);
+
+  // Tenta Unsplash con titolo + categoria
+  const unsplashUrl = await fetchUnsplashImage(titleOrPrompt, detectedCategory);
   
-  if (lowerPrompt.includes('allena') || lowerPrompt.includes('workout') || lowerPrompt.includes('fitness') || lowerPrompt.includes('palestra') || lowerPrompt.includes('eserciz')) {
-    return '/images/blog/allenamento.jpg';
+  if (unsplashUrl) {
+    return unsplashUrl;
   }
-  
-  if (lowerPrompt.includes('alimenta') || lowerPrompt.includes('nutri') || lowerPrompt.includes('cibo') || lowerPrompt.includes('dieta') || lowerPrompt.includes('mang')) {
-    return '/images/blog/alimentazione.jpg';
+
+  // Fallback: immagine statica per categoria
+  console.warn(`Unsplash fallito, uso immagine statica per categoria: ${detectedCategory}`);
+  return FALLBACK_IMAGES[detectedCategory] || FALLBACK_IMAGES.default;
+}
+
+/**
+ * Rileva la categoria dal testo del titolo/prompt
+ */
+function detectCategory(text: string): string {
+  const lower = text.toLowerCase();
+
+  if (
+    lower.includes('allena') ||
+    lower.includes('workout') ||
+    lower.includes('fitness') ||
+    lower.includes('palestra') ||
+    lower.includes('eserciz') ||
+    lower.includes('muscol') ||
+    lower.includes('cardio')
+  ) {
+    return 'allenamento';
   }
-  
-  if (lowerPrompt.includes('motiva') || lowerPrompt.includes('mental') || lowerPrompt.includes('obiettiv') || lowerPrompt.includes('mindset')) {
-    return '/images/blog/motivazione.jpeg';
+
+  if (
+    lower.includes('alimenta') ||
+    lower.includes('nutri') ||
+    lower.includes('cibo') ||
+    lower.includes('dieta') ||
+    lower.includes('mang') ||
+    lower.includes('protein') ||
+    lower.includes('carboidrat')
+  ) {
+    return 'alimentazione';
   }
-  
-  // Default generico
-  return '/images/blog/generico.jpg';
+
+  if (
+    lower.includes('motiva') ||
+    lower.includes('mental') ||
+    lower.includes('obiettiv') ||
+    lower.includes('mindset') ||
+    lower.includes('abitudin') ||
+    lower.includes('stress')
+  ) {
+    return 'motivazione';
+  }
+
+  return 'default';
 }
 
 /**
