@@ -5,29 +5,32 @@ import { useState, useEffect } from 'react';
 import { Menu, X, Dumbbell, Camera, ChevronRight } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import LanguageSwitcher from './LanguageSwitcher';
+import { useLanguage } from '@/lib/i18n/LanguageProvider';
 
 // Voci di navigazione — Calcolatore rimosso, aggiunti Galleria e Private Gym
 interface NavItem {
-  label: string;
+  labelKey: string;
   href: string;
   external?: boolean;
-  badge?: string;
+  badgeKey?: string;
   icon?: React.ElementType;
 }
 
 const NAVIGATION_ITEMS: NavItem[] = [
-  { label: 'Chi siamo', href: '#chi-siamo' },
-  { label: 'Servizi', href: '#servizi' },
-  { label: 'Galleria', href: '#galleria', icon: Camera },
-  { label: 'Come funziona', href: '#come-funziona' },
-  { label: 'Private Gym', href: '/private-gym', external: true, badge: 'NUOVO', icon: Dumbbell },
-  { label: 'Testimonianze', href: '#testimonianze' },
-  { label: 'FAQ', href: '#faq' },
-  { label: 'Blog', href: '/blog', external: true },
-  { label: 'Contatti', href: '#contatti' },
+  { labelKey: 'chiSiamo', href: '#chi-siamo' },
+  { labelKey: 'servizi', href: '#servizi' },
+  { labelKey: 'galleria', href: '#galleria', icon: Camera },
+  { labelKey: 'comeFunziona', href: '#come-funziona' },
+  { labelKey: 'privateGym', href: '/private-gym', external: true, badgeKey: 'nuovo', icon: Dumbbell },
+  { labelKey: 'testimonianze', href: '#testimonianze' },
+  { labelKey: 'faq', href: '#faq' },
+  { labelKey: 'blog', href: '/blog', external: true },
+  { labelKey: 'contatti', href: '#contatti' },
 ];
 
 export default function Header() {
+  const { t } = useLanguage();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState('');
@@ -99,6 +102,7 @@ export default function Header() {
         <nav className="hidden lg:flex items-center gap-1 xl:gap-1.5">
           {NAVIGATION_ITEMS.map((item) => {
             const isActive = item.href.startsWith('#') && activeSection === item.href.substring(1);
+            const label = t("nav", item.labelKey);
 
             if (item.external) {
               return (
@@ -106,16 +110,16 @@ export default function Header() {
                   key={item.href}
                   href={item.href}
                   className={`relative px-3 xl:px-3.5 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1.5 ${
-                    item.badge
+                    item.badgeKey
                       ? 'text-primary hover:bg-primary/5 font-semibold'
                       : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                   }`}
                 >
                   {item.icon && <item.icon className="w-3.5 h-3.5" />}
-                  {item.label}
-                  {item.badge && (
+                  {label}
+                  {item.badgeKey && (
                     <span className="bg-primary text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full leading-none tracking-wide">
-                      {item.badge}
+                      {t("nav", item.badgeKey)}
                     </span>
                   )}
                 </Link>
@@ -137,7 +141,7 @@ export default function Header() {
                 }`}
               >
                 {item.icon && <item.icon className="w-3.5 h-3.5" />}
-                {item.label}
+                {label}
                 {/* Underline animata */}
                 <span className={`absolute bottom-0 left-3 right-3 h-0.5 bg-primary rounded-full transition-transform duration-300 origin-left ${
                   isActive ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
@@ -149,6 +153,9 @@ export default function Header() {
           {/* Separatore verticale */}
           <div className="w-px h-6 bg-gray-200 mx-1" />
 
+          {/* Language switcher */}
+          <LanguageSwitcher />
+
           {/* CTA Prenota */}
           <button
             onClick={() =>
@@ -156,32 +163,36 @@ export default function Header() {
             }
             className="ml-1 bg-gradient-to-r from-primary to-primary-dark text-white px-5 py-2.5 rounded-full font-semibold text-sm hover:shadow-lg hover:shadow-primary/25 transition-all duration-300 hover:scale-[1.03] active:scale-[0.98]"
           >
-            PRENOTA ORA
+            {t("nav", "prenota")}
           </button>
         </nav>
 
-        {/* MOBILE MENU BUTTON */}
-        <button
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="lg:hidden text-gray-700 hover:text-primary transition-colors p-2 -mr-2"
-          aria-label={isMenuOpen ? 'Chiudi menu' : 'Apri menu'}
-        >
-          {isMenuOpen ? <X size={26} /> : <Menu size={26} />}
-        </button>
+        {/* MOBILE: Language + Menu */}
+        <div className="lg:hidden flex items-center gap-2">
+          <LanguageSwitcher />
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="text-gray-700 hover:text-primary transition-colors p-2 -mr-2"
+            aria-label={isMenuOpen ? t("nav", "chiudiMenu") : t("nav", "apriMenu")}
+          >
+            {isMenuOpen ? <X size={26} /> : <Menu size={26} />}
+          </button>
+        </div>
       </div>
 
-      {/* MOBILE MENU — Full screen con blur */}
+      {/* MOBILE MENU — Full screen solido */}
       <div
-        className={`lg:hidden fixed inset-0 top-[56px] bg-white/98 backdrop-blur-xl transition-all duration-300 ${
+        className={`lg:hidden fixed inset-0 top-[56px] z-50 bg-white transition-all duration-300 overflow-y-auto ${
           isMenuOpen
             ? 'opacity-100 pointer-events-auto'
             : 'opacity-0 pointer-events-none'
         }`}
       >
-        <nav className="container-custom mx-auto px-6 py-6 flex flex-col h-full">
+        <nav className="container-custom mx-auto px-6 py-6 flex flex-col min-h-full">
           <div className="flex-1 space-y-1">
             {NAVIGATION_ITEMS.map((item) => {
               const isActive = item.href.startsWith('#') && activeSection === item.href.substring(1);
+              const label = t("nav", item.labelKey);
 
               if (item.external) {
                 return (
@@ -190,17 +201,17 @@ export default function Header() {
                     href={item.href}
                     onClick={() => setIsMenuOpen(false)}
                     className={`flex items-center justify-between py-3.5 px-4 rounded-xl transition-all duration-200 ${
-                      item.badge
+                      item.badgeKey
                         ? 'text-primary bg-primary/5 font-semibold'
                         : 'text-gray-700 hover:bg-gray-50'
                     }`}
                   >
                     <span className="flex items-center gap-3 text-base">
                       {item.icon && <item.icon className="w-5 h-5" />}
-                      {item.label}
-                      {item.badge && (
+                      {label}
+                      {item.badgeKey && (
                         <span className="bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded-full leading-none">
-                          {item.badge}
+                          {t("nav", item.badgeKey)}
                         </span>
                       )}
                     </span>
@@ -225,7 +236,7 @@ export default function Header() {
                 >
                   <span className="flex items-center gap-3">
                     {item.icon && <item.icon className="w-5 h-5" />}
-                    {item.label}
+                    {label}
                   </span>
                   {isActive && <div className="w-2 h-2 bg-primary rounded-full" />}
                 </a>
@@ -243,7 +254,7 @@ export default function Header() {
               }}
               className="bg-gradient-to-r from-primary to-primary-dark text-white px-6 py-4 rounded-full font-bold text-base hover:shadow-lg transition-all duration-300 w-full"
             >
-              PRENOTA ORA
+              {t("nav", "prenota")}
             </button>
           </div>
         </nav>

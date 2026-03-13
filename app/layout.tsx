@@ -5,6 +5,7 @@ import './globals.css';
 import '@/styles/cookieconsent-custom.css';
 import WebsiteTracker from '@/components/WebsiteTracker';
 import CookieConsent from '@/components/CookieConsent';
+import { LanguageProvider } from '@/lib/i18n/LanguageProvider';
 import Script from 'next/script';
 
 // Font ottimizzati con next/font — eliminano render-blocking CSS
@@ -89,9 +90,11 @@ export default function RootLayout({
         </Script>
       </head>
       <body>
-        <WebsiteTracker websiteId="tribu-studio" />
-        {children}
-        <CookieConsent />
+        <LanguageProvider>
+          <WebsiteTracker websiteId="tribu-studio" />
+          {children}
+          <CookieConsent />
+        </LanguageProvider>
       </body>
     </html>
   );
