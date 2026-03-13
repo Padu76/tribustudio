@@ -10,10 +10,9 @@ import Link from "next/link";
 
 interface SlotInfo {
   id: string;
-  date: string;
-  start_time: string;
-  end_time: string;
-  price: number;
+  starts_at: string;
+  ends_at: string;
+  price_eur: number;
   status: string;
 }
 
@@ -77,8 +76,10 @@ function BookingContent() {
     );
   }
 
-  const dateLabel = format(parseISO(slot.date), "EEEE d MMMM yyyy", { locale: it });
-  const timeLabel = `${slot.start_time.slice(0, 5)} — ${slot.end_time.slice(0, 5)}`;
+  const dateLabel = format(parseISO(slot.starts_at), "EEEE d MMMM yyyy", { locale: it });
+  const startTime = format(parseISO(slot.starts_at), "HH:mm");
+  const endTime = format(parseISO(slot.ends_at), "HH:mm");
+  const timeLabel = `${startTime} — ${endTime}`;
   const customer = { fullName, email, phone, notes, acceptedRules };
 
   return (
@@ -88,14 +89,14 @@ function BookingContent() {
         <Link href="/private-gym" className="text-sm text-white/50 hover:text-white transition">
           ← Torna alla landing
         </Link>
-        <h1 className="mt-6 text-3xl font-bold sm:text-4xl">Prenota la tua sessione</h1>
+        <h1 className="mt-6 text-3xl font-bold text-white sm:text-4xl">Prenota la tua sessione</h1>
 
         {/* Riepilogo slot */}
         <div className="mt-6 rounded-2xl border border-white/10 bg-white/5 p-5">
           <div className="text-sm font-semibold uppercase tracking-widest text-orange-400">Riepilogo</div>
-          <div className="mt-3 text-lg font-semibold capitalize">{dateLabel}</div>
+          <div className="mt-3 text-lg font-semibold capitalize text-white">{dateLabel}</div>
           <div className="text-white/70">{timeLabel}</div>
-          <div className="mt-2 text-2xl font-bold text-orange-400">{slot.price}€</div>
+          <div className="mt-2 text-2xl font-bold text-orange-400">{slot.price_eur}€</div>
         </div>
 
         {/* Form dati */}

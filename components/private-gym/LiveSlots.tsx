@@ -7,11 +7,11 @@ import { it } from "date-fns/locale";
 
 interface Slot {
   id: string;
-  date: string;
-  start_time: string;
-  end_time: string;
-  price: number;
+  starts_at: string;
+  ends_at: string;
+  price_eur: number;
   status: string;
+  capacity: number;
 }
 
 interface GroupedSlots {
@@ -24,14 +24,12 @@ export default function LiveSlots() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // API route sotto /api/private-gym/slots
     fetch("/api/private-gym/slots", { cache: "no-store" })
       .then((r) => r.json())
       .then((data) => {
         const now = new Date();
         const futureSlots = (data.slots || []).filter((s: Slot) => {
-          const slotDateTime = parseISO(`${s.date}T${s.end_time}`);
-          return isAfter(slotDateTime, now);
+          return isAfter(parseISO(s.ends_at), now);
         });
         setSlots(futureSlots);
       })
@@ -69,8 +67,9 @@ export default function LiveSlots() {
   // Raggruppa per data
   const grouped: GroupedSlots = {};
   for (const slot of slots) {
-    if (!grouped[slot.date]) grouped[slot.date] = [];
-    grouped[slot.date].push(slot);
+    const dateKey = slot.starts_at.slice(0, 10);
+    if (!grouped[dateKey]) grouped[dateKey] = [];
+    grouped[dateKey].push(slot);
   }
 
   return (
@@ -85,32 +84,37 @@ export default function LiveSlots() {
               {dayLabel}
             </h4>
             <div className="space-y-3">
-              {dateSlots.map((slot) => (
-                <div
-                  key={slot.id}
-                  className="flex flex-col gap-3 rounded-2xl border border-white/10 bg-black/30 p-5 sm:flex-row sm:items-center sm:justify-between"
-                >
-                  <div>
-                    <div className="mt-1 text-lg font-semibold">
-                      {slot.start_time.slice(0, 5)} — {slot.end_time.slice(0, 5)}
+              {dateSlots.map((slot) => {
+                const startTime = format(parseISO(slot.starts_at), "HH:mm");
+                const endTime = format(parseISO(slot.ends_at), "HH:mm");
+
+                return (
+                  <div
+                    key={slot.id}
+                    className="flex flex-col gap-3 rounded-2xl border border-white/10 bg-black/30 p-5 sm:flex-row sm:items-center sm:justify-between"
+                  >
+                    <div>
+                      <div className="mt-1 text-lg font-semibold text-white">
+                        {startTime} — {endTime}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="rounded-full border border-white/10 bg-black/30 px-3 py-1 text-sm text-white/70">
+                        {slot.price_eur}€
+                      </span>
+                      <span className="rounded-full bg-emerald-500/15 px-3 py-1 text-sm font-medium text-emerald-400">
+                        Disponibile
+                      </span>
+                      <a
+                        href={`/private-gym/booking?slot=${slot.id}`}
+                        className="rounded-full bg-orange-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-orange-600"
+                      >
+                        Prenota
+                      </a>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <span className="rounded-full border border-white/10 bg-black/30 px-3 py-1 text-sm text-white/70">
-                      {slot.price}€
-                    </span>
-                    <span className="rounded-full bg-emerald-500/15 px-3 py-1 text-sm font-medium text-emerald-400">
-                      Disponibile
-                    </span>
-                    <a
-                      href={`/private-gym/booking?slot=${slot.id}`}
-                      className="rounded-full bg-orange-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-orange-600"
-                    >
-                      Prenota
-                    </a>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         );
