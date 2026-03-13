@@ -8,6 +8,7 @@ import Hero from '../components/sections/Hero';
 import ChiSiamo from '../components/sections/ChiSiamo';
 import PercheTributu from '../components/sections/PercheTributu';
 import Servizi from '../components/sections/Servizi';
+import ServiziStudio from '../components/sections/ServiziStudio';
 import ComeFunziona from '../components/sections/ComeFunziona';
 import GalleriaStudio from '../components/sections/GalleriaStudio';
 import Contatore from '../components/sections/Contatore';
@@ -15,24 +16,18 @@ import Testimonianze from '../components/sections/Testimonianze';
 import Brochure from '../components/sections/Brochure';
 import FAQ from '../components/sections/FAQ';
 import Contatti from '../components/sections/Contatti';
-import QuizCTA from '../components/QuizCTA';
 
 export default function Home() {
   return (
     <>
-      {/* Banner Quiz in alto */}
-      <QuizCTA variant="banner" />
-
       <Header />
       <main>
         <Hero />
         <ChiSiamo />
         <PercheTributu />
 
-        {/* Sezione Quiz dopo PercheTributu */}
-        <QuizCTA variant="section" />
-
         <Servizi />
+        <ServiziStudio />
         <ComeFunziona />
 
         {/* Galleria foto dello studio */}
@@ -67,9 +62,6 @@ export default function Home() {
       </main>
       <Footer />
       <WhatsAppButton />
-
-      {/* Bottone floating Quiz */}
-      <QuizCTA variant="floating" />
     </>
   );
 }

@@ -15,7 +15,12 @@
       "Bash(powershell -Command \"Get-ChildItem ''E:\\\\tribustudio\\\\.claude\\\\worktrees\\\\confident-swirles\\\\public\\\\images\\\\private-gym'' -Recurse | Select-Object FullName\")",
       "Bash(powershell -ExecutionPolicy Bypass -File \"E:\\\\tribustudio\\\\.claude\\\\worktrees\\\\confident-swirles\\\\copy-images.ps1\")",
       "Bash(powershell -Command \"Test-Path ''E:\\\\tribustudio\\\\.claude\\\\worktrees\\\\confident-swirles\\\\public\\\\images\\\\private-gym''\")",
-      "Bash(node \"E:\\\\tribustudio\\\\.claude\\\\worktrees\\\\confident-swirles\\\\_copy-images.mjs\")"
+      "Bash(node \"E:\\\\tribustudio\\\\.claude\\\\worktrees\\\\confident-swirles\\\\_copy-images.mjs\")",
+      "Bash(npx next:*)",
+      "Bash(cp \"E:/tribu-private-gym/public/attrezzature/attrezzatura4.jpg\" \"E:/tribustudio/.claude/worktrees/agitated-kowalevski/public/images/private-gym/attrezzature/attrezzatura4.jpg\")",
+      "Bash(cp \"E:/tribu-private-gym/public/attrezzature/attrezzatura5.jpg\" \"E:/tribustudio/.claude/worktrees/agitated-kowalevski/public/images/private-gym/attrezzature/attrezzatura5.jpg\")",
+      "Bash(cp \"E:/tribu-private-gym/public/esterno/esterno.jpg\" \"E:/tribustudio/.claude/worktrees/agitated-kowalevski/public/images/private-gym/esterno/esterno.jpg\")",
+      "Bash(cp \"E:/tribu-private-gym/public/postazioni/postazione1.jpg\" \"E:/tribustudio/.claude/worktrees/agitated-kowalevski/public/images/private-gym/postazioni/postazione1.jpg\")"
     ]
   }
 }

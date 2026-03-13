@@ -339,7 +339,7 @@ export default function TribuQuiz() {
               </div>
               <div className="bg-gray-800/50 rounded-2xl p-6 max-w-md mx-auto">
                 <p className="text-gray-400 text-sm">Non vuoi aspettare? Scrivici subito su WhatsApp.</p>
-                <a href="https://wa.me/393332847282" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 mt-4 px-6 py-3 bg-green-600 hover:bg-green-700 rounded-full font-semibold transition-colors">Scrivici su WhatsApp</a>
+                <a href="https://wa.me/393478881515" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 mt-4 px-6 py-3 bg-green-600 hover:bg-green-700 rounded-full font-semibold transition-colors">Scrivici su WhatsApp</a>
               </div>
               <Link href="/" className="inline-flex items-center gap-2 text-orange-400 hover:text-orange-300">Torna al sito<ArrowRight className="w-4 h-4" /></Link>
             </motion.div>
