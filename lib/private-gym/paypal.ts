@@ -1,16 +1,25 @@
 // lib/private-gym/paypal.ts
-import { env } from "./config";
+// Legge direttamente da process.env per evitare problemi di caching del modulo config
 
 function getPayPalBaseUrl() {
-  return env.PAYPAL_ENV === "live" ? "https://api-m.paypal.com" : "https://api-m.sandbox.paypal.com";
+  const env = process.env.PAYPAL_ENV || "sandbox";
+  return env === "live" ? "https://api-m.paypal.com" : "https://api-m.sandbox.paypal.com";
 }
 
 async function getAccessToken() {
-  if (!env.PAYPAL_CLIENT_ID || !env.PAYPAL_CLIENT_SECRET) {
+  const clientId = process.env.PAYPAL_CLIENT_ID;
+  const clientSecret = process.env.PAYPAL_CLIENT_SECRET;
+
+  if (!clientId || !clientSecret) {
+    console.error("[PayPal] Env check:", {
+      hasClientId: !!clientId,
+      hasClientSecret: !!clientSecret,
+      paypalEnv: process.env.PAYPAL_ENV,
+    });
     throw new Error("PayPal credentials mancanti.");
   }
 
-  const auth = Buffer.from(`${env.PAYPAL_CLIENT_ID}:${env.PAYPAL_CLIENT_SECRET}`).toString("base64");
+  const auth = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
   const response = await fetch(`${getPayPalBaseUrl()}/v1/oauth2/token`, {
     method: "POST",
     headers: {
