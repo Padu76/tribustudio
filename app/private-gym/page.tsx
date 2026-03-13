@@ -78,7 +78,7 @@ function SectionTitle({
           {eyebrow}
         </div>
       ) : null}
-      <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{title}</h2>
+      <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">{title}</h2>
       {text ? <p className="mt-4 text-base leading-7 text-white/80 sm:text-lg">{text}</p> : null}
     </div>
   );
@@ -162,7 +162,7 @@ export default function TribuPrivateGymPage() {
               Prenotazione studio autogestito
             </div>
 
-            <h1 className="max-w-4xl text-4xl font-bold leading-tight sm:text-6xl">
+            <h1 className="max-w-4xl text-4xl font-bold leading-tight text-white sm:text-6xl">
               Prenota lo studio.
               <br />
               Allenati in autonomia.
@@ -260,7 +260,7 @@ export default function TribuPrivateGymPage() {
             ].map((item) => (
               <div key={item.n} className="rounded-[28px] border border-white/10 bg-white/5 p-6">
                 <div className="text-sm font-semibold tracking-[0.2em] text-orange-400">{item.n}</div>
-                <h3 className="mt-4 text-xl font-semibold">{item.t}</h3>
+                <h3 className="mt-4 text-xl font-semibold text-white">{item.t}</h3>
                 <p className="mt-3 text-white/80">{item.d}</p>
               </div>
             ))}
@@ -313,7 +313,7 @@ export default function TribuPrivateGymPage() {
                   loading="lazy"
                 />
                 <div className="p-6">
-                  <h3 className="text-xl font-semibold">{item.title}</h3>
+                  <h3 className="text-xl font-semibold text-white">{item.title}</h3>
                   <p className="mt-3 text-white/80">{item.text}</p>
                 </div>
               </div>
@@ -437,7 +437,7 @@ export default function TribuPrivateGymPage() {
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
           <div className="rounded-[36px] border border-orange-500/20 bg-gradient-to-br from-orange-500/10 to-white/5 p-8 text-center sm:p-12">
             <div className="text-sm font-semibold uppercase tracking-[0.24em] text-orange-400">Costi</div>
-            <h2 className="mt-4 text-4xl font-bold sm:text-5xl">25€ / ora</h2>
+            <h2 className="mt-4 text-4xl font-bold text-white sm:text-5xl">25€ / ora</h2>
             <p className="mx-auto mt-5 max-w-2xl text-white/75">
               Accesso allo studio, utilizzo delle attrezzature disponibili, ingresso 10 minuti prima
               e gestione smart della prenotazione.
@@ -486,14 +486,14 @@ export default function TribuPrivateGymPage() {
         <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
           <div className="rounded-[28px] border border-white/10 bg-white/5 p-8">
             <div className="text-sm font-semibold uppercase tracking-[0.2em] text-orange-400">Sicurezza</div>
-            <h3 className="mt-4 text-2xl font-bold">Videosorveglianza e tutela dello studio</h3>
+            <h3 className="mt-4 text-2xl font-bold text-white">Videosorveglianza e tutela dello studio</h3>
             <p className="mt-4 text-white/80">
               L&apos;area è videosorvegliata per sicurezza, controllo accessi e tutela della struttura.
             </p>
           </div>
           <div className="rounded-[28px] border border-white/10 bg-white/5 p-8">
             <div className="text-sm font-semibold uppercase tracking-[0.2em] text-orange-400">Penali</div>
-            <h3 className="mt-4 text-2xl font-bold">Mancato rispetto delle regole</h3>
+            <h3 className="mt-4 text-2xl font-bold text-white">Mancato rispetto delle regole</h3>
             <p className="mt-4 text-white/80">
               Il mancato rispetto del regolamento può comportare sospensione del servizio, penali
               economiche o esclusione da future prenotazioni.
@@ -513,7 +513,7 @@ export default function TribuPrivateGymPage() {
           <div className="space-y-4">
             {faqs.map((item) => (
               <div key={item.q} className="rounded-[24px] border border-white/10 bg-white/5 p-6">
-                <h3 className="text-lg font-semibold">{item.q}</h3>
+                <h3 className="text-lg font-semibold text-white">{item.q}</h3>
                 <p className="mt-3 text-white/80">{item.a}</p>
               </div>
             ))}
@@ -526,7 +526,7 @@ export default function TribuPrivateGymPage() {
         <div className="mx-auto max-w-5xl px-4 text-center sm:px-6 lg:px-8">
           <div className="rounded-[36px] border border-white/10 bg-white/5 p-8 sm:p-12">
             <div className="text-sm font-semibold uppercase tracking-[0.2em] text-orange-400">Prenotazione</div>
-            <h2 className="mt-4 text-3xl font-bold sm:text-5xl">Prenota il tuo slot</h2>
+            <h2 className="mt-4 text-3xl font-bold text-white sm:text-5xl">Prenota il tuo slot</h2>
             <p className="mx-auto mt-5 max-w-2xl text-white/75">
               Allenati in autonomia in uno spazio professionale, ordinato e riservato.
             </p>
