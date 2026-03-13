@@ -44,7 +44,8 @@ function formatTime(dateStr: string) {
 }
 
 function getDateKey(dateStr: string) {
-  return new Date(dateStr).toISOString().slice(0, 10);
+  const d = new Date(dateStr);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
 
 function toYMD(d: Date) {
@@ -211,8 +212,9 @@ export default function TribuAdminPage() {
       return;
     }
 
-    const starts_at = `${date}T${startTime}:00`;
-    const ends_at = `${date}T${endTime}:00`;
+    // Converti ora locale italiana in UTC per Supabase
+    const starts_at = new Date(`${date}T${startTime}:00`).toISOString();
+    const ends_at = new Date(`${date}T${endTime}:00`).toISOString();
 
     const res = await fetch("/api/private-gym/admin/slots", {
       method: "POST",

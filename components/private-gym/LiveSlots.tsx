@@ -64,10 +64,11 @@ export default function LiveSlots() {
     );
   }
 
-  // Raggruppa per data
+  // Raggruppa per data (usa data locale, non UTC)
   const grouped: GroupedSlots = {};
   for (const slot of slots) {
-    const dateKey = slot.starts_at.slice(0, 10);
+    const d = parseISO(slot.starts_at);
+    const dateKey = format(d, "yyyy-MM-dd");
     if (!grouped[dateKey]) grouped[dateKey] = [];
     grouped[dateKey].push(slot);
   }
