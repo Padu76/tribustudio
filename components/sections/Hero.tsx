@@ -6,7 +6,7 @@ import Image from 'next/image';
 
 export default function Hero() {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16 md:pt-0">
       {/* Sfondo ottimizzato con next/image — WebP/AVIF automatico, priority per LCP */}
       <Image
         src="/images/hero/hero-bg.jpg"

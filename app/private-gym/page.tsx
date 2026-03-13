@@ -50,7 +50,7 @@ const faqs = [
   },
   {
     q: "Come apro la porta?",
-    a: "Dopo la prenotazione riceverai l'accesso smart tramite sistema Nuki sul tuo smartphone.",
+    a: "Dopo la prenotazione riceverai l'accesso smart direttamente sul tuo smartphone.",
   },
   {
     q: "Posso portare un'altra persona?",
@@ -174,7 +174,7 @@ export default function TribuPrivateGymPage() {
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3">
-              {['25€ / ora', 'Accesso 10 minuti prima', '3 postazioni', 'Accesso smart Nuki'].map((tag) => (
+              {['25€ / ora', 'Accesso 10 minuti prima', '3 postazioni', 'Accesso smart'].map((tag) => (
                 <div key={tag} className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white/85">
                   {tag}
                 </div>
@@ -393,8 +393,8 @@ export default function TribuPrivateGymPage() {
             <div className="text-sm font-semibold uppercase tracking-[0.2em] text-orange-400">Accesso smart</div>
             <h3 className="mt-4 text-2xl font-bold">Ingresso tramite smartphone</h3>
             <p className="mt-4 text-white/70">
-              Dopo la prenotazione riceverai l&apos;accesso smart tramite il sistema Nuki. Potrai
-              entrare nello studio direttamente con il tuo telefono.
+              Dopo la prenotazione riceverai l&apos;accesso smart direttamente sul tuo smartphone.
+              Potrai entrare nello studio con il tuo telefono.
             </p>
             <p className="mt-4 text-white/70">
               Per questa prima fase test l&apos;accesso avviene via smartphone, in futuro potrà essere

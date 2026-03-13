@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Menu, X, Target, Dumbbell, Camera, ChevronRight } from 'lucide-react';
+import { Menu, X, Dumbbell, Camera, ChevronRight } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -149,15 +149,6 @@ export default function Header() {
           {/* Separatore verticale */}
           <div className="w-px h-6 bg-gray-200 mx-1" />
 
-          {/* Quiz Button */}
-          <Link
-            href="/quiz"
-            className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium text-orange-500 hover:bg-orange-50 transition-all duration-200"
-          >
-            <Target className="w-3.5 h-3.5" />
-            Trova il Percorso
-          </Link>
-
           {/* CTA Prenota */}
           <button
             onClick={() =>
@@ -241,18 +232,6 @@ export default function Header() {
               );
             })}
 
-            {/* Divider */}
-            <div className="border-t border-gray-100 my-3" />
-
-            {/* Quiz Mobile */}
-            <Link
-              href="/quiz"
-              onClick={() => setIsMenuOpen(false)}
-              className="flex items-center gap-3 py-3.5 px-4 rounded-xl text-orange-500 hover:bg-orange-50 transition-all duration-200 text-base font-medium"
-            >
-              <Target className="w-5 h-5" />
-              Trova il Tuo Percorso
-            </Link>
           </div>
 
           {/* CTA fisso in basso */}

@@ -15,7 +15,8 @@
       "Bash(powershell -Command \"Get-ChildItem ''E:\\\\tribustudio\\\\.claude\\\\worktrees\\\\confident-swirles\\\\public\\\\images\\\\private-gym'' -Recurse | Select-Object FullName\")",
       "Bash(powershell -ExecutionPolicy Bypass -File \"E:\\\\tribustudio\\\\.claude\\\\worktrees\\\\confident-swirles\\\\copy-images.ps1\")",
       "Bash(powershell -Command \"Test-Path ''E:\\\\tribustudio\\\\.claude\\\\worktrees\\\\confident-swirles\\\\public\\\\images\\\\private-gym''\")",
-      "Bash(node \"E:\\\\tribustudio\\\\.claude\\\\worktrees\\\\confident-swirles\\\\_copy-images.mjs\")"
+      "Bash(node \"E:\\\\tribustudio\\\\.claude\\\\worktrees\\\\confident-swirles\\\\_copy-images.mjs\")",
+      "Bash(npx next:*)"
     ]
   }
 }

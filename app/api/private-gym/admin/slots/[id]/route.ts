@@ -57,6 +57,29 @@ export async function DELETE(
       return NextResponse.json({ error: "Supabase non configurato" }, { status: 500 });
     }
 
+    // Elimina prima gli accessi collegati ai booking di questo slot
+    const { data: bookings } = await supabase
+      .from("tribu_private_gym_bookings")
+      .select("id")
+      .eq("slot_id", id);
+
+    if (bookings && bookings.length > 0) {
+      const bookingIds = bookings.map((b: { id: string }) => b.id);
+
+      // Elimina accessi collegati ai booking
+      await supabase
+        .from("tribu_private_gym_accesses")
+        .delete()
+        .in("booking_id", bookingIds);
+
+      // Elimina i booking collegati allo slot
+      await supabase
+        .from("tribu_private_gym_bookings")
+        .delete()
+        .eq("slot_id", id);
+    }
+
+    // Ora elimina lo slot
     const { error } = await supabase.from("tribu_private_gym_slots").delete().eq("id", id);
 
     if (error) {
