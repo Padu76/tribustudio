@@ -369,6 +369,12 @@ export default function TribuAdminPage() {
           </div>
 
           <div className="flex gap-3">
+            <a
+              href="/private-gym#calendario"
+              className="rounded-full border border-orange-500/30 bg-orange-500/10 px-5 py-3 text-sm font-semibold text-orange-400 hover:bg-orange-500/20"
+            >
+              Vedi sul sito
+            </a>
             <button
               onClick={loadSlots}
               className="rounded-full border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-white hover:bg-white/10"
