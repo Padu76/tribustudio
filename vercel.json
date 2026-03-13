@@ -3,6 +3,10 @@
     {
       "path": "/api/blog/generate-and-publish?secret=tr1bu_9sd8f9s8df9_sicurezza_2025_kjhsdf98h34",
       "schedule": "0 6 * * 1,3,5"
+    },
+    {
+      "path": "/api/newsletter/send-weekly?secret=tr1bu_9sd8f9s8df9_sicurezza_2025_kjhsdf98h34",
+      "schedule": "0 7 * * 1,3,5"
     }
   ]
 }
