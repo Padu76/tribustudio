@@ -79,7 +79,7 @@ function SectionTitle({
         </div>
       ) : null}
       <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{title}</h2>
-      {text ? <p className="mt-4 text-base leading-7 text-white/70 sm:text-lg">{text}</p> : null}
+      {text ? <p className="mt-4 text-base leading-7 text-white/80 sm:text-lg">{text}</p> : null}
     </div>
   );
 }
@@ -261,7 +261,7 @@ export default function TribuPrivateGymPage() {
               <div key={item.n} className="rounded-[28px] border border-white/10 bg-white/5 p-6">
                 <div className="text-sm font-semibold tracking-[0.2em] text-orange-400">{item.n}</div>
                 <h3 className="mt-4 text-xl font-semibold">{item.t}</h3>
-                <p className="mt-3 text-white/70">{item.d}</p>
+                <p className="mt-3 text-white/80">{item.d}</p>
               </div>
             ))}
           </div>
@@ -314,7 +314,7 @@ export default function TribuPrivateGymPage() {
                 />
                 <div className="p-6">
                   <h3 className="text-xl font-semibold">{item.title}</h3>
-                  <p className="mt-3 text-white/70">{item.text}</p>
+                  <p className="mt-3 text-white/80">{item.text}</p>
                 </div>
               </div>
             ))}
@@ -374,31 +374,19 @@ export default function TribuPrivateGymPage() {
         </div>
       </section>
 
-      {/* CAMBIO SLOT + ACCESSO SMART */}
+      {/* CAMBIO SLOT */}
       <section className="border-t border-white/10 py-20 sm:py-24">
-        <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
-          <div className="rounded-[28px] border border-white/10 bg-white/5 p-8">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="rounded-[28px] border border-white/10 bg-white/5 p-8 max-w-3xl mx-auto">
             <div className="text-sm font-semibold uppercase tracking-[0.2em] text-orange-400">Cambio slot</div>
-            <h3 className="mt-4 text-2xl font-bold">Come funziona il cambio tra utenti</h3>
-            <p className="mt-4 text-white/70">
+            <h3 className="mt-4 text-2xl font-bold text-white">Come funziona il cambio tra utenti</h3>
+            <p className="mt-4 text-white/80">
               L&apos;utente che termina lo slot deve concludere l&apos;utilizzo delle attrezzature 5 minuti
               prima della fine, così da riordinare la postazione e lasciarla pronta.
             </p>
-            <p className="mt-4 text-white/70">
+            <p className="mt-4 text-white/80">
               L&apos;utente successivo può accedere 10 minuti prima e attendere nella sala di attesa o
               iniziare il riscaldamento. In questo modo il flusso rimane ordinato senza tempi morti.
-            </p>
-          </div>
-          <div className="rounded-[28px] border border-white/10 bg-white/5 p-8">
-            <div className="text-sm font-semibold uppercase tracking-[0.2em] text-orange-400">Accesso smart</div>
-            <h3 className="mt-4 text-2xl font-bold">Ingresso tramite smartphone</h3>
-            <p className="mt-4 text-white/70">
-              Dopo la prenotazione riceverai l&apos;accesso smart direttamente sul tuo smartphone.
-              Potrai entrare nello studio con il tuo telefono.
-            </p>
-            <p className="mt-4 text-white/70">
-              Per questa prima fase test l&apos;accesso avviene via smartphone, in futuro potrà essere
-              esteso anche ad altre modalità.
             </p>
           </div>
         </div>
@@ -499,14 +487,14 @@ export default function TribuPrivateGymPage() {
           <div className="rounded-[28px] border border-white/10 bg-white/5 p-8">
             <div className="text-sm font-semibold uppercase tracking-[0.2em] text-orange-400">Sicurezza</div>
             <h3 className="mt-4 text-2xl font-bold">Videosorveglianza e tutela dello studio</h3>
-            <p className="mt-4 text-white/70">
+            <p className="mt-4 text-white/80">
               L&apos;area è videosorvegliata per sicurezza, controllo accessi e tutela della struttura.
             </p>
           </div>
           <div className="rounded-[28px] border border-white/10 bg-white/5 p-8">
             <div className="text-sm font-semibold uppercase tracking-[0.2em] text-orange-400">Penali</div>
             <h3 className="mt-4 text-2xl font-bold">Mancato rispetto delle regole</h3>
-            <p className="mt-4 text-white/70">
+            <p className="mt-4 text-white/80">
               Il mancato rispetto del regolamento può comportare sospensione del servizio, penali
               economiche o esclusione da future prenotazioni.
             </p>
@@ -526,7 +514,7 @@ export default function TribuPrivateGymPage() {
             {faqs.map((item) => (
               <div key={item.q} className="rounded-[24px] border border-white/10 bg-white/5 p-6">
                 <h3 className="text-lg font-semibold">{item.q}</h3>
-                <p className="mt-3 text-white/70">{item.a}</p>
+                <p className="mt-3 text-white/80">{item.a}</p>
               </div>
             ))}
           </div>
