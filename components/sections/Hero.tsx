@@ -1,52 +1,34 @@
-// E:\\tribustudio\\components\\sections\\Hero.tsx
+// components/sections/Hero.tsx
 'use client';
 
 import { motion } from 'framer-motion';
-import { useState, useEffect } from 'react';
+import Image from 'next/image';
 
 export default function Hero() {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Sfondo ottimizzato per mobile */}
-      <div 
-        className="absolute inset-0 z-0"
-        style={{
-          backgroundImage: 'url("/images/hero/hero-bg.jpg")',
-          // Rimuovo fixed su mobile perché crea problemi su iOS
-          backgroundAttachment: isMobile ? 'scroll' : 'fixed',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-          backgroundSize: 'cover',
-          // Aggiungo webkit per compatibilità iOS
-          WebkitBackgroundSize: 'cover',
-          MozBackgroundSize: 'cover',
-          OBackgroundSize: 'cover'
-        }}
-      >
-        {/* Overlay gradiente */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/70" />
-        
-        {/* Pattern overlay per texture */}
-        <div className="absolute inset-0 opacity-10" 
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-          }}
-        />
-      </div>
+      {/* Sfondo ottimizzato con next/image — WebP/AVIF automatico, priority per LCP */}
+      <Image
+        src="/images/hero/hero-bg.jpg"
+        alt="Tribù Personal Training Studio"
+        fill
+        priority
+        sizes="100vw"
+        className="object-cover"
+        quality={75}
+      />
 
-      {/* Content con padding migliorato per mobile */}
+      {/* Overlay gradiente */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/70 z-[1]" />
+
+      {/* Pattern overlay per texture */}
+      <div className="absolute inset-0 opacity-10 z-[2]"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+        }}
+      />
+
+      {/* Content */}
       <div className="relative z-20 container-custom mx-auto px-4 py-8 text-center">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
@@ -75,8 +57,8 @@ export default function Hero() {
           transition={{ duration: 0.8, delay: 0.4 }}
           className="text-base sm:text-lg md:text-xl lg:text-2xl mb-8 md:mb-10 max-w-3xl mx-auto text-gray-200 font-light px-4 sm:px-0"
         >
-          Allenarsi con un personal trainer significa trovare la giusta motivazione 
-          ed ottimizzare il tuo tempo. Inizia oggi il tuo percorso su misura 
+          Allenarsi con un personal trainer significa trovare la giusta motivazione
+          ed ottimizzare il tuo tempo. Inizia oggi il tuo percorso su misura
           con un professionista al tuo fianco.
         </motion.p>
 
@@ -86,7 +68,7 @@ export default function Hero() {
           transition={{ duration: 0.8, delay: 0.6 }}
           className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12 md:mb-0"
         >
-          <button 
+          <button
             onClick={() => document.getElementById('contatti')?.scrollIntoView({ behavior: 'smooth' })}
             className="group relative px-6 sm:px-8 py-3 sm:py-4 bg-primary text-white rounded-full font-bold text-base sm:text-lg overflow-hidden transition-all hover:scale-105 hover:shadow-2xl w-full sm:w-auto max-w-xs"
           >
@@ -95,7 +77,7 @@ export default function Hero() {
           </button>
         </motion.div>
 
-        {/* Stats mini con layout responsive migliorato */}
+        {/* Stats mini */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -116,7 +98,7 @@ export default function Hero() {
           </div>
         </motion.div>
 
-        {/* Scroll indicator - nascosto su mobile molto piccoli */}
+        {/* Scroll indicator */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

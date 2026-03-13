@@ -1,10 +1,26 @@
 // app/layout.tsx
 import type { Metadata } from 'next';
+import { Montserrat, Open_Sans } from 'next/font/google';
 import './globals.css';
 import '@/styles/cookieconsent-custom.css';
 import WebsiteTracker from '@/components/WebsiteTracker';
 import CookieConsent from '@/components/CookieConsent';
 import Script from 'next/script';
+
+// Font ottimizzati con next/font — eliminano render-blocking CSS
+const montserrat = Montserrat({
+  subsets: ['latin'],
+  weight: ['400', '600', '700', '800'],
+  variable: '--font-montserrat',
+  display: 'swap',
+});
+
+const openSans = Open_Sans({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600'],
+  variable: '--font-opensans',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.tribustudio.it'),
@@ -56,7 +72,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="it">
+    <html lang="it" className={`${montserrat.variable} ${openSans.variable}`}>
       <head>
         {/* Google Analytics */}
         <Script

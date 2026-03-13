@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find E:/tribu-private-gym/public -type f -name *.jpg -o -name *.png)",
+      "Bash(find E:/tribustudio/.claude/worktrees/confident-swirles/public/images/ -type f -exec du -h {} +)",
+      "Bash(find E:tribu-private-gym -type f \\\\\\(-iname *.jpg -o -iname *.jpeg -o -iname *.png -o -iname *.webp -o -iname *.avif -o -iname *.gif -o -iname *.svg \\\\\\))",
+      "Bash(cmd /c \"mkdir \"\"E:\\\\tribustudio\\\\.claude\\\\worktrees\\\\confident-swirles\\\\public\\\\images\\\\private-gym\\\\studio\"\" 2>nul & mkdir \"\"E:\\\\tribustudio\\\\.claude\\\\worktrees\\\\confident-swirles\\\\public\\\\images\\\\private-gym\\\\postazioni\"\" 2>nul & mkdir \"\"E:\\\\tribustudio\\\\.claude\\\\worktrees\\\\confident-swirles\\\\public\\\\images\\\\private-gym\\\\attrezzature\"\" 2>nul & mkdir \"\"E:\\\\tribustudio\\\\.claude\\\\worktrees\\\\confident-swirles\\\\public\\\\images\\\\private-gym\\\\spogliatoi\"\" 2>nul & mkdir \"\"E:\\\\tribustudio\\\\.claude\\\\worktrees\\\\confident-swirles\\\\public\\\\images\\\\private-gym\\\\attesa\"\" 2>nul & mkdir \"\"E:\\\\tribustudio\\\\.claude\\\\worktrees\\\\confident-swirles\\\\public\\\\images\\\\private-gym\\\\esterno\"\" 2>nul & echo DONE\")",
+      "Bash(powershell -Command \"New-Item -ItemType Directory -Force -Path ''E:\\\\tribustudio\\\\.claude\\\\worktrees\\\\confident-swirles\\\\public\\\\images\\\\private-gym\\\\studio'',''E:\\\\tribustudio\\\\.claude\\\\worktrees\\\\confident-swirles\\\\public\\\\images\\\\private-gym\\\\postazioni'',''E:\\\\tribustudio\\\\.claude\\\\worktrees\\\\confident-swirles\\\\public\\\\images\\\\private-gym\\\\attrezzature'',''E:\\\\tribustudio\\\\.claude\\\\worktrees\\\\confident-swirles\\\\public\\\\images\\\\private-gym\\\\spogliatoi'',''E:\\\\tribustudio\\\\.claude\\\\worktrees\\\\confident-swirles\\\\public\\\\images\\\\private-gym\\\\attesa'',''E:\\\\tribustudio\\\\.claude\\\\worktrees\\\\confident-swirles\\\\public\\\\images\\\\private-gym\\\\esterno'' | Select-Object FullName\")",
+      "Bash(powershell -Command \"mkdir -Force ''E:\\\\tribustudio\\\\.claude\\\\worktrees\\\\confident-swirles\\\\public\\\\images\\\\private-gym\\\\studio''\")",
+      "Bash(powershell -Command \"echo ''test''\")",
+      "Bash(cmd.exe /c \"mkdir E:\\\\tribustudio\\\\.claude\\\\worktrees\\\\confident-swirles\\\\public\\\\images\\\\private-gym\\\\studio\")",
+      "Bash(powershell -Command \"Copy-Item -Path ''E:\\\\tribu-private-gym\\\\public\\\\studio'',''E:\\\\tribu-private-gym\\\\public\\\\postazioni'',''E:\\\\tribu-private-gym\\\\public\\\\attrezzature'',''E:\\\\tribu-private-gym\\\\public\\\\spogliatoi'',''E:\\\\tribu-private-gym\\\\public\\\\attesa'',''E:\\\\tribu-private-gym\\\\public\\\\esterno'' -Destination ''E:\\\\tribustudio\\\\.claude\\\\worktrees\\\\confident-swirles\\\\public\\\\images\\\\private-gym\\\\'' -Recurse -Force\")",
+      "Bash(powershell -Command \"echo test\")",
+      "Bash(powershell -Command \"Copy-Item -Path ''E:\\\\tribu-private-gym\\\\public\\\\studio'',''E:\\\\tribu-private-gym\\\\public\\\\postazioni'',''E:\\\\tribu-private-gym\\\\public\\\\attrezzature'',''E:\\\\tribu-private-gym\\\\public\\\\spogliatoi'',''E:\\\\tribu-private-gym\\\\public\\\\attesa'',''E:\\\\tribu-private-gym\\\\public\\\\esterno'' -Destination ''E:\\\\tribustudio\\\\.claude\\\\worktrees\\\\confident-swirles\\\\public\\\\images\\\\private-gym\\\\'' -Recurse -Force; Write-Host ''DONE''\")",
+      "Bash(powershell -Command \"Get-ChildItem ''E:\\\\tribustudio\\\\.claude\\\\worktrees\\\\confident-swirles\\\\public\\\\images\\\\private-gym'' -Recurse | Select-Object FullName\")",
+      "Bash(powershell -ExecutionPolicy Bypass -File \"E:\\\\tribustudio\\\\.claude\\\\worktrees\\\\confident-swirles\\\\copy-images.ps1\")",
+      "Bash(powershell -Command \"Test-Path ''E:\\\\tribustudio\\\\.claude\\\\worktrees\\\\confident-swirles\\\\public\\\\images\\\\private-gym''\")",
+      "Bash(node \"E:\\\\tribustudio\\\\.claude\\\\worktrees\\\\confident-swirles\\\\_copy-images.mjs\")"
+    ]
+  }
+}

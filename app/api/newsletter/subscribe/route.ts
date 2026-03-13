@@ -2,13 +2,18 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+function getSupabase() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!supabaseUrl || !supabaseAnonKey) {
+    throw new Error('Supabase non configurato (NEXT_PUBLIC_SUPABASE_URL / ANON_KEY mancanti).');
+  }
+  return createClient(supabaseUrl, supabaseAnonKey);
+}
 
 export async function POST(request: Request) {
   try {
+    const supabase = getSupabase();
     const { email, name } = await request.json();
 
     if (!email) {
@@ -30,7 +35,7 @@ export async function POST(request: Request) {
       if (!existing.is_active) {
         const { error } = await supabase
           .from('ts_newsletter_subscribers')
-          .update({ 
+          .update({
             is_active: true,
             name: name || null,
             unsubscribed_at: null
@@ -39,14 +44,14 @@ export async function POST(request: Request) {
 
         if (error) throw error;
 
-        return NextResponse.json({ 
-          message: 'Iscrizione riattivata con successo!' 
+        return NextResponse.json({
+          message: 'Iscrizione riattivata con successo!'
         });
       }
-      
+
       // Se già attivo
-      return NextResponse.json({ 
-        message: 'Email già iscritta alla newsletter' 
+      return NextResponse.json({
+        message: 'Email già iscritta alla newsletter'
       });
     }
 

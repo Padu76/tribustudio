@@ -15,14 +15,19 @@
     "@mediapipe/camera_utils": "^0.3.1675466862",
     "@mediapipe/drawing_utils": "^0.3.1675466124",
     "@mediapipe/pose": "^0.5.1675469404",
+    "@paypal/react-paypal-js": "^9.0.1",
     "@supabase/supabase-js": "^2.86.0",
+    "date-fns": "^4.1.0",
     "framer-motion": "^12.23.12",
+    "googleapis": "^171.4.0",
     "lucide-react": "^0.536.0",
     "next": "15.4.8",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-intersection-observer": "^9.16.0",
-    "vanilla-cookieconsent": "^3.1.0"
+    "resend": "^6.9.3",
+    "vanilla-cookieconsent": "^3.1.0",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.0.0",

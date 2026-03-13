@@ -9,13 +9,13 @@ import ChiSiamo from '../components/sections/ChiSiamo';
 import PercheTributu from '../components/sections/PercheTributu';
 import Servizi from '../components/sections/Servizi';
 import ComeFunziona from '../components/sections/ComeFunziona';
+import GalleriaStudio from '../components/sections/GalleriaStudio';
 import Contatore from '../components/sections/Contatore';
 import Testimonianze from '../components/sections/Testimonianze';
 import Brochure from '../components/sections/Brochure';
 import FAQ from '../components/sections/FAQ';
 import Contatti from '../components/sections/Contatti';
 import QuizCTA from '../components/QuizCTA';
-import CalcolatoreTrasformazione from '../components/CalcolatoreTrasformazione';
 
 export default function Home() {
   return (
@@ -35,11 +35,8 @@ export default function Home() {
         <Servizi />
         <ComeFunziona />
 
-        {/* Calcolatore Trasformazione */}
-        <section id="calcolatore">
-  <CalcolatoreTrasformazione />
-</section>
-
+        {/* Galleria foto dello studio */}
+        <GalleriaStudio />
 
         {/* Sezione Blog Tribù Studio */}
         <section className="bg-slate-50 py-12 mt-8">

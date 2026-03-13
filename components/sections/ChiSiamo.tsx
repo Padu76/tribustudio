@@ -1,8 +1,10 @@
+// components/sections/ChiSiamo.tsx
 'use client';
 
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { Target, Heart, Users, Sparkles, Award, Clock, Shield, Zap } from 'lucide-react';
+import Image from 'next/image';
 
 const values = [
   {
@@ -75,8 +77,8 @@ export default function ChiSiamo() {
               Affrontiamo con loro la battaglia più difficile: credere in sé stessi e sentirsi bene nel proprio corpo.
             </p>
             <p className="text-lg md:text-xl text-gray/80">
-              Allenarsi con noi non è solo allenamento: è <span className="font-semibold text-primary">motivazione</span>, 
-              <span className="font-semibold text-primary"> supporto</span> e 
+              Allenarsi con noi non è solo allenamento: è <span className="font-semibold text-primary">motivazione</span>,
+              <span className="font-semibold text-primary"> supporto</span> e
               <span className="font-semibold text-primary"> risultati concreti</span>.
             </p>
           </motion.div>
@@ -107,21 +109,21 @@ export default function ChiSiamo() {
         </div>
       </section>
 
-      {/* Sezione 2 - Immagine parallax con testo overlay */}
+      {/* Sezione 2 - Immagine parallax con next/image ottimizzato */}
       <section className="relative h-[60vh] md:h-[70vh] flex items-center" ref={ref2}>
-        <div 
-          className="absolute inset-0 z-0"
-          style={{
-            backgroundImage: 'url("/images/studio/studio-1.jpg")',
-            backgroundAttachment: 'fixed',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-            backgroundSize: 'cover'
-          }}
-        >
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="/images/studio/studio-1.jpg"
+            alt="Interno dello studio Tribù"
+            fill
+            sizes="100vw"
+            className="object-cover"
+            quality={75}
+            loading="lazy"
+          />
           <div className="absolute inset-0 bg-gradient-to-r from-black/80 to-black/40" />
         </div>
-        
+
         <div className="relative z-10 container-custom mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, x: -50 }}
@@ -133,10 +135,10 @@ export default function ChiSiamo() {
               Non una semplice palestra, ma il tuo <span className="text-primary">studio personale</span>
             </h2>
             <p className="text-lg md:text-xl text-gray-200 mb-8">
-              Uno spazio esclusivo dove ogni dettaglio è pensato per il tuo benessere. 
+              Uno spazio esclusivo dove ogni dettaglio è pensato per il tuo benessere.
               Attrezzature di ultima generazione, ambiente climatizzato e la privacy che meriti.
             </p>
-            <button 
+            <button
               onClick={() => document.getElementById('servizi')?.scrollIntoView({ behavior: 'smooth' })}
               className="bg-primary text-white px-8 py-4 rounded-full font-semibold hover:bg-primary-dark transition-all hover:scale-105"
             >

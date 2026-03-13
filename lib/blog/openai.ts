@@ -8,12 +8,13 @@ import type {
   GeneratedBlogPostPayload,
 } from './types';
 
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-const UNSPLASH_ACCESS_KEY = process.env.UNSPLASH_ACCESS_KEY;
-
-if (!OPENAI_API_KEY) {
-  throw new Error('OPENAI_API_KEY non configurata.');
+function getOpenAIKey() {
+  const key = process.env.OPENAI_API_KEY;
+  if (!key) throw new Error('OPENAI_API_KEY non configurata.');
+  return key;
 }
+
+const UNSPLASH_ACCESS_KEY = process.env.UNSPLASH_ACCESS_KEY;
 
 const MODEL = process.env.BLOG_MODEL_NAME || 'gpt-4o-mini';
 
@@ -143,7 +144,7 @@ Rispondi SOLO con JSON valido.
   const response = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${OPENAI_API_KEY}`,
+      Authorization: `Bearer ${getOpenAIKey()}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
@@ -212,7 +213,7 @@ Rispondi SOLO con JSON valido.
 export async function generateImageForPost(
   titleOrPrompt: string,
   category?: string,
-  style: 'photo' | 'illustration' = 'photo'
+  _style: 'photo' | 'illustration' = 'photo'
 ): Promise<string | null> {
   // Determina categoria dal testo se non passata esplicitamente
   const detectedCategory = category || detectCategory(titleOrPrompt);
@@ -321,7 +322,7 @@ Rispondi SOLO con l'array JSON.
   const response = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${OPENAI_API_KEY}`,
+      Authorization: `Bearer ${getOpenAIKey()}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({

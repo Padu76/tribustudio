@@ -140,8 +140,11 @@ export const FAQ_DATA = [
 export const NAVIGATION_ITEMS = [
   { label: 'Chi siamo', href: '#chi-siamo' },
   { label: 'Servizi', href: '#servizi' },
+  { label: 'Galleria', href: '#galleria' },
   { label: 'Come funziona', href: '#come-funziona' },
+  { label: 'Private Gym', href: '/private-gym' },
   { label: 'Testimonianze', href: '#testimonianze' },
   { label: 'FAQ', href: '#faq' },
+  { label: 'Blog', href: '/blog' },
   { label: 'Contatti', href: '#contatti' }
 ]

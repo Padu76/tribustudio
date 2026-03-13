@@ -3,30 +3,30 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import * as Brevo from '@getbrevo/brevo';
 
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const cronSecret = process.env.CRON_SECRET || '';
-const brevoApiKey = process.env.BREVO_API_KEY;
 const siteUrl = process.env.SITE_URL || 'https://www.tribustudio.it';
 
-if (!supabaseUrl || !supabaseServiceKey) {
-  throw new Error('SUPABASE_URL o SUPABASE_SERVICE_ROLE_KEY mancanti');
+function getSupabaseAdmin() {
+  const url = process.env.SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) throw new Error('SUPABASE_URL o SUPABASE_SERVICE_ROLE_KEY mancanti');
+  return createClient(url, key);
 }
 
-if (!brevoApiKey) {
-  throw new Error('BREVO_API_KEY mancante');
+function getBrevoApi() {
+  const brevoApiKey = process.env.BREVO_API_KEY;
+  if (!brevoApiKey) throw new Error('BREVO_API_KEY mancante');
+  const api = new Brevo.TransactionalEmailsApi();
+  api.setApiKey(Brevo.TransactionalEmailsApiApiKeys.apiKey, brevoApiKey);
+  return api;
 }
-
-const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
-
-// Inizializza Brevo
-const brevoApi = new Brevo.TransactionalEmailsApi();
-brevoApi.setApiKey(Brevo.TransactionalEmailsApiApiKeys.apiKey, brevoApiKey);
 
 export const runtime = 'nodejs';
 
 export async function GET(request: Request) {
   try {
+    const supabaseAdmin = getSupabaseAdmin();
+    const brevoApi = getBrevoApi();
+    const cronSecret = process.env.CRON_SECRET || '';
     const { searchParams } = new URL(request.url);
     const token = searchParams.get('secret');
     const isCron = request.headers.get('x-vercel-cron') !== null;

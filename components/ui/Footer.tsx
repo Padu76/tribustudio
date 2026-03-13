@@ -1,5 +1,7 @@
-import { Instagram, Facebook, MapPin, Phone, Mail } from 'lucide-react';
+// components/ui/Footer.tsx
+import { Instagram, Facebook, MapPin, Phone, Mail, Dumbbell } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 const CONTACT_INFO = {
   phone: '3478881515',
@@ -13,22 +15,30 @@ const SOCIAL_LINKS = {
   facebook: 'https://www.facebook.com/tribupersonaltrainingstudio/?locale=it_IT'
 };
 
-const NAVIGATION_ITEMS = [
+// Link aggiornati con Galleria e Private Gym
+const FOOTER_LINKS = [
   { label: 'Chi siamo', href: '#chi-siamo' },
   { label: 'Servizi', href: '#servizi' },
+  { label: 'Galleria', href: '#galleria' },
   { label: 'Come funziona', href: '#come-funziona' },
   { label: 'Testimonianze', href: '#testimonianze' },
   { label: 'FAQ', href: '#faq' },
-  { label: 'Contatti', href: '#contatti' }
+  { label: 'Contatti', href: '#contatti' },
+];
+
+const FOOTER_PAGES = [
+  { label: 'Private Gym', href: '/private-gym', icon: Dumbbell },
+  { label: 'Blog', href: '/blog' },
+  { label: 'Quiz Percorso', href: '/quiz' },
 ];
 
 export default function Footer() {
   return (
     <footer className="bg-dark text-white">
       <div className="container-custom mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Logo e descrizione */}
-          <div className="md:col-span-1">
+          <div>
             <Image
               src="/images/logo/logo-tribu-white.png"
               alt="Tribù Personal Training Studio"
@@ -36,16 +46,16 @@ export default function Footer() {
               height={50}
               className="h-12 w-auto mb-4"
             />
-            <p className="text-gray-400 text-sm">
+            <p className="text-gray-400 text-sm leading-relaxed">
               Il tuo studio di Personal Training a Verona dove ogni allenamento è su misura.
             </p>
           </div>
 
           {/* Link rapidi */}
-          <div className="md:col-span-1">
-            <h4 className="font-montserrat font-semibold mb-4">Link Rapidi</h4>
+          <div>
+            <h4 className="font-montserrat font-semibold mb-4 text-sm uppercase tracking-wider text-white/90">Link Rapidi</h4>
             <ul className="space-y-2">
-              {NAVIGATION_ITEMS.map((item) => (
+              {FOOTER_LINKS.map((item) => (
                 <li key={item.href}>
                   <a
                     href={item.href}
@@ -58,29 +68,45 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Contatti */}
-          <div className="md:col-span-1">
-            <h4 className="font-montserrat font-semibold mb-4">Contatti</h4>
-            <ul className="space-y-3 text-sm">
+          {/* Pagine e servizi */}
+          <div>
+            <h4 className="font-montserrat font-semibold mb-4 text-sm uppercase tracking-wider text-white/90">Servizi</h4>
+            <ul className="space-y-2">
+              {FOOTER_PAGES.map((item) => (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    className="text-gray-400 hover:text-primary transition-colors text-sm flex items-center gap-1.5"
+                  >
+                    {item.icon && <item.icon size={14} />}
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+
+            {/* Contatti */}
+            <h4 className="font-montserrat font-semibold mb-3 mt-6 text-sm uppercase tracking-wider text-white/90">Contatti</h4>
+            <ul className="space-y-2.5 text-sm">
               <li className="flex items-center gap-2 text-gray-400">
-                <MapPin size={16} className="text-primary flex-shrink-0" />
+                <MapPin size={14} className="text-primary flex-shrink-0" />
                 {CONTACT_INFO.address}
               </li>
               <li className="flex items-center gap-2 text-gray-400">
-                <Phone size={16} className="text-primary flex-shrink-0" />
+                <Phone size={14} className="text-primary flex-shrink-0" />
                 {CONTACT_INFO.phoneDisplay}
               </li>
               <li className="flex items-center gap-2 text-gray-400">
-                <Mail size={16} className="text-primary flex-shrink-0" />
+                <Mail size={14} className="text-primary flex-shrink-0" />
                 {CONTACT_INFO.email}
               </li>
             </ul>
           </div>
 
           {/* Social */}
-          <div className="md:col-span-1">
-            <h4 className="font-montserrat font-semibold mb-4">Seguici</h4>
-            <div className="flex gap-4">
+          <div>
+            <h4 className="font-montserrat font-semibold mb-4 text-sm uppercase tracking-wider text-white/90">Seguici</h4>
+            <div className="flex gap-3">
               <a
                 href={SOCIAL_LINKS.instagram}
                 target="_blank"
@@ -104,11 +130,11 @@ export default function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-400">
-          <p>&copy; 2024 Tribù Personal Training Studio. Tutti i diritti riservati.</p>
+        <div className="border-t border-gray-800 mt-10 pt-8 text-center text-sm text-gray-500">
+          <p>&copy; {new Date().getFullYear()} Tribù Personal Training Studio. Tutti i diritti riservati.</p>
           <p className="mt-2">
             <a href="/privacy-policy" className="hover:text-primary transition-colors">Privacy Policy</a>
-            {' • '}
+            {' · '}
             <a href="/cookie-policy" className="hover:text-primary transition-colors">Cookie Policy</a>
           </p>
         </div>

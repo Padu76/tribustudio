@@ -1,5 +1,5 @@
 /* app/globals.css */
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Open+Sans:wght@300;400;500;600&display=swap');
+/* Font caricati via next/font in layout.tsx — nessun @import bloccante */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -26,14 +26,14 @@ html {
 }
 
 body {
-  font-family: 'Open Sans', sans-serif;
+  font-family: var(--font-opensans), 'Open Sans', sans-serif;
   color: var(--color-gray);
   line-height: 1.6;
   overflow-x: hidden;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-montserrat), 'Montserrat', sans-serif;
   color: var(--color-dark);
   font-weight: 700;
   line-height: 1.2;
