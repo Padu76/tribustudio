@@ -424,9 +424,9 @@ export default function TribuPrivateGymPage() {
               <div className="mt-6 space-y-4">
                 {[
                   "Seleziona uno slot disponibile",
-                  "Conferma la prenotazione",
+                  "Compila i tuoi dati e conferma",
                   "Completa il pagamento online",
-                  "Ricevi l'accesso smart sul telefono",
+                  "Ricevi la conferma su WhatsApp",
                 ].map((item, index) => (
                   <div key={item} className="flex items-start gap-4 rounded-2xl border border-white/10 bg-black/30 p-4">
                     <div className="flex h-8 w-8 items-center justify-center rounded-full bg-orange-500 font-semibold text-white flex-shrink-0">
