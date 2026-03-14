@@ -75,85 +75,6 @@ export default function Header() {
     return () => { document.body.style.overflow = ''; };
   }, [isMenuOpen]);
 
-  // Pannello menu mobile — renderizzato via Portal fuori dal header
-  const mobileMenuPanel = isMenuOpen && mounted ? createPortal(
-    <div
-      className="lg:hidden fixed inset-x-0 bottom-0 bg-white overflow-y-auto"
-      style={{ top: '56px', zIndex: 99999 }}
-    >
-      <nav className="px-6 py-6 flex flex-col" style={{ minHeight: 'calc(100vh - 56px)' }}>
-        <div className="flex-1 space-y-1">
-          {NAVIGATION_ITEMS.map((item) => {
-            const isActive = item.href.startsWith('#') && activeSection === item.href.substring(1);
-            const label = t("nav", item.labelKey);
-
-            if (item.external) {
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setIsMenuOpen(false)}
-                  className={`flex items-center justify-between py-3.5 px-4 rounded-xl transition-all duration-200 ${
-                    item.badgeKey
-                      ? 'text-primary bg-primary/5 font-semibold'
-                      : 'text-gray-700 hover:bg-gray-50'
-                  }`}
-                >
-                  <span className="flex items-center gap-3 text-base">
-                    {item.icon && <item.icon className="w-5 h-5" />}
-                    {label}
-                    {item.badgeKey && (
-                      <span className="bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded-full leading-none">
-                        {t("nav", item.badgeKey)}
-                      </span>
-                    )}
-                  </span>
-                  <ChevronRight className="w-4 h-4 text-gray-400" />
-                </Link>
-              );
-            }
-
-            return (
-              <a
-                key={item.href}
-                href={item.href}
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleNavClick(item.href);
-                }}
-                className={`flex items-center justify-between py-3.5 px-4 rounded-xl transition-all duration-200 text-base ${
-                  isActive
-                    ? 'text-primary bg-primary/5 font-semibold'
-                    : 'text-gray-700 hover:bg-gray-50'
-                }`}
-              >
-                <span className="flex items-center gap-3">
-                  {item.icon && <item.icon className="w-5 h-5" />}
-                  {label}
-                </span>
-                {isActive && <div className="w-2 h-2 bg-primary rounded-full" />}
-              </a>
-            );
-          })}
-        </div>
-
-        {/* CTA fisso in basso */}
-        <div className="pt-4 pb-8">
-          <button
-            onClick={() => {
-              setIsMenuOpen(false);
-              document.getElementById('contatti')?.scrollIntoView({ behavior: 'smooth' });
-            }}
-            className="bg-gradient-to-r from-primary to-primary-dark text-white px-6 py-4 rounded-full font-bold text-base hover:shadow-lg transition-all duration-300 w-full"
-          >
-            {t("nav", "prenota")}
-          </button>
-        </div>
-      </nav>
-    </div>,
-    document.body
-  ) : null;
-
   return (
     <>
       <header
@@ -257,8 +178,83 @@ export default function Header() {
         </div>
       </header>
 
-      {/* Menu mobile renderizzato via Portal fuori dal header */}
-      {mobileMenuPanel}
+      {/* MOBILE MENU — Renderizzato fuori dal header come elemento separato */}
+      {isMenuOpen && (
+        <div
+          className="lg:hidden fixed inset-0 bg-white overflow-y-auto"
+          style={{ zIndex: 9999, paddingTop: '56px' }}
+        >
+          <nav className="px-6 py-6 flex flex-col" style={{ minHeight: 'calc(100vh - 56px)' }}>
+            <div className="flex-1 space-y-1">
+              {NAVIGATION_ITEMS.map((item) => {
+                const isActive = item.href.startsWith('#') && activeSection === item.href.substring(1);
+                const label = t("nav", item.labelKey);
+
+                if (item.external) {
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setIsMenuOpen(false)}
+                      className={`flex items-center justify-between py-3.5 px-4 rounded-xl transition-all duration-200 ${
+                        item.badgeKey
+                          ? 'text-primary bg-primary/5 font-semibold'
+                          : 'text-gray-700 hover:bg-gray-50'
+                      }`}
+                    >
+                      <span className="flex items-center gap-3 text-base">
+                        {item.icon && <item.icon className="w-5 h-5" />}
+                        {label}
+                        {item.badgeKey && (
+                          <span className="bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded-full leading-none">
+                            {t("nav", item.badgeKey)}
+                          </span>
+                        )}
+                      </span>
+                      <ChevronRight className="w-4 h-4 text-gray-400" />
+                    </Link>
+                  );
+                }
+
+                return (
+                  <a
+                    key={item.href}
+                    href={item.href}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleNavClick(item.href);
+                    }}
+                    className={`flex items-center justify-between py-3.5 px-4 rounded-xl transition-all duration-200 text-base ${
+                      isActive
+                        ? 'text-primary bg-primary/5 font-semibold'
+                        : 'text-gray-700 hover:bg-gray-50'
+                    }`}
+                  >
+                    <span className="flex items-center gap-3">
+                      {item.icon && <item.icon className="w-5 h-5" />}
+                      {label}
+                    </span>
+                    {isActive && <div className="w-2 h-2 bg-primary rounded-full" />}
+                  </a>
+                );
+              })}
+            </div>
+
+            {/* CTA in basso */}
+            <div className="pt-4 pb-8">
+              <button
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  document.getElementById('contatti')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="bg-gradient-to-r from-primary to-primary-dark text-white px-6 py-4 rounded-full font-bold text-base hover:shadow-lg transition-all duration-300 w-full"
+              >
+                {t("nav", "prenota")}
+              </button>
+            </div>
+          </nav>
+        </div>
+      )}
     </>
   );
 }
