@@ -5,79 +5,7 @@ import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { Users, User, UsersRound, Apple, Heart, Monitor, X, ExternalLink, Calendar, Clock } from 'lucide-react';
 import Image from 'next/image';
-
-const SERVIZI = [
-  {
-    id: 'individuale',
-    titolo: 'Lezioni Individuali',
-    descrizione: 'Allenamenti 1-to-1 per risultati massimi',
-    prezzi: [
-      { lezioni: 10, prezzo: 55, label: '10 lezioni → 55€/lez' },
-      { lezioni: 20, prezzo: 50, label: '20 lezioni → 50€/lez' },
-      { lezioni: 30, prezzo: 45, label: '30 lezioni → 45€/lez' }
-    ],
-    dettagli: 'Allenamento completamente personalizzato con un personal trainer dedicato esclusivamente a te. Massima attenzione, correzione immediata della tecnica e progressi rapidi.'
-  },
-  {
-    id: 'coppia',
-    titolo: 'Lezioni di Coppia',
-    descrizione: 'Allenati con un amico/a e condividi motivazione',
-    prezzi: [
-      { lezioni: 10, prezzo: 35, label: '10 lezioni → 35€/lez/pers' },
-      { lezioni: 20, prezzo: 30, label: '20 lezioni → 30€/lez/pers' },
-      { lezioni: 30, prezzo: 25, label: '30 lezioni → 25€/lez/pers' }
-    ],
-    dettagli: 'Perfetto per chi vuole allenarsi con un partner. Motivazione reciproca, divertimento e risparmio, mantenendo sempre la supervisione professionale.'
-  },
-  {
-    id: 'miniclass',
-    titolo: 'Miniclass (3-5 persone)',
-    descrizione: 'Functional, Posturale e Terza Età - Gruppi ristretti con orari fissi',
-    prezzi: [
-      { lezioni: 10, prezzo: 15, label: '10 lezioni → 15€/lez' }
-    ],
-    dettagli: 'Il giusto equilibrio tra personalizzazione e dinamica di gruppo. Ideale per chi cerca motivazione e socialità senza rinunciare alla qualità.',
-    orari: {
-      functional: [
-        { giorno: 'Lunedì', ora: '17:30' },
-        { giorno: 'Martedì', ora: '10:00' },
-        { giorno: 'Giovedì', ora: '17:30' },
-        { giorno: 'Sabato', ora: '10:00' }
-      ],
-      posturale: [
-        { giorno: 'Mercoledì', ora: '18:30' },
-        { giorno: 'Sabato', ora: '09:00' }
-      ],
-      terzaeta: [
-        { giorno: 'Martedì', ora: '10:00' },
-        { giorno: 'Giovedì', ora: '10:00' },
-        { giorno: 'Sabato', ora: '11:00' }
-      ]
-    }
-  },
-  {
-    id: 'nutrizionista',
-    titolo: 'Nutrizionista',
-    descrizione: 'Consulenza nutrizionale integrata all\'allenamento',
-    prezzi: null,
-    dettagli: 'Piano alimentare personalizzato che si integra perfettamente con il tuo programma di allenamento per risultati ottimali.'
-  },
-  {
-    id: 'massaggi',
-    titolo: 'Massaggi',
-    descrizione: 'Recupero muscolare e benessere',
-    prezzi: null,
-    dettagli: 'Massaggi professionali per il recupero post-allenamento, riduzione delle tensioni muscolari e miglioramento del benessere generale.'
-  },
-  {
-    id: 'online',
-    titolo: 'Coaching Online',
-    descrizione: 'Allenati ovunque con il nostro supporto',
-    link: 'https://www.tornoinforma.it',
-    prezzi: null,
-    dettagli: 'Programmi di allenamento online personalizzati con supporto costante del tuo personal trainer, ovunque tu sia.'
-  }
-];
+import { useLanguage } from '@/lib/i18n/LanguageProvider';
 
 const serviceIcons: { [key: string]: React.ElementType } = {
   individuale: User,
@@ -93,7 +21,82 @@ export default function Servizi() {
     threshold: 0.1,
     triggerOnce: true
   });
-  
+
+  const { t } = useLanguage();
+
+  const SERVIZI = [
+    {
+      id: 'individuale',
+      titolo: t("servizi", "individualeTitle"),
+      descrizione: t("servizi", "individualeDesc"),
+      prezzi: [
+        { lezioni: 10, prezzo: 55, label: '10 lezioni → 55€/lez' },
+        { lezioni: 20, prezzo: 50, label: '20 lezioni → 50€/lez' },
+        { lezioni: 30, prezzo: 45, label: '30 lezioni → 45€/lez' }
+      ],
+      dettagli: t("servizi", "individualeDetails")
+    },
+    {
+      id: 'coppia',
+      titolo: t("servizi", "coppiaTitle"),
+      descrizione: t("servizi", "coppiaDesc"),
+      prezzi: [
+        { lezioni: 10, prezzo: 35, label: '10 lezioni → 35€/lez/pers' },
+        { lezioni: 20, prezzo: 30, label: '20 lezioni → 30€/lez/pers' },
+        { lezioni: 30, prezzo: 25, label: '30 lezioni → 25€/lez/pers' }
+      ],
+      dettagli: t("servizi", "coppiaDetails")
+    },
+    {
+      id: 'miniclass',
+      titolo: t("servizi", "miniclassTitle"),
+      descrizione: t("servizi", "miniclassDesc"),
+      prezzi: [
+        { lezioni: 10, prezzo: 15, label: '10 lezioni → 15€/lez' }
+      ],
+      dettagli: t("servizi", "miniclassDetails"),
+      orari: {
+        functional: [
+          { giorno: 'Lunedì', ora: '17:30' },
+          { giorno: 'Martedì', ora: '10:00' },
+          { giorno: 'Giovedì', ora: '17:30' },
+          { giorno: 'Sabato', ora: '10:00' }
+        ],
+        posturale: [
+          { giorno: 'Mercoledì', ora: '18:30' },
+          { giorno: 'Sabato', ora: '09:00' }
+        ],
+        terzaeta: [
+          { giorno: 'Martedì', ora: '10:00' },
+          { giorno: 'Giovedì', ora: '10:00' },
+          { giorno: 'Sabato', ora: '11:00' }
+        ]
+      }
+    },
+    {
+      id: 'nutrizionista',
+      titolo: t("servizi", "nutrizionTitle"),
+      descrizione: t("servizi", "nutrizionDesc"),
+      prezzi: null,
+      dettagli: t("servizi", "nutrizionDetails")
+    },
+    {
+      id: 'massaggi',
+      titolo: t("servizi", "massaggiTitle"),
+      descrizione: t("servizi", "massaggiDesc"),
+      prezzi: null,
+      dettagli: t("servizi", "massaggiDetails")
+    },
+    {
+      id: 'online',
+      titolo: t("servizi", "onlineTitle"),
+      descrizione: t("servizi", "onlineDesc"),
+      link: 'https://www.tornoinforma.it',
+      prezzi: null,
+      dettagli: t("servizi", "onlineDetails")
+    }
+  ];
+
   const [selectedService, setSelectedService] = useState<typeof SERVIZI[0] | null>(null);
 
   return (
@@ -106,11 +109,11 @@ export default function Servizi() {
           className="text-center mb-8 md:mb-12"
         >
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-montserrat font-bold mb-4 md:mb-6">
-            I Nostri Servizi
+            {t("servizi", "title")}
           </h2>
           <div className="w-24 h-1 bg-primary mx-auto mb-6 md:mb-8"></div>
           <p className="text-base md:text-lg text-gray max-w-2xl mx-auto px-4">
-            Scegli il percorso più adatto a te. Ogni servizio è pensato per offrirti il massimo supporto nel raggiungimento dei tuoi obiettivi.
+            {t("servizi", "subtitle")}
           </p>
         </motion.div>
 
@@ -138,7 +141,7 @@ export default function Servizi() {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
                 )}
-                
+
                 {servizio.id === 'individuale' && (
                   <div className="relative h-40 sm:h-48 overflow-hidden bg-gray-200">
                     <Image
@@ -150,7 +153,7 @@ export default function Servizi() {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
                 )}
-                
+
                 {servizio.id === 'coppia' && (
                   <div className="relative h-40 sm:h-48 overflow-hidden bg-gray-200">
                     <Image
@@ -162,7 +165,7 @@ export default function Servizi() {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
                 )}
-                
+
                 {servizio.id === 'nutrizionista' && (
                   <div className="relative h-40 sm:h-48 overflow-hidden bg-gray-200">
                     <Image
@@ -174,7 +177,7 @@ export default function Servizi() {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
                 )}
-                
+
                 {servizio.id === 'massaggi' && (
                   <div className="relative h-40 sm:h-48 overflow-hidden bg-gray-200">
                     <Image
@@ -186,7 +189,7 @@ export default function Servizi() {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
                 )}
-                
+
                 {servizio.id === 'online' && (
                   <div className="relative h-40 sm:h-48 overflow-hidden bg-gray-200">
                     <Image
@@ -198,7 +201,7 @@ export default function Servizi() {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
                 )}
-                
+
                 {/* Contenuto della card */}
                 <div className="p-4 sm:p-6">
                   <div className="bg-primary/10 rounded-full w-12 h-12 sm:w-16 sm:h-16 mb-3 sm:mb-4 flex items-center justify-center group-hover:bg-primary transition-colors">
@@ -206,47 +209,47 @@ export default function Servizi() {
                   </div>
                   <h3 className="font-montserrat font-bold text-lg sm:text-xl mb-2">{servizio.titolo}</h3>
                   <p className="text-gray mb-3 sm:mb-4 text-xs sm:text-sm">{servizio.descrizione}</p>
-                  
+
                   {/* Speciale per Miniclass - mostra i tipi */}
                   {servizio.id === 'miniclass' && (
                     <div className="mb-3 sm:mb-4 space-y-1">
                       <div className="flex items-center gap-2 text-xs sm:text-sm">
                         <div className="w-2 h-2 bg-primary rounded-full"></div>
-                        <span className="font-semibold text-primary">Functional Training</span>
+                        <span className="font-semibold text-primary">{t("servizi", "miniclassFunctional")}</span>
                       </div>
                       <div className="flex items-center gap-2 text-xs sm:text-sm">
                         <div className="w-2 h-2 bg-primary rounded-full"></div>
-                        <span className="font-semibold text-primary">Posturale</span>
+                        <span className="font-semibold text-primary">{t("servizi", "miniclassPosturale")}</span>
                       </div>
                       <div className="flex items-center gap-2 text-xs sm:text-sm">
                         <div className="w-2 h-2 bg-primary rounded-full"></div>
-                        <span className="font-semibold text-primary">Ginnastica Terza Età</span>
+                        <span className="font-semibold text-primary">{t("servizi", "miniclassTerzaEta")}</span>
                       </div>
                     </div>
                   )}
-                  
+
                   {servizio.prezzi && servizio.prezzi.length > 0 && (
                     <div className="border-t pt-3 sm:pt-4 mb-3 sm:mb-4">
-                      <p className="text-xs sm:text-sm font-semibold text-primary mb-1 sm:mb-2">A partire da:</p>
+                      <p className="text-xs sm:text-sm font-semibold text-primary mb-1 sm:mb-2">{t("servizi", "aPartireDa")}</p>
                       <p className="text-xl sm:text-2xl font-bold text-dark">
-                        {servizio.prezzi[servizio.prezzi.length - 1].prezzo}€<span className="text-xs sm:text-sm font-normal">/lezione</span>
+                        {servizio.prezzi[servizio.prezzi.length - 1].prezzo}€<span className="text-xs sm:text-sm font-normal">{t("servizi", "perLezione")}</span>
                       </p>
                     </div>
                   )}
-                  
+
                   {servizio.id === 'online' ? (
                     <a
-                      href={servizio.link}
+                      href={(servizio as any).link}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-2 text-primary font-semibold hover:gap-3 transition-all text-sm"
                       onClick={(e) => e.stopPropagation()}
                     >
-                      Vai al sito <ExternalLink size={14} />
+                      {t("servizi", "vaiAlSito")} <ExternalLink size={14} />
                     </a>
                   ) : (
                     <button className="text-primary font-semibold hover:text-primary-dark transition-colors text-sm">
-                      Scopri di più →
+                      {t("servizi", "scopriDiPiu")} →
                     </button>
                   )}
                 </div>
@@ -275,18 +278,18 @@ export default function Servizi() {
                 <X size={24} />
               </button>
             </div>
-            
+
             <div className="p-4 sm:p-6 md:p-8">
               <p className="text-gray mb-6 text-sm sm:text-base">{selectedService.dettagli}</p>
-              
+
               {/* Orari Miniclass con immagini - Mobile optimized */}
               {selectedService.id === 'miniclass' && selectedService.orari && (
                 <div className="space-y-4 sm:space-y-6 mb-6">
                   <h4 className="font-semibold text-base sm:text-lg flex items-center gap-2">
                     <Calendar size={18} className="text-primary" />
-                    Le nostre Miniclass
+                    {t("servizi", "leNostreMiniclass")}
                   </h4>
-                  
+
                   {/* Functional Training */}
                   <div className="bg-gray-light rounded-lg p-3 sm:p-4">
                     <div className="flex flex-col gap-3 sm:gap-4">
@@ -301,8 +304,8 @@ export default function Servizi() {
                         </div>
                       </div>
                       <div className="w-full">
-                        <h5 className="font-semibold text-primary mb-2 text-base sm:text-lg">🏋️ Functional Training</h5>
-                        <p className="text-xs sm:text-sm text-gray mb-3">Allenamento funzionale ad alta intensità per migliorare forza, resistenza e coordinazione.</p>
+                        <h5 className="font-semibold text-primary mb-2 text-base sm:text-lg">{t("servizi", "miniclassFunctional")}</h5>
+                        <p className="text-xs sm:text-sm text-gray mb-3">{t("servizi", "miniclassFunctionalDesc")}</p>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 sm:gap-2">
                           {selectedService.orari.functional.map((orario, idx) => (
                             <div key={idx} className="flex items-center gap-2 text-xs sm:text-sm">
@@ -314,7 +317,7 @@ export default function Servizi() {
                       </div>
                     </div>
                   </div>
-                  
+
                   {/* Posturale */}
                   <div className="bg-gray-light rounded-lg p-3 sm:p-4">
                     <div className="flex flex-col gap-3 sm:gap-4">
@@ -329,8 +332,8 @@ export default function Servizi() {
                         </div>
                       </div>
                       <div className="w-full">
-                        <h5 className="font-semibold text-primary mb-2 text-base sm:text-lg">🧘 Posturale</h5>
-                        <p className="text-xs sm:text-sm text-gray mb-3">Esercizi mirati per migliorare la postura, ridurre tensioni e prevenire dolori.</p>
+                        <h5 className="font-semibold text-primary mb-2 text-base sm:text-lg">{t("servizi", "miniclassPosturale")}</h5>
+                        <p className="text-xs sm:text-sm text-gray mb-3">{t("servizi", "miniclassPosturaleDesc")}</p>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 sm:gap-2">
                           {selectedService.orari.posturale.map((orario, idx) => (
                             <div key={idx} className="flex items-center gap-2 text-xs sm:text-sm">
@@ -342,26 +345,23 @@ export default function Servizi() {
                       </div>
                     </div>
                   </div>
-                  
-                  {/* Terza Età */}
+
+                  {/* Terza Eta */}
                   <div className="bg-gray-light rounded-lg p-3 sm:p-4">
                     <div className="flex flex-col gap-3 sm:gap-4">
                       <div className="w-full">
                         <div className="relative h-32 sm:h-48 md:h-64 rounded-lg overflow-hidden bg-gray-200">
                           <Image
                             src="/images/servizi/miniclass-aged.jpg"
-                            alt="Ginnastica Terza Età"
+                            alt="Ginnastica Terza Eta"
                             fill
                             className="object-cover"
                           />
                         </div>
                       </div>
                       <div className="w-full">
-                        <h5 className="font-semibold text-primary mb-2 text-base sm:text-lg">👥 Ginnastica Dolce Terza Età</h5>
-                        <p className="text-xs sm:text-sm text-gray mb-3">
-                          Ginnastica leggera con obiettivo di recuperare e mantenere la muscolatura. 
-                          Fai il primo passo verso una nuova vita piena di energia ed indipendente!
-                        </p>
+                        <h5 className="font-semibold text-primary mb-2 text-base sm:text-lg">{t("servizi", "miniclassDolceTerzaEta")}</h5>
+                        <p className="text-xs sm:text-sm text-gray mb-3">{t("servizi", "miniclassTerzaEtaDesc")}</p>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 sm:gap-2">
                           {selectedService.orari.terzaeta.map((orario, idx) => (
                             <div key={idx} className="flex items-center gap-2 text-xs sm:text-sm">
@@ -375,11 +375,11 @@ export default function Servizi() {
                   </div>
                 </div>
               )}
-              
+
               {/* Prezzi */}
               {selectedService.prezzi && (
                 <div className="bg-gray-light rounded-lg p-3 sm:p-4 mb-6">
-                  <p className="font-semibold mb-3 text-sm sm:text-base">Listino prezzi:</p>
+                  <p className="font-semibold mb-3 text-sm sm:text-base">{t("servizi", "listinoPrezzi")}</p>
                   {selectedService.prezzi.map((prezzo, idx) => (
                     <div key={idx} className="flex justify-between items-center py-2 border-b border-gray/10 last:border-0">
                       <span className="text-gray text-xs sm:text-sm">{prezzo.label}</span>
@@ -387,15 +387,15 @@ export default function Servizi() {
                   ))}
                 </div>
               )}
-              
-              <button 
+
+              <button
                 className="btn-primary w-full text-sm sm:text-base py-3 sm:py-4"
                 onClick={() => {
                   setSelectedService(null);
                   document.getElementById('contatti')?.scrollIntoView({ behavior: 'smooth' });
                 }}
               >
-                Prenota ora
+                {t("servizi", "prenotaOra")}
               </button>
             </div>
           </motion.div>

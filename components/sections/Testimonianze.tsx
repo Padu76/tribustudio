@@ -5,13 +5,15 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { Star, ChevronLeft, ChevronRight } from 'lucide-react';
 import { TESTIMONIANZE } from '../../lib/constants';
+import { useLanguage } from '@/lib/i18n/LanguageProvider';
 
 export default function Testimonianze() {
+  const { t } = useLanguage();
   const { ref, inView } = useInView({
     threshold: 0.1,
     triggerOnce: true
   });
-  
+
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const nextTestimonianza = () => {
@@ -32,11 +34,11 @@ export default function Testimonianze() {
           className="text-center mb-12"
         >
           <h2 className="text-4xl md:text-5xl font-montserrat font-bold mb-6">
-            Cosa dicono di noi
+            {t("testimonianze", "title")}
           </h2>
           <div className="w-24 h-1 bg-primary mx-auto mb-8"></div>
           <p className="text-lg text-gray max-w-2xl mx-auto">
-            Le storie di successo dei nostri clienti parlano da sole
+            {t("testimonianze", "subtitle")}
           </p>
         </motion.div>
 
@@ -81,7 +83,7 @@ export default function Testimonianze() {
           >
             <ChevronLeft size={24} className="text-primary" />
           </button>
-          
+
           <button
             onClick={nextTestimonianza}
             className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-12 md:translate-x-16 bg-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all hover:scale-110"
@@ -112,7 +114,7 @@ export default function Testimonianze() {
           transition={{ duration: 0.6, delay: 0.4 }}
           className="text-center mt-8"
         >
-          <p className="text-gray mb-2">Leggi tutte le nostre recensioni su</p>
+          <p className="text-gray mb-2">{t("testimonianze", "bottomText")}</p>
           <a
             href="https://www.google.com/search?q=tribu+personal+training+verona+recensioni"
             target="_blank"

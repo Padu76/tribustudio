@@ -76,9 +76,9 @@ export default function Header() {
 
   return (
     <header
-      className={`fixed top-0 w-full z-40 transition-all duration-300 ${
+      className={`fixed top-0 w-full z-50 transition-all duration-300 ${
         isScrolled
-          ? 'bg-white/98 shadow-lg shadow-black/5 py-2 backdrop-blur-md'
+          ? 'bg-white shadow-lg shadow-black/5 py-2'
           : 'bg-white/95 backdrop-blur-sm py-3'
       }`}
     >
@@ -181,14 +181,12 @@ export default function Header() {
       </div>
 
       {/* MOBILE MENU — Full screen solido */}
+      {isMenuOpen && (
       <div
-        className={`lg:hidden fixed inset-0 top-[56px] z-50 bg-white transition-all duration-300 overflow-y-auto ${
-          isMenuOpen
-            ? 'opacity-100 pointer-events-auto'
-            : 'opacity-0 pointer-events-none'
-        }`}
+        className="lg:hidden fixed inset-x-0 top-[56px] bottom-0 z-[9999] bg-white overflow-y-auto"
+        style={{ position: 'fixed' }}
       >
-        <nav className="container-custom mx-auto px-6 py-6 flex flex-col min-h-full">
+        <nav className="px-6 py-6 flex flex-col min-h-full">
           <div className="flex-1 space-y-1">
             {NAVIGATION_ITEMS.map((item) => {
               const isActive = item.href.startsWith('#') && activeSection === item.href.substring(1);
@@ -259,6 +257,7 @@ export default function Header() {
           </div>
         </nav>
       </div>
+      )}
     </header>
   );
 }

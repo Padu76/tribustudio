@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import Image from 'next/image';
+import { useLanguage } from '@/lib/i18n/LanguageProvider';
 
 const GALLERY_IMAGES = [
   { src: '/images/private-gym/studio/studio1.jpg', alt: 'Studio Tribù - Area principale' },
@@ -20,6 +21,7 @@ const GALLERY_IMAGES = [
 
 export default function GalleriaStudio() {
   const { ref, inView } = useInView({ threshold: 0.1, triggerOnce: true });
+  const { t } = useLanguage();
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   const openLightbox = (index: number) => setLightboxIndex(index);
@@ -46,13 +48,13 @@ export default function GalleriaStudio() {
             transition={{ duration: 0.6 }}
             className="text-center mb-10 md:mb-14"
           >
-            <span className="text-primary font-semibold text-sm uppercase tracking-wider">Il Nostro Studio</span>
+            <span className="text-primary font-semibold text-sm uppercase tracking-wider">{t("galleria", "eyebrow")}</span>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-montserrat font-bold mt-3 mb-4">
-              Galleria <span className="text-primary">Foto</span>
+              {t("galleria", "title").replace(t("galleria", "titleHighlight"), '')} <span className="text-primary">{t("galleria", "titleHighlight")}</span>
             </h2>
             <div className="w-24 h-1 bg-primary mx-auto mb-6"></div>
             <p className="text-base md:text-lg text-gray max-w-2xl mx-auto">
-              Uno spazio professionale progettato per il tuo allenamento. Attrezzature moderne, ambiente curato e tutto ciò che serve per i tuoi risultati.
+              {t("galleria", "subtitle")}
             </p>
           </motion.div>
 

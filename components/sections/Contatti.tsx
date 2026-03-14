@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { MapPin, Phone, Mail, Clock, MessageCircle } from 'lucide-react';
+import { useLanguage } from '@/lib/i18n/LanguageProvider';
 
 const CONTACT_INFO = {
   phone: '3478881515',
@@ -18,6 +19,7 @@ const ORARI = {
 };
 
 export default function Contatti() {
+  const { t } = useLanguage();
   const { ref, inView } = useInView({
     threshold: 0.1,
     triggerOnce: true
@@ -38,12 +40,11 @@ export default function Contatti() {
           className="text-center mb-12"
         >
           <h2 className="text-4xl md:text-5xl font-montserrat font-bold mb-6">
-            Contattaci
+            {t("contatti", "title")}
           </h2>
           <div className="w-24 h-1 bg-primary mx-auto mb-8"></div>
           <p className="text-lg text-gray max-w-2xl mx-auto">
-            Siamo qui per aiutarti a iniziare il tuo percorso di trasformazione. 
-            Scrivici su WhatsApp per una risposta immediata o passa a trovarci in studio!
+            {t("contatti", "subtitle")}
           </p>
         </motion.div>
 
@@ -55,14 +56,14 @@ export default function Contatti() {
             transition={{ duration: 0.6, delay: 0.2 }}
           >
             <h3 className="text-2xl font-montserrat font-bold mb-6">
-              Vieni a trovarci
+              {t("contatti", "vieniATrovarci")}
             </h3>
-            
+
             <div className="space-y-4 mb-8">
               <div className="flex items-start gap-3">
                 <MapPin className="text-primary flex-shrink-0 mt-1" size={20} />
                 <div>
-                  <p className="font-semibold">Indirizzo</p>
+                  <p className="font-semibold">{t("contatti", "indirizzo")}</p>
                   <p className="text-gray">{CONTACT_INFO.address}</p>
                 </div>
               </div>
@@ -70,7 +71,7 @@ export default function Contatti() {
               <div className="flex items-start gap-3">
                 <Phone className="text-primary flex-shrink-0 mt-1" size={20} />
                 <div>
-                  <p className="font-semibold">Telefono</p>
+                  <p className="font-semibold">{t("contatti", "telefono")}</p>
                   <a href={`tel:+39${CONTACT_INFO.phone}`} className="text-gray hover:text-primary transition-colors">
                     {CONTACT_INFO.phoneDisplay}
                   </a>
@@ -80,7 +81,7 @@ export default function Contatti() {
               <div className="flex items-start gap-3">
                 <Mail className="text-primary flex-shrink-0 mt-1" size={20} />
                 <div>
-                  <p className="font-semibold">Email</p>
+                  <p className="font-semibold">{t("contatti", "email")}</p>
                   <a href={`mailto:${CONTACT_INFO.email}`} className="text-gray hover:text-primary transition-colors">
                     {CONTACT_INFO.email}
                   </a>
@@ -90,7 +91,7 @@ export default function Contatti() {
               <div className="flex items-start gap-3">
                 <Clock className="text-primary flex-shrink-0 mt-1" size={20} />
                 <div>
-                  <p className="font-semibold">Orari</p>
+                  <p className="font-semibold">{t("contatti", "orari")}</p>
                   <p className="text-gray">{ORARI.weekdays}</p>
                   <p className="text-gray">{ORARI.saturday}</p>
                 </div>
@@ -107,28 +108,28 @@ export default function Contatti() {
               <div className="flex items-center gap-4 mb-4">
                 <MessageCircle size={32} />
                 <div>
-                  <h4 className="text-xl font-bold">Contattaci su WhatsApp</h4>
-                  <p className="text-green-100">Risposta immediata garantita!</p>
+                  <h4 className="text-xl font-bold">{t("contatti", "whatsappTitle")}</h4>
+                  <p className="text-green-100">{t("contatti", "whatsappSubtitle")}</p>
                 </div>
               </div>
-              
+
               <button
                 onClick={openWhatsApp}
                 className="w-full bg-white text-green-600 py-4 px-6 rounded-lg font-bold hover:shadow-lg transition-all hover:scale-105 flex items-center justify-center gap-3"
               >
                 <MessageCircle size={24} />
-                Scrivici ora su WhatsApp
+                {t("contatti", "whatsappCta")}
               </button>
-              
+
               <p className="text-sm text-green-100 mt-3 text-center">
-                Online dalle 7:00 alle 21:00
+                {t("contatti", "whatsappOnline")}
               </p>
             </motion.div>
 
             {/* Box parcheggio */}
             <div className="bg-primary/10 rounded-lg p-4 mt-6">
               <p className="text-center text-primary font-semibold">
-                🚗 Parcheggio gratuito disponibile
+                {t("contatti", "parcheggio")}
               </p>
             </div>
           </motion.div>
@@ -141,9 +142,9 @@ export default function Contatti() {
             className="space-y-6"
           >
             <h3 className="text-2xl font-montserrat font-bold mb-6">
-              Dove siamo
+              {t("contatti", "doveSiamo")}
             </h3>
-            
+
             {/* Mappa */}
             <div className="rounded-lg overflow-hidden shadow-lg h-[500px]">
               <iframe
@@ -160,13 +161,13 @@ export default function Contatti() {
 
             {/* Box "Come raggiungerci" */}
             <div className="bg-gray-light rounded-lg p-6">
-              <h4 className="font-semibold mb-3">Come raggiungerci:</h4>
+              <h4 className="font-semibold mb-3">{t("contatti", "direzioniTitle")}</h4>
               <ul className="space-y-2 text-gray text-sm">
-                <li>• A 2 minuti dalla tangenziale Nord</li>
-                <li>• A 5 minuti dal centro</li>
-                <li>• Fermata autobus linea 11 e 12 a 30 metri</li>
-                <li>• Ampio parcheggio gratuito</li>
-                <li>• Accessibile ai disabili</li>
+                <li>• {t("contatti", "direzione1")}</li>
+                <li>• {t("contatti", "direzione2")}</li>
+                <li>• {t("contatti", "direzione3")}</li>
+                <li>• {t("contatti", "direzione4")}</li>
+                <li>• {t("contatti", "direzione5")}</li>
               </ul>
             </div>
           </motion.div>
@@ -180,18 +181,17 @@ export default function Contatti() {
           className="mt-12 bg-gradient-to-br from-primary to-primary-dark rounded-xl p-8 text-white text-center"
         >
           <h3 className="text-2xl font-montserrat font-bold mb-4">
-            Pronto a iniziare il tuo percorso?
+            {t("contatti", "finalCtaTitle")}
           </h3>
           <p className="text-lg mb-6 opacity-95">
-            Non aspettare domani per iniziare a cambiare la tua vita. 
-            Contattaci ora e prenota la tua prima lezione gratuita con massaggio incluso!
+            {t("contatti", "finalCtaText")}
           </p>
           <button
             onClick={openWhatsApp}
             className="bg-white text-primary px-8 py-4 rounded-full font-bold hover:shadow-xl transition-all hover:scale-105 inline-flex items-center gap-3"
           >
             <MessageCircle size={24} />
-            Prenota su WhatsApp
+            {t("contatti", "finalCtaButton")}
           </button>
         </motion.div>
       </div>

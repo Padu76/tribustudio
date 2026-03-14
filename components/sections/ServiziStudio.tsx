@@ -12,50 +12,53 @@ import {
   Coffee,
   DoorOpen
 } from 'lucide-react';
-
-const SERVIZI_STUDIO = [
-  {
-    icon: ShowerHead,
-    titolo: 'Docce',
-    descrizione: 'Spogliatoi con docce calde disponibili'
-  },
-  {
-    icon: DoorOpen,
-    titolo: 'Spogliatoi',
-    descrizione: 'Spogliatoi privati e attrezzati'
-  },
-  {
-    icon: Accessibility,
-    titolo: 'Accesso Disabili',
-    descrizione: 'Struttura accessibile a tutti'
-  },
-  {
-    icon: Car,
-    titolo: 'Parcheggio',
-    descrizione: 'Ampio parcheggio gratuito'
-  },
-  {
-    icon: Phone,
-    titolo: 'Wi-Fi Gratuito',
-    descrizione: 'Connessione Wi-Fi disponibile'
-  },
-  {
-    icon: Droplets,
-    titolo: 'Acqua Ionizzata',
-    descrizione: 'Distributore acqua ionizzata'
-  },
-  {
-    icon: Coffee,
-    titolo: 'Area Caffè',
-    descrizione: 'Zona relax con caffè disponibile'
-  }
-];
+import { useLanguage } from '@/lib/i18n/LanguageProvider';
 
 export default function ServiziStudio() {
   const { ref, inView } = useInView({
     threshold: 0.1,
     triggerOnce: true
   });
+
+  const { t } = useLanguage();
+
+  const SERVIZI_STUDIO = [
+    {
+      icon: ShowerHead,
+      titolo: t("serviziStudio", "docceTitle"),
+      descrizione: t("serviziStudio", "docceDesc")
+    },
+    {
+      icon: DoorOpen,
+      titolo: t("serviziStudio", "spogliatoiTitle"),
+      descrizione: t("serviziStudio", "spogliatoiDesc")
+    },
+    {
+      icon: Accessibility,
+      titolo: t("serviziStudio", "accessoDisabiliTitle"),
+      descrizione: t("serviziStudio", "accessoDisabiliDesc")
+    },
+    {
+      icon: Car,
+      titolo: t("serviziStudio", "parcheggioTitle"),
+      descrizione: t("serviziStudio", "parcheggioDesc")
+    },
+    {
+      icon: Phone,
+      titolo: t("serviziStudio", "wifiTitle"),
+      descrizione: t("serviziStudio", "wifiDesc")
+    },
+    {
+      icon: Droplets,
+      titolo: t("serviziStudio", "acquaTitle"),
+      descrizione: t("serviziStudio", "acquaDesc")
+    },
+    {
+      icon: Coffee,
+      titolo: t("serviziStudio", "caffeTitle"),
+      descrizione: t("serviziStudio", "caffeDesc")
+    }
+  ];
 
   return (
     <section className="py-12 md:py-16 lg:py-20 px-4 md:px-8 bg-white" ref={ref}>
@@ -67,11 +70,11 @@ export default function ServiziStudio() {
           className="text-center mb-8 md:mb-12"
         >
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-montserrat font-bold mb-4 md:mb-6">
-            Lo Studio
+            {t("serviziStudio", "title")}
           </h2>
           <div className="w-24 h-1 bg-primary mx-auto mb-6 md:mb-8"></div>
           <p className="text-base md:text-lg text-gray max-w-2xl mx-auto px-4">
-            Tutto quello che ti serve per allenarti in comfort e tranquillità, in un ambiente professionale e curato.
+            {t("serviziStudio", "subtitle")}
           </p>
         </motion.div>
 
@@ -80,7 +83,7 @@ export default function ServiziStudio() {
             const Icon = servizio.icon;
             return (
               <motion.div
-                key={servizio.titolo}
+                key={index}
                 initial={{ opacity: 0, y: 20 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.4, delay: index * 0.08 }}

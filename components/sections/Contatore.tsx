@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { STATS } from '@/lib/constants';
+import { useLanguage } from '@/lib/i18n/LanguageProvider';
 
 function Counter({ value, suffix }: { value: number; suffix: string }) {
   const [count, setCount] = useState(0);
@@ -18,7 +19,7 @@ function Counter({ value, suffix }: { value: number; suffix: string }) {
       const end = value;
       const duration = 2000;
       const increment = end / (duration / 16);
-      
+
       const timer = setInterval(() => {
         start += increment;
         if (start > end) {
@@ -28,7 +29,7 @@ function Counter({ value, suffix }: { value: number; suffix: string }) {
           setCount(Math.floor(start));
         }
       }, 16);
-      
+
       return () => clearInterval(timer);
     }
   }, [inView, value]);
@@ -40,7 +41,10 @@ function Counter({ value, suffix }: { value: number; suffix: string }) {
   );
 }
 
+const labelKeys = ['clienti', 'esperienza', 'sessioni', 'recensioni'] as const;
+
 export default function Contatore() {
+  const { t } = useLanguage();
   const { ref, inView } = useInView({
     threshold: 0.1,
     triggerOnce: true
@@ -62,7 +66,7 @@ export default function Contatore() {
               <div className="text-3xl md:text-4xl font-montserrat font-bold mb-2">
                 <Counter value={stat.value} suffix={stat.suffix} />
               </div>
-              <div className="text-sm md:text-base opacity-90">{stat.label}</div>
+              <div className="text-sm md:text-base opacity-90">{t("contatore", labelKeys[index])}</div>
             </motion.div>
           ))}
         </div>

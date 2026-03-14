@@ -3,17 +3,12 @@
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { CheckCircle } from 'lucide-react';
+import { useLanguage } from '@/lib/i18n/LanguageProvider';
 
-const benefits = [
-  'Nessun abbonamento vincolante',
-  'Ogni sessione su appuntamento',
-  'Personal Trainer sempre presente',
-  'Massima personalizzazione',
-  'Ambiente esclusivo e riservato',
-  'Risultati concreti e misurabili'
-];
+const benefitKeys = ['benefit1', 'benefit2', 'benefit3', 'benefit4', 'benefit5', 'benefit6'] as const;
 
 export default function PercheTributu() {
+  const { t } = useLanguage();
   const { ref, inView } = useInView({
     threshold: 0.1,
     triggerOnce: true
@@ -22,7 +17,7 @@ export default function PercheTributu() {
   return (
     <section className="relative min-h-[80vh] flex items-center overflow-hidden" ref={ref}>
       {/* Sfondo fisso con parallax dello studio */}
-      <div 
+      <div
         className="absolute inset-0 z-0"
         style={{
           backgroundImage: 'url("/images/studio/studio-2.jpg")',
@@ -34,7 +29,7 @@ export default function PercheTributu() {
       >
         {/* Overlay gradiente per leggibilità */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-black/40" />
-        
+
         {/* Pattern decorativo sottile */}
         <div className="absolute inset-0 opacity-5"
           style={{
@@ -54,21 +49,22 @@ export default function PercheTributu() {
             className="text-white"
           >
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-montserrat font-bold mb-6">
-              No, non è una <span className="text-primary">classica palestra</span>
+              {t("percheTributu", "title").replace(t("percheTributu", "titleHighlight"), '')}
+              <span className="text-primary">{t("percheTributu", "titleHighlight")}</span>
             </h2>
-            
+
             <div className="w-24 h-1 bg-primary mb-8"></div>
-            
+
             <p className="text-lg md:text-xl mb-6 text-gray-200 leading-relaxed">
-              <span className="font-semibold text-white">Tribù</span> è uno studio di Personal Training dove facciamo solo lezioni individuali, di coppia e miniclass.
+              {t("percheTributu", "text1")}
             </p>
-            
+
             <p className="text-lg md:text-xl mb-8 text-gray-300">
-              Nessun abbonamento, niente accesso libero: ogni sessione è su appuntamento e supervisionata da un Personal Trainer.
+              {t("percheTributu", "text2")}
             </p>
-            
+
             <p className="text-xl md:text-2xl font-bold text-primary bg-white/10 backdrop-blur-sm p-4 rounded-lg inline-block">
-              Questo significa più personalizzazione, motivazione e risultati concreti.
+              {t("percheTributu", "highlight")}
             </p>
           </motion.div>
 
@@ -79,16 +75,16 @@ export default function PercheTributu() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="space-y-4"
           >
-            {benefits.map((benefit, index) => (
+            {benefitKeys.map((key, index) => (
               <motion.div
-                key={index}
+                key={key}
                 initial={{ opacity: 0, x: 20 }}
                 animate={inView ? { opacity: 1, x: 0 } : {}}
                 transition={{ duration: 0.4, delay: 0.3 + index * 0.1 }}
                 className="flex items-center gap-3 bg-white/10 backdrop-blur-md p-4 rounded-lg border border-white/20 hover:bg-white/20 transition-all"
               >
                 <CheckCircle className="text-primary flex-shrink-0" size={24} />
-                <span className="text-white font-medium">{benefit}</span>
+                <span className="text-white font-medium">{t("percheTributu", key)}</span>
               </motion.div>
             ))}
           </motion.div>

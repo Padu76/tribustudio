@@ -5,57 +5,59 @@ import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { Target, Heart, Users, Sparkles, Award, Clock, Shield, Zap } from 'lucide-react';
 import Image from 'next/image';
-
-const values = [
-  {
-    icon: Target,
-    title: 'Personal Training su misura',
-    description: 'Ogni allenamento è personalizzato sui tuoi obiettivi'
-  },
-  {
-    icon: Heart,
-    title: 'Nutrizione e benessere',
-    description: 'Approccio completo per risultati duraturi'
-  },
-  {
-    icon: Users,
-    title: 'Recupero e massaggi',
-    description: 'Tecniche professionali per il tuo recupero'
-  },
-  {
-    icon: Sparkles,
-    title: 'Coaching online',
-    description: 'Supporto costante ovunque tu sia'
-  }
-];
-
-const features = [
-  {
-    icon: Award,
-    title: 'Trainer Certificati',
-    description: 'Solo professionisti qualificati e in continuo aggiornamento'
-  },
-  {
-    icon: Clock,
-    title: 'Flessibilità Oraria',
-    description: 'Prenota quando vuoi, dalle 7:00 alle 21:00'
-  },
-  {
-    icon: Shield,
-    title: 'Risultati Garantiti',
-    description: 'Metodo testato su oltre 1200 clienti soddisfatti'
-  },
-  {
-    icon: Zap,
-    title: 'Approccio Innovativo',
-    description: 'Tecniche all\'avanguardia e attrezzature moderne'
-  }
-];
+import { useLanguage } from '@/lib/i18n/LanguageProvider';
 
 export default function ChiSiamo() {
+  const { t } = useLanguage();
   const { ref: ref1, inView: inView1 } = useInView({ threshold: 0.1, triggerOnce: true });
   const { ref: ref2, inView: inView2 } = useInView({ threshold: 0.1, triggerOnce: true });
   const { ref: ref3, inView: inView3 } = useInView({ threshold: 0.1, triggerOnce: true });
+
+  const values = [
+    {
+      icon: Target,
+      title: t("chiSiamo", "value1Title"),
+      description: t("chiSiamo", "value1Desc")
+    },
+    {
+      icon: Heart,
+      title: t("chiSiamo", "value2Title"),
+      description: t("chiSiamo", "value2Desc")
+    },
+    {
+      icon: Users,
+      title: t("chiSiamo", "value3Title"),
+      description: t("chiSiamo", "value3Desc")
+    },
+    {
+      icon: Sparkles,
+      title: t("chiSiamo", "value4Title"),
+      description: t("chiSiamo", "value4Desc")
+    }
+  ];
+
+  const features = [
+    {
+      icon: Award,
+      title: t("chiSiamo", "feature1Title"),
+      description: t("chiSiamo", "feature1Desc")
+    },
+    {
+      icon: Clock,
+      title: t("chiSiamo", "feature2Title"),
+      description: t("chiSiamo", "feature2Desc")
+    },
+    {
+      icon: Shield,
+      title: t("chiSiamo", "feature3Title"),
+      description: t("chiSiamo", "feature3Desc")
+    },
+    {
+      icon: Zap,
+      title: t("chiSiamo", "feature4Title"),
+      description: t("chiSiamo", "feature4Desc")
+    }
+  ];
 
   return (
     <>
@@ -68,18 +70,27 @@ export default function ChiSiamo() {
             transition={{ duration: 0.8 }}
             className="text-center max-w-4xl mx-auto"
           >
-            <span className="text-primary font-semibold text-sm uppercase tracking-wider">Chi Siamo</span>
+            <span className="text-primary font-semibold text-sm uppercase tracking-wider">{t("chiSiamo", "eyebrow")}</span>
             <h2 className="text-4xl md:text-6xl font-montserrat font-bold mt-4 mb-8">
-              La tua <span className="text-primary">trasformazione</span> inizia qui
+              {(() => {
+                const full = t("chiSiamo", "title");
+                const highlight = t("chiSiamo", "titleHighlight");
+                const idx = full.indexOf(highlight);
+                if (idx === -1) return full;
+                return (
+                  <>
+                    {full.slice(0, idx)}
+                    <span className="text-primary">{highlight}</span>
+                    {full.slice(idx + highlight.length)}
+                  </>
+                );
+              })()}
             </h2>
             <p className="text-xl md:text-2xl text-gray leading-relaxed mb-8">
-              Crediamo in un mondo in cui aiutiamo le persone ad essere la migliore versione di sé stesse.
-              Affrontiamo con loro la battaglia più difficile: credere in sé stessi e sentirsi bene nel proprio corpo.
+              {t("chiSiamo", "text1")}
             </p>
             <p className="text-lg md:text-xl text-gray/80">
-              Allenarsi con noi non è solo allenamento: è <span className="font-semibold text-primary">motivazione</span>,
-              <span className="font-semibold text-primary"> supporto</span> e
-              <span className="font-semibold text-primary"> risultati concreti</span>.
+              {t("chiSiamo", "text2")}
             </p>
           </motion.div>
 
@@ -114,7 +125,7 @@ export default function ChiSiamo() {
         <div className="absolute inset-0 z-0">
           <Image
             src="/images/studio/studio-1.jpg"
-            alt="Interno dello studio Tribù"
+            alt="Interno dello studio Tribu"
             fill
             sizes="100vw"
             className="object-cover"
@@ -132,17 +143,16 @@ export default function ChiSiamo() {
             className="max-w-2xl"
           >
             <h2 className="text-3xl md:text-5xl font-montserrat font-bold text-white mb-6">
-              Non una semplice palestra, ma il tuo <span className="text-primary">studio personale</span>
+              {t("chiSiamo", "parallaxTitle")}
             </h2>
             <p className="text-lg md:text-xl text-gray-200 mb-8">
-              Uno spazio esclusivo dove ogni dettaglio è pensato per il tuo benessere.
-              Attrezzature di ultima generazione, ambiente climatizzato e la privacy che meriti.
+              {t("chiSiamo", "parallaxText")}
             </p>
             <button
               onClick={() => document.getElementById('servizi')?.scrollIntoView({ behavior: 'smooth' })}
               className="bg-primary text-white px-8 py-4 rounded-full font-semibold hover:bg-primary-dark transition-all hover:scale-105"
             >
-              Scopri i nostri servizi
+              {t("chiSiamo", "parallaxCta")}
             </button>
           </motion.div>
         </div>
@@ -158,10 +168,10 @@ export default function ChiSiamo() {
             className="text-center mb-16"
           >
             <h2 className="text-3xl md:text-5xl font-montserrat font-bold mb-4">
-              Perché scegliere <span className="text-primary">Tribù</span>
+              {t("chiSiamo", "featuresTitle")}
             </h2>
             <p className="text-lg text-gray max-w-2xl mx-auto">
-              Quattro ragioni che fanno la differenza nel tuo percorso di trasformazione
+              {t("chiSiamo", "featuresSubtitle")}
             </p>
           </motion.div>
 

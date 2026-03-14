@@ -4,15 +4,13 @@ import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { Download, FileText, Calendar, Euro, Clock } from 'lucide-react';
 import Image from 'next/image';
+import { useLanguage } from '@/lib/i18n/LanguageProvider';
 
-const brochureContent = [
-  { icon: FileText, label: 'Programmi dettagliati' },
-  { icon: Euro, label: 'Listino prezzi completo' },
-  { icon: Calendar, label: 'Orari miniclass' },
-  { icon: Clock, label: 'Info e contatti' }
-];
+const brochureIcons = [FileText, Euro, Calendar, Clock];
+const contentKeys = ['content1', 'content2', 'content3', 'content4'] as const;
 
 export default function Brochure() {
+  const { t } = useLanguage();
   const { ref, inView } = useInView({
     threshold: 0.1,
     triggerOnce: true
@@ -34,28 +32,27 @@ export default function Brochure() {
             transition={{ duration: 0.6 }}
           >
             <h2 className="text-4xl md:text-5xl font-montserrat font-bold mb-6">
-              Vuoi scoprire tutti i dettagli?
+              {t("brochure", "title")}
             </h2>
             <div className="w-24 h-1 bg-primary mb-8"></div>
-            
+
             <p className="text-lg text-gray mb-8 leading-relaxed">
-              Scarica la nostra brochure completa con programmi, prezzi e orari delle nostre miniclass.
-              Tutto quello che ti serve per iniziare subito il tuo percorso con Tribù.
+              {t("brochure", "subtitle")}
             </p>
 
             <div className="grid grid-cols-2 gap-4 mb-8">
-              {brochureContent.map((item, index) => {
-                const Icon = item.icon;
+              {contentKeys.map((key, index) => {
+                const Icon = brochureIcons[index];
                 return (
                   <motion.div
-                    key={index}
+                    key={key}
                     initial={{ opacity: 0, y: 20 }}
                     animate={inView ? { opacity: 1, y: 0 } : {}}
                     transition={{ duration: 0.4, delay: 0.2 + index * 0.1 }}
                     className="flex items-center gap-3"
                   >
                     <Icon className="text-primary" size={20} />
-                    <span className="text-gray">{item.label}</span>
+                    <span className="text-gray">{t("brochure", key)}</span>
                   </motion.div>
                 );
               })}
@@ -68,7 +65,7 @@ export default function Brochure() {
               className="btn-primary inline-flex items-center gap-3"
             >
               <Download size={20} />
-              Scarica la brochure PDF
+              {t("brochure", "cta")}
             </motion.button>
           </motion.div>
 
@@ -86,7 +83,7 @@ export default function Brochure() {
                   <Download size={32} />
                 </div>
               </div>
-              
+
               {/* Immagine anteprima brochure */}
               <Image
                 src="/images/brochure/brochure-preview.jpg"
@@ -95,7 +92,7 @@ export default function Brochure() {
                 height={800}
                 className="w-full rounded-lg shadow-2xl"
               />
-              
+
               {/* Placeholder se l'immagine non c'è */}
               <div className="hidden bg-gradient-to-br from-primary/10 to-primary/5 rounded-lg p-8 min-h-[400px] flex items-center justify-center">
                 <div className="text-center">
@@ -109,10 +106,10 @@ export default function Brochure() {
                 </div>
               </div>
             </div>
-            
+
             {/* Testo sotto l'anteprima */}
             <p className="text-center text-gray mt-4 text-sm">
-              Clicca sull&apos;anteprima per scaricare la brochure completa
+              {t("brochure", "previewText")}
             </p>
           </motion.div>
         </div>

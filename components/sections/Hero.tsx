@@ -3,14 +3,17 @@
 
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { useLanguage } from '@/lib/i18n/LanguageProvider';
 
 export default function Hero() {
+  const { t } = useLanguage();
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16 md:pt-0">
       {/* Sfondo ottimizzato con next/image — WebP/AVIF automatico, priority per LCP */}
       <Image
         src="/images/hero/hero-bg.jpg"
-        alt="Tribù Personal Training Studio"
+        alt="Tribu Personal Training Studio"
         fill
         priority
         sizes="100vw"
@@ -37,7 +40,7 @@ export default function Hero() {
           className="mb-6 md:mb-8"
         >
           <span className="inline-block text-primary bg-white/10 backdrop-blur-sm px-4 sm:px-6 py-2 rounded-full text-xs sm:text-sm font-semibold mb-4 md:mb-6 border border-primary/30">
-            TRASFORMA IL TUO CORPO
+            {t("hero", "eyebrow")}
           </span>
         </motion.div>
 
@@ -47,8 +50,8 @@ export default function Hero() {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-montserrat font-bold mb-4 md:mb-6 text-white leading-tight"
         >
-          Allenati, mangia bene
-          <span className="block text-primary mt-2">e vivi meglio</span>
+          {t("hero", "title1")}
+          <span className="block text-primary mt-2">{t("hero", "titleHighlight")}</span>
         </motion.h1>
 
         <motion.p
@@ -57,9 +60,7 @@ export default function Hero() {
           transition={{ duration: 0.8, delay: 0.4 }}
           className="text-base sm:text-lg md:text-xl lg:text-2xl mb-8 md:mb-10 max-w-3xl mx-auto text-gray-200 font-light px-4 sm:px-0"
         >
-          Allenarsi con un personal trainer significa trovare la giusta motivazione
-          ed ottimizzare il tuo tempo. Inizia oggi il tuo percorso su misura
-          con un professionista al tuo fianco.
+          {t("hero", "subtitle")}
         </motion.p>
 
         <motion.div
@@ -72,7 +73,7 @@ export default function Hero() {
             onClick={() => document.getElementById('contatti')?.scrollIntoView({ behavior: 'smooth' })}
             className="group relative px-6 sm:px-8 py-3 sm:py-4 bg-primary text-white rounded-full font-bold text-base sm:text-lg overflow-hidden transition-all hover:scale-105 hover:shadow-2xl w-full sm:w-auto max-w-xs"
           >
-            <span className="relative z-10">Prenota la tua prima lezione</span>
+            <span className="relative z-10">{t("hero", "cta")}</span>
             <div className="absolute inset-0 bg-gradient-to-r from-primary-dark to-primary transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
           </button>
         </motion.div>
@@ -86,15 +87,15 @@ export default function Hero() {
         >
           <div className="text-white">
             <div className="text-2xl sm:text-3xl font-bold text-primary">1200+</div>
-            <div className="text-xs sm:text-sm opacity-80">Clienti Soddisfatti</div>
+            <div className="text-xs sm:text-sm opacity-80">{t("hero", "stat1")}</div>
           </div>
           <div className="text-white">
             <div className="text-2xl sm:text-3xl font-bold text-primary">10+</div>
-            <div className="text-xs sm:text-sm opacity-80">Anni Esperienza</div>
+            <div className="text-xs sm:text-sm opacity-80">{t("hero", "stat2")}</div>
           </div>
           <div className="text-white">
             <div className="text-2xl sm:text-3xl font-bold text-primary">25k+</div>
-            <div className="text-xs sm:text-sm opacity-80">Sessioni Complete</div>
+            <div className="text-xs sm:text-sm opacity-80">{t("hero", "stat3")}</div>
           </div>
         </motion.div>
 
@@ -106,7 +107,7 @@ export default function Hero() {
           className="absolute bottom-4 sm:bottom-8 left-1/2 transform -translate-x-1/2 hidden sm:flex"
         >
           <div className="flex flex-col items-center gap-2">
-            <span className="text-white/60 text-xs sm:text-sm">Scorri per scoprire</span>
+            <span className="text-white/60 text-xs sm:text-sm">{t("hero", "scrollText")}</span>
             <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center">
               <div className="w-1 h-3 bg-white rounded-full mt-2 animate-bounce" />
             </div>
