@@ -18,4 +18,5 @@ export type BookingCustomerInput = {
   phone: string;
   notes?: string;
   acceptedRules: boolean;
+  discountCode?: string;
 };

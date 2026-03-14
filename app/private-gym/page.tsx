@@ -183,7 +183,7 @@ export default function TribuPrivateGymPage() {
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3">
-              {['25€ / ora', 'Accesso 10 minuti prima', '3 postazioni', 'Accesso smart'].map((tag) => (
+              {['Da 20€ / ora', 'Accesso 10 minuti prima', '3 postazioni', 'Accesso smart'].map((tag) => (
                 <div key={tag} className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white/85">
                   {tag}
                 </div>
@@ -444,19 +444,72 @@ export default function TribuPrivateGymPage() {
       {/* COSTI */}
       <section id="costi" className="scroll-mt-24 border-t border-white/10 py-20 sm:py-24">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-          <div className="rounded-[36px] border border-orange-500/20 bg-gradient-to-br from-orange-500/10 to-white/5 p-8 text-center sm:p-12">
+          <div className="text-center mb-10">
             <div className="text-sm font-semibold uppercase tracking-[0.24em] text-orange-400">Costi</div>
-            <h2 className="mt-4 text-4xl font-bold text-white sm:text-5xl">25€ / ora</h2>
+            <h2 className="mt-4 text-4xl font-bold text-white sm:text-5xl">Scegli la tua tariffa</h2>
             <p className="mx-auto mt-5 max-w-2xl text-white/75">
               Accesso allo studio, utilizzo delle attrezzature disponibili, ingresso 10 minuti prima
               e gestione smart della prenotazione.
             </p>
-            <div className="mt-8 flex flex-wrap justify-center gap-3">
-              {['Accesso smart', '3 postazioni', 'Attrezzature incluse', 'Ingresso anticipato'].map((tag) => (
-                <div key={tag} className="rounded-full border border-white/10 bg-black/30 px-4 py-2 text-sm text-white/85">
-                  {tag}
-                </div>
-              ))}
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2 max-w-4xl mx-auto">
+            {/* Tariffa standard */}
+            <div className="rounded-[36px] border border-white/10 bg-white/5 p-8 text-center">
+              <div className="text-xs font-semibold uppercase tracking-[0.2em] text-white/50">Standard</div>
+              <div className="mt-4 text-5xl font-bold text-white">25€</div>
+              <div className="text-white/50 mt-1">/ ora</div>
+              <p className="mt-5 text-sm text-white/60">
+                Per chi vuole provare lo studio o allenarsi occasionalmente.
+              </p>
+              <div className="mt-6 space-y-3">
+                {['Accesso smart', '3 postazioni', 'Attrezzature incluse', 'Ingresso anticipato'].map((tag) => (
+                  <div key={tag} className="flex items-center gap-2 text-sm text-white/70">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-white/40 flex-shrink-0">
+                      <path d="M20 6 9 17l-5-5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    {tag}
+                  </div>
+                ))}
+              </div>
+              <a
+                href="#calendario"
+                className="mt-8 inline-flex w-full items-center justify-center rounded-full border border-white/15 bg-white/5 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
+              >
+                Prenota a 25€
+              </a>
+            </div>
+
+            {/* Tariffa cliente Tribù */}
+            <div className="relative rounded-[36px] border-2 border-orange-500/40 bg-gradient-to-br from-orange-500/10 to-white/5 p-8 text-center">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-orange-500 px-4 py-1 text-xs font-bold uppercase tracking-wider text-white">
+                Consigliato
+              </div>
+              <div className="text-xs font-semibold uppercase tracking-[0.2em] text-orange-400">Cliente Tribù</div>
+              <div className="mt-4 flex items-center justify-center gap-2">
+                <span className="text-2xl text-white/30 line-through">25€</span>
+                <span className="text-5xl font-bold text-orange-400">20€</span>
+              </div>
+              <div className="text-orange-400/60 mt-1">/ ora</div>
+              <p className="mt-5 text-sm text-white/60">
+                Per chi ha già un pacchetto personal o miniclass attivo con Tribù.
+              </p>
+              <div className="mt-6 space-y-3">
+                {['Tutto della tariffa standard', 'Sconto 5€ a sessione', 'Codice personale dedicato', 'Priorità sugli slot'].map((tag) => (
+                  <div key={tag} className="flex items-center gap-2 text-sm text-white/70">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-orange-400 flex-shrink-0">
+                      <path d="M20 6 9 17l-5-5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    {tag}
+                  </div>
+                ))}
+              </div>
+              <a
+                href="#calendario"
+                className="mt-8 inline-flex w-full items-center justify-center rounded-full bg-orange-500 px-6 py-3 text-sm font-semibold text-white transition hover:bg-orange-600"
+              >
+                Prenota a 20€
+              </a>
             </div>
           </div>
         </div>

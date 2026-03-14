@@ -2,7 +2,7 @@
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useState, Suspense, useCallback } from "react";
 import { format, parseISO } from "date-fns";
 import { it } from "date-fns/locale";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
@@ -34,7 +34,17 @@ function BookingContent() {
   const [notes, setNotes] = useState("");
   const [acceptedRules, setAcceptedRules] = useState(false);
 
+  // Codice sconto
+  const [discountCode, setDiscountCode] = useState("");
+  const [discountStatus, setDiscountStatus] = useState<"idle" | "checking" | "valid" | "invalid">("idle");
+  const [finalPrice, setFinalPrice] = useState<number | null>(null);
+  const [discountMessage, setDiscountMessage] = useState("");
+
   const formValid = fullName.length >= 2 && email.includes("@") && phone.length >= 5 && acceptedRules;
+
+  // Prezzo visualizzato
+  const displayPrice = finalPrice ?? slot?.price_eur ?? 25;
+  const hasDiscount = discountStatus === "valid" && finalPrice !== null && slot && finalPrice < slot.price_eur;
 
   // Carica lo slot
   useEffect(() => {
@@ -51,11 +61,46 @@ function BookingContent() {
           setError("Slot non trovato o non più disponibile.");
         } else {
           setSlot(found);
+          setFinalPrice(found.price_eur);
         }
       })
       .catch(() => setError("Errore nel caricamento dello slot."))
       .finally(() => setLoading(false));
   }, [slotId]);
+
+  // Valida codice sconto
+  const validateCode = useCallback(async () => {
+    if (!discountCode.trim() || !slot) {
+      setDiscountStatus("idle");
+      setFinalPrice(slot?.price_eur ?? 25);
+      setDiscountMessage("");
+      return;
+    }
+
+    setDiscountStatus("checking");
+    try {
+      const res = await fetch("/api/private-gym/validate-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: discountCode, slotPrice: slot.price_eur }),
+      });
+      const data = await res.json();
+
+      if (data.valid) {
+        setDiscountStatus("valid");
+        setFinalPrice(data.finalPrice);
+        setDiscountMessage(data.message);
+      } else {
+        setDiscountStatus("invalid");
+        setFinalPrice(slot.price_eur);
+        setDiscountMessage(data.message || "Codice non valido.");
+      }
+    } catch {
+      setDiscountStatus("invalid");
+      setFinalPrice(slot.price_eur);
+      setDiscountMessage("Errore nella verifica del codice.");
+    }
+  }, [discountCode, slot]);
 
   if (loading) {
     return (
@@ -80,14 +125,14 @@ function BookingContent() {
   const startTime = format(parseISO(slot.starts_at), "HH:mm");
   const endTime = format(parseISO(slot.ends_at), "HH:mm");
   const timeLabel = `${startTime} — ${endTime}`;
-  const customer = { fullName, email, phone, notes, acceptedRules };
+  const customer = { fullName, email, phone, notes, acceptedRules, discountCode: discountCode.trim() };
 
   return (
     <main className="min-h-screen bg-[#050505] px-4 py-12 text-white">
       <div className="mx-auto max-w-xl">
         {/* Header */}
         <Link href="/private-gym" className="text-sm text-white/50 hover:text-white transition">
-          ← Torna alla landing
+          &larr; Torna alla landing
         </Link>
         <h1 className="mt-6 text-3xl font-bold text-white sm:text-4xl">Prenota la tua sessione</h1>
 
@@ -96,7 +141,20 @@ function BookingContent() {
           <div className="text-sm font-semibold uppercase tracking-widest text-orange-400">Riepilogo</div>
           <div className="mt-3 text-lg font-semibold capitalize text-white">{dateLabel}</div>
           <div className="text-white/70">{timeLabel}</div>
-          <div className="mt-2 text-2xl font-bold text-orange-400">{slot.price_eur}€</div>
+
+          <div className="mt-3 flex items-center gap-3">
+            {hasDiscount ? (
+              <>
+                <div className="text-lg text-white/40 line-through">{slot.price_eur}€</div>
+                <div className="text-2xl font-bold text-green-400">{displayPrice}€</div>
+                <span className="rounded-full bg-green-500/20 px-3 py-1 text-xs font-bold text-green-400 uppercase tracking-wider">
+                  Cliente Tribù
+                </span>
+              </>
+            ) : (
+              <div className="text-2xl font-bold text-orange-400">{displayPrice}€</div>
+            )}
+          </div>
         </div>
 
         {/* Form dati */}
@@ -141,6 +199,70 @@ function BookingContent() {
               placeholder="Eventuali richieste o info utili..."
             />
           </div>
+
+          {/* Codice sconto cliente Tribù */}
+          <div>
+            <label className="mb-1 block text-sm text-white/60">
+              Codice cliente Tribù (opzionale)
+            </label>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={discountCode}
+                onChange={(e) => {
+                  setDiscountCode(e.target.value.toUpperCase());
+                  if (!e.target.value.trim()) {
+                    setDiscountStatus("idle");
+                    setFinalPrice(slot.price_eur);
+                    setDiscountMessage("");
+                  }
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    validateCode();
+                  }
+                }}
+                className="flex-1 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white uppercase placeholder:text-white/30 focus:border-orange-500 focus:outline-none"
+                placeholder="Es. TRIBU20"
+              />
+              <button
+                type="button"
+                onClick={validateCode}
+                disabled={!discountCode.trim() || discountStatus === "checking"}
+                className="rounded-xl bg-white/10 px-5 py-3 text-sm font-semibold text-white hover:bg-white/15 transition disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                {discountStatus === "checking" ? (
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                ) : (
+                  "Applica"
+                )}
+              </button>
+            </div>
+
+            {/* Messaggio validazione */}
+            {discountStatus === "valid" && (
+              <div className="mt-2 flex items-center gap-2 text-sm text-green-400">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M20 6 9 17l-5-5"/>
+                </svg>
+                {discountMessage}
+              </div>
+            )}
+            {discountStatus === "invalid" && (
+              <div className="mt-2 flex items-center gap-2 text-sm text-red-400">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+                </svg>
+                {discountMessage}
+              </div>
+            )}
+
+            <p className="mt-1.5 text-xs text-white/30">
+              Hai un pacchetto personal o miniclass attivo? Inserisci il codice per la tariffa agevolata a 20€.
+            </p>
+          </div>
+
           <label className="flex items-start gap-3 cursor-pointer">
             <input
               type="checkbox"
@@ -177,6 +299,19 @@ function BookingContent() {
                   Elaborazione pagamento...
                 </div>
               )}
+
+              {/* Riepilogo prezzo prima del pagamento */}
+              {hasDiscount && (
+                <div className="mb-4 rounded-xl border border-green-500/20 bg-green-500/5 p-4 text-center">
+                  <div className="text-sm text-green-400 font-semibold">
+                    Tariffa cliente Tribù applicata: {displayPrice}€ invece di {slot.price_eur}€
+                  </div>
+                  <div className="text-xs text-green-400/60 mt-1">
+                    Risparmi {slot.price_eur - displayPrice}€ su questa sessione
+                  </div>
+                </div>
+              )}
+
               <PayPalScriptProvider
                 options={{
                   clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || "",

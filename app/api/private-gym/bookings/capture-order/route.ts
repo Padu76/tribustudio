@@ -13,6 +13,7 @@ const schema = z.object({
     phone: z.string().min(5),
     notes: z.string().optional().default(""),
     acceptedRules: z.boolean().refine((value) => value === true),
+    discountCode: z.string().optional().default(""),
   }),
 });
 

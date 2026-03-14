@@ -42,7 +42,14 @@ export async function reserveOrValidateSlot(slotId: string) {
   };
 }
 
-export async function createPendingBooking(input: { slotId: string; customer: BookingCustomerInput; paypalOrderId: string | null; }) {
+export async function createPendingBooking(input: {
+  slotId: string;
+  customer: BookingCustomerInput;
+  paypalOrderId: string | null;
+  finalPrice?: number;
+  isTribuMember?: boolean;
+  discountCode?: string | null;
+}) {
   const supabase = getSupabaseAdmin();
   if (!supabase) {
     return { id: `local-${Date.now()}` };
@@ -62,7 +69,9 @@ export async function createPendingBooking(input: { slotId: string; customer: Bo
       booking_status: "pending_payment",
       payment_status: "pending",
       paypal_order_id: input.paypalOrderId,
-      price_eur: slot.price_eur,
+      price_eur: input.finalPrice ?? slot.price_eur,
+      is_tribu_member: input.isTribuMember ?? false,
+      discount_code: input.discountCode || null,
     })
     .select("id")
     .single();
