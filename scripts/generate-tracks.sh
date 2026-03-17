@@ -57,7 +57,7 @@ generate_for_channel() {
       \"channel\": \"${ch}\",
       \"count\": ${COUNT},
       \"duration_ms\": ${DURATION},
-      \"force_instrumental\": true
+      \"force_instrumental\": false
     }")
 
   HTTP_CODE=$(echo "$RESPONSE" | tail -1)
