@@ -5,6 +5,7 @@ import { RadioChannel, RadioTrack } from "@/lib/radio/types";
 import ChannelSelector from "./ChannelSelector";
 import PlayerControls from "./PlayerControls";
 import NowPlaying from "./NowPlaying";
+import TrackList from "./TrackList";
 
 type Announcement = {
   id: string;
@@ -26,11 +27,31 @@ export default function RadioPlayer() {
   const [volume, setVolume] = useState(0.7);
   const [isMuted, setIsMuted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const tracksSinceAnnouncement = useRef(0);
+  const animFrameRef = useRef<number>(0);
 
   const currentTrack = tracks[currentIndex] ?? null;
+
+  // Aggiorna currentTime tramite requestAnimationFrame
+  const startTimeUpdate = useCallback(() => {
+    const update = () => {
+      if (audioRef.current) {
+        setCurrentTime(audioRef.current.currentTime);
+        setDuration(audioRef.current.duration || 0);
+      }
+      animFrameRef.current = requestAnimationFrame(update);
+    };
+    cancelAnimationFrame(animFrameRef.current);
+    animFrameRef.current = requestAnimationFrame(update);
+  }, []);
+
+  const stopTimeUpdate = useCallback(() => {
+    cancelAnimationFrame(animFrameRef.current);
+  }, []);
 
   const fetchTracks = useCallback(async (ch: RadioChannel) => {
     setLoading(true);
@@ -65,6 +86,11 @@ export default function RadioPlayer() {
       audioRef.current.volume = isMuted ? 0 : volume;
     }
   }, [volume, isMuted]);
+
+  // Cleanup animFrame on unmount
+  useEffect(() => {
+    return () => cancelAnimationFrame(animFrameRef.current);
+  }, []);
 
   /**
    * Riproduce un annuncio DJ random, poi chiama il callback
@@ -114,8 +140,9 @@ export default function RadioPlayer() {
       audioRef.current.src = track.file_url;
       audioRef.current.volume = isMuted ? 0 : volume;
       audioRef.current.play().catch(console.error);
+      startTimeUpdate();
     },
-    [tracks, volume, isMuted]
+    [tracks, volume, isMuted, startTimeUpdate]
   );
 
   /**
@@ -141,27 +168,29 @@ export default function RadioPlayer() {
     });
   }, [tracks, announcements, playAnnouncement, playTrackAtIndex]);
 
-  const handlePlay = useCallback(() => {
-    if (tracks.length === 0) return;
-
+  const ensureAudioElement = useCallback(() => {
     if (!audioRef.current) {
       audioRef.current = new Audio();
       audioRef.current.addEventListener("ended", () => {
-        // Non avanzare se stiamo suonando un annuncio
-        if (!isAnnouncing) {
-          advanceToNext();
-        }
+        advanceToNext();
       });
     }
+  }, [advanceToNext]);
+
+  const handlePlay = useCallback(() => {
+    if (tracks.length === 0) return;
+
+    ensureAudioElement();
 
     const track = tracks[currentIndex];
     if (!track) return;
 
-    audioRef.current.src = track.file_url;
-    audioRef.current.volume = isMuted ? 0 : volume;
-    audioRef.current.play().catch(console.error);
+    audioRef.current!.src = track.file_url;
+    audioRef.current!.volume = isMuted ? 0 : volume;
+    audioRef.current!.play().catch(console.error);
     setIsPlaying(true);
-  }, [tracks, currentIndex, volume, isMuted, advanceToNext, isAnnouncing]);
+    startTimeUpdate();
+  }, [tracks, currentIndex, volume, isMuted, ensureAudioElement, startTimeUpdate]);
 
   const handleStop = useCallback(() => {
     if (audioRef.current) {
@@ -170,7 +199,9 @@ export default function RadioPlayer() {
     }
     setIsPlaying(false);
     setIsAnnouncing(false);
-  }, []);
+    setCurrentTime(0);
+    stopTimeUpdate();
+  }, [stopTimeUpdate]);
 
   const handleNext = useCallback(() => {
     if (tracks.length === 0) return;
@@ -183,16 +214,30 @@ export default function RadioPlayer() {
     }
   }, [tracks, currentIndex, isPlaying, advanceToNext]);
 
-  // Auto-play next track when currentIndex changes and already playing
-  useEffect(() => {
-    if (isPlaying && audioRef.current && currentTrack) {
-      audioRef.current.src = currentTrack.file_url;
-      audioRef.current.volume = isMuted ? 0 : volume;
-      audioRef.current.play().catch(console.error);
+  const handleSeek = useCallback((time: number) => {
+    if (audioRef.current) {
+      audioRef.current.currentTime = time;
+      setCurrentTime(time);
     }
-    // Only trigger on currentIndex change from "ended" event
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const handleSelectTrack = useCallback(
+    (index: number) => {
+      setCurrentIndex(index);
+
+      if (isPlaying) {
+        ensureAudioElement();
+        const track = tracks[index];
+        if (track && audioRef.current) {
+          audioRef.current.src = track.file_url;
+          audioRef.current.volume = isMuted ? 0 : volume;
+          audioRef.current.play().catch(console.error);
+          startTimeUpdate();
+        }
+      }
+    },
+    [isPlaying, tracks, volume, isMuted, ensureAudioElement, startTimeUpdate]
+  );
 
   const handleChannelChange = useCallback(
     (ch: RadioChannel) => {
@@ -225,11 +270,14 @@ export default function RadioPlayer() {
           isPlaying={isPlaying}
           volume={volume}
           isMuted={isMuted}
+          currentTime={currentTime}
+          duration={duration}
           onPlay={handlePlay}
           onStop={handleStop}
           onNext={handleNext}
           onVolumeChange={setVolume}
           onToggleMute={() => setIsMuted((m) => !m)}
+          onSeek={handleSeek}
         />
 
         {loading && (
@@ -241,6 +289,14 @@ export default function RadioPlayer() {
             Nessuna traccia disponibile per questo canale.
           </p>
         )}
+
+        {/* Track List */}
+        <TrackList
+          tracks={tracks}
+          currentIndex={currentIndex}
+          isPlaying={isPlaying}
+          onSelectTrack={handleSelectTrack}
+        />
 
         {tracks.length > 0 && (
           <p className="text-gray-500 text-xs">

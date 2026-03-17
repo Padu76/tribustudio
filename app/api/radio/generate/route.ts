@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
       channel,
       count = 1,
       duration_ms = 180_000,
-      force_instrumental = true,
+      force_instrumental = false,
     } = body;
 
     // Validazione
