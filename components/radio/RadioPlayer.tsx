@@ -29,6 +29,7 @@ export default function RadioPlayer() {
   const [loading, setLoading] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [loop, setLoop] = useState<"none" | "all" | "one">("all");
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const tracksSinceAnnouncement = useRef(0);
@@ -149,12 +150,28 @@ export default function RadioPlayer() {
    * Avanza alla prossima traccia, eventualmente con annuncio DJ
    */
   const advanceToNext = useCallback(() => {
+    // Loop singola traccia: ri-riproduce la stessa
+    if (loop === "one") {
+      if (audioRef.current) {
+        audioRef.current.currentTime = 0;
+        audioRef.current.play().catch(console.error);
+      }
+      return;
+    }
+
     setCurrentIndex((prev) => {
-      const next = prev + 1 < tracks.length ? prev + 1 : 0;
+      const isLast = prev + 1 >= tracks.length;
+
+      // Se non c'è loop e siamo all'ultima traccia, fermati
+      if (isLast && loop === "none") {
+        setIsPlaying(false);
+        return prev;
+      }
+
+      const next = isLast ? 0 : prev + 1;
 
       tracksSinceAnnouncement.current++;
 
-      // Inserisci annuncio DJ ogni N tracce
       if (
         announcements.length > 0 &&
         tracksSinceAnnouncement.current >= ANNOUNCE_EVERY_N_TRACKS
@@ -166,7 +183,7 @@ export default function RadioPlayer() {
 
       return next;
     });
-  }, [tracks, announcements, playAnnouncement, playTrackAtIndex]);
+  }, [tracks, announcements, playAnnouncement, playTrackAtIndex, loop]);
 
   const ensureAudioElement = useCallback(() => {
     if (!audioRef.current) {
@@ -213,6 +230,39 @@ export default function RadioPlayer() {
       setCurrentIndex(nextIndex);
     }
   }, [tracks, currentIndex, isPlaying, advanceToNext]);
+
+  const handlePrev = useCallback(() => {
+    if (tracks.length === 0) return;
+
+    // Se siamo oltre i 3 secondi, ricomincia la traccia corrente
+    if (audioRef.current && audioRef.current.currentTime > 3) {
+      audioRef.current.currentTime = 0;
+      setCurrentTime(0);
+      return;
+    }
+
+    const prevIndex = currentIndex > 0 ? currentIndex - 1 : tracks.length - 1;
+    setCurrentIndex(prevIndex);
+
+    if (isPlaying) {
+      ensureAudioElement();
+      const track = tracks[prevIndex];
+      if (track && audioRef.current) {
+        audioRef.current.src = track.file_url;
+        audioRef.current.volume = isMuted ? 0 : volume;
+        audioRef.current.play().catch(console.error);
+        startTimeUpdate();
+      }
+    }
+  }, [tracks, currentIndex, isPlaying, volume, isMuted, ensureAudioElement, startTimeUpdate]);
+
+  const handleToggleLoop = useCallback(() => {
+    setLoop((prev) => {
+      if (prev === "none") return "all";
+      if (prev === "all") return "one";
+      return "none";
+    });
+  }, []);
 
   const handleSeek = useCallback((time: number) => {
     if (audioRef.current) {
@@ -272,9 +322,12 @@ export default function RadioPlayer() {
           isMuted={isMuted}
           currentTime={currentTime}
           duration={duration}
+          loop={loop}
           onPlay={handlePlay}
           onStop={handleStop}
           onNext={handleNext}
+          onPrev={handlePrev}
+          onToggleLoop={handleToggleLoop}
           onVolumeChange={setVolume}
           onToggleMute={() => setIsMuted((m) => !m)}
           onSeek={handleSeek}
@@ -289,23 +342,25 @@ export default function RadioPlayer() {
             Nessuna traccia disponibile per questo canale.
           </p>
         )}
-
-        {/* Track List */}
-        <TrackList
-          tracks={tracks}
-          currentIndex={currentIndex}
-          isPlaying={isPlaying}
-          onSelectTrack={handleSelectTrack}
-        />
-
-        {tracks.length > 0 && (
-          <p className="text-gray-500 text-xs">
-            {tracks.length} tracce disponibili · Traccia {currentIndex + 1} di{" "}
-            {tracks.length}
-            {announcements.length > 0 && ` · ${announcements.length} annunci DJ`}
-          </p>
-        )}
       </div>
+
+      {/* Track List - Separata e ben visibile */}
+      {tracks.length > 0 && (
+        <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6">
+          <TrackList
+            tracks={tracks}
+            currentIndex={currentIndex}
+            isPlaying={isPlaying}
+            onSelectTrack={handleSelectTrack}
+          />
+
+          {announcements.length > 0 && (
+            <p className="text-gray-500 text-xs mt-3">
+              {announcements.length} annunci DJ attivi
+            </p>
+          )}
+        </div>
+      )}
     </div>
   );
 }
