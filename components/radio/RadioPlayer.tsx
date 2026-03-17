@@ -30,9 +30,7 @@ export default function RadioPlayer() {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [loop, setLoop] = useState<"none" | "all" | "one">("all");
-  const [adminMode, setAdminMode] = useState(false);
-  const [adminKey, setAdminKey] = useState("");
-  const [showAdminLogin, setShowAdminLogin] = useState(false);
+  const [adminMode, setAdminMode] = useState(true);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const tracksSinceAnnouncement = useRef(0);
@@ -307,7 +305,7 @@ export default function RadioPlayer() {
       try {
         const res = await fetch(`/api/radio/tracks/${trackId}`, {
           method: "DELETE",
-          headers: { "x-admin-key": adminKey },
+          headers: {},
         });
         if (!res.ok) {
           const data = await res.json();
@@ -328,7 +326,7 @@ export default function RadioPlayer() {
         alert("Errore di rete durante l'eliminazione");
       }
     },
-    [adminKey, currentIndex]
+    [currentIndex]
   );
 
   // Admin: sposta traccia in altro canale
@@ -339,7 +337,6 @@ export default function RadioPlayer() {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
-            "x-admin-key": adminKey,
           },
           body: JSON.stringify({ channel: newChannel }),
         });
@@ -361,16 +358,8 @@ export default function RadioPlayer() {
         alert("Errore di rete durante lo spostamento");
       }
     },
-    [adminKey, currentIndex]
+    [currentIndex]
   );
-
-  // Admin: login
-  const handleAdminLogin = useCallback(() => {
-    if (adminKey.trim()) {
-      setAdminMode(true);
-      setShowAdminLogin(false);
-    }
-  }, [adminKey]);
 
   return (
     <div className="space-y-8">
@@ -440,53 +429,6 @@ export default function RadioPlayer() {
         </div>
       )}
 
-      {/* Admin Toggle */}
-      <div className="flex justify-end">
-        {adminMode ? (
-          <button
-            onClick={() => {
-              setAdminMode(false);
-              setAdminKey("");
-            }}
-            className="text-xs text-red-400/60 hover:text-red-400 transition-colors"
-          >
-            Esci da Admin
-          </button>
-        ) : showAdminLogin ? (
-          <div className="flex items-center gap-2">
-            <input
-              type="password"
-              value={adminKey}
-              onChange={(e) => setAdminKey(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleAdminLogin()}
-              placeholder="Admin key..."
-              className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-primary/50 w-48"
-            />
-            <button
-              onClick={handleAdminLogin}
-              className="text-xs text-primary hover:text-primary/80 transition-colors"
-            >
-              Entra
-            </button>
-            <button
-              onClick={() => {
-                setShowAdminLogin(false);
-                setAdminKey("");
-              }}
-              className="text-xs text-gray-500 hover:text-gray-400 transition-colors"
-            >
-              Annulla
-            </button>
-          </div>
-        ) : (
-          <button
-            onClick={() => setShowAdminLogin(true)}
-            className="text-xs text-gray-600 hover:text-gray-400 transition-colors"
-          >
-            Admin
-          </button>
-        )}
-      </div>
     </div>
   );
 }

@@ -22,20 +22,11 @@ function getAdminSupabase() {
   return createClient(url, serviceKey);
 }
 
-function isAuthorized(request: NextRequest): boolean {
-  const authHeader = request.headers.get("x-admin-key");
-  return authHeader === process.env.SUPABASE_SERVICE_ROLE_KEY;
-}
-
 // DELETE /api/radio/tracks/[id] — Elimina traccia (soft delete: is_published = false)
 export async function DELETE(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  if (!isAuthorized(request)) {
-    return NextResponse.json({ error: "Non autorizzato" }, { status: 401 });
-  }
-
   const { id } = await params;
   const supabase = getAdminSupabase();
 
@@ -61,10 +52,6 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  if (!isAuthorized(request)) {
-    return NextResponse.json({ error: "Non autorizzato" }, { status: 401 });
-  }
-
   const { id } = await params;
   const body = await request.json();
   const { channel } = body;
