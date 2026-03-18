@@ -212,9 +212,19 @@ export default function TribuAdminPage() {
       return;
     }
 
-    // Converti ora locale italiana in UTC per Supabase
-    const starts_at = new Date(`${date}T${startTime}:00`).toISOString();
-    const ends_at = new Date(`${date}T${endTime}:00`).toISOString();
+    // Calcola offset locale del browser per gestire CET/CEST automaticamente
+    // Questo evita che Supabase/Vercel interpretino l'orario in UTC
+    const localStart = new Date(`${date}T${startTime}:00`);
+    const localEnd = new Date(`${date}T${endTime}:00`);
+    const offsetMin = localStart.getTimezoneOffset(); // es. -60 per CET, -120 per CEST
+    const sign = offsetMin <= 0 ? "+" : "-";
+    const absH = String(Math.floor(Math.abs(offsetMin) / 60)).padStart(2, "0");
+    const absM = String(Math.abs(offsetMin) % 60).padStart(2, "0");
+    const tz = `${sign}${absH}:${absM}`;
+    const starts_at = `${date}T${startTime}:00${tz}`;
+    const ends_at = `${date}T${endTime}:00${tz}`;
+    // Verifica: il browser deve mostrare lo stesso giorno/ora che l'admin ha scelto
+    console.log("[Admin] Creazione slot:", { date, startTime, endTime, tz, starts_at, ends_at, localStart: localStart.toISOString(), localEnd: localEnd.toISOString() });
 
     const res = await fetch("/api/private-gym/admin/slots", {
       method: "POST",
