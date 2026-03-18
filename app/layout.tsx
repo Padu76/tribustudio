@@ -88,6 +88,7 @@ export default function RootLayout({
             gtag('config', 'G-3N4DQKS9KK');
           `}
         </Script>
+        <script defer src="https://analytics.tornoinforma.it/script.js" data-website-id="be4aeae8-effd-4717-8cc3-ba88e7d50332"></script>
       </head>
       <body>
         <LanguageProvider>
