@@ -660,67 +660,6 @@ export const translations = {
   pgWhatsapp: {
     cta: { it: "Chiedi info", en: "Ask info" },
   },
-
-  // ===== PAGINA SERVIZI FITNESS =====
-  serviziFitness: {
-    metaTitle: { it: "Servizi Fitness - Tribù Personal Training Studio Verona", en: "Fitness Services - Tribù Personal Training Studio Verona" },
-    metaDesc: {
-      it: "Servizi fitness a Verona: personal training individuale e di coppia, miniclass functional, posturale, Strafit e terza età, coaching online. Studio esclusivo.",
-      en: "Fitness services in Verona: individual and partner personal training, functional miniclass, postural, Strafit and senior fitness, online coaching. Exclusive studio.",
-    },
-    title: { it: "Servizi Fitness", en: "Fitness Services" },
-    subtitle: {
-      it: "Allenamenti personalizzati per ogni obiettivo: dalla lezione individuale alle miniclass, dal coaching online alla novità Strafit.",
-      en: "Personalized workouts for every goal: from private sessions to miniclasses, from online coaching to the new Strafit.",
-    },
-    // Strafit miniclass
-    strafitTitle: { it: "Strafit", en: "Strafit" },
-    strafitBadge: { it: "ESCLUSIVA VERONA", en: "VERONA EXCLUSIVE" },
-    strafitDesc: {
-      it: "Allenamento su cuscini instabili Strafit: unici a Verona!",
-      en: "Training on Strafit unstable cushions: the only studio in Verona!",
-    },
-    strafitDetails: {
-      it: "Strafit è un metodo di allenamento innovativo che utilizza speciali cuscini instabili per migliorare equilibrio, forza funzionale e coordinazione. Ogni esercizio viene amplificato dalla superficie instabile, attivando la muscolatura profonda e il core in modo molto più intenso rispetto all'allenamento tradizionale. Il risultato? Più forza, più stabilità, più controllo del corpo. Siamo l'unico studio a Verona a offrire lezioni Strafit!",
-      en: "Strafit is an innovative training method that uses special unstable cushions to improve balance, functional strength and coordination. Every exercise is amplified by the unstable surface, activating deep muscles and core much more intensely than traditional training. The result? More strength, more stability, more body control. We are the only studio in Verona to offer Strafit classes!",
-    },
-    strafitSito: { it: "Scopri Strafit", en: "Discover Strafit" },
-    // CTA
-    ctaTitle: { it: "Vuoi provare uno dei nostri servizi fitness?", en: "Want to try one of our fitness services?" },
-    ctaText: { it: "Contattaci su WhatsApp per prenotare la tua prima lezione o per ricevere informazioni sui nostri pacchetti.", en: "Contact us on WhatsApp to book your first session or to get information about our packages." },
-  },
-
-  // ===== PAGINA SERVIZI BENESSERE =====
-  serviziBenessere: {
-    metaTitle: { it: "Servizi Benessere - Tribù Personal Training Studio Verona", en: "Wellness Services - Tribù Personal Training Studio Verona" },
-    metaDesc: {
-      it: "Servizi benessere a Verona: nutrizionista Filippo Mensi biologo nutrizionista, massaggi professionali per recupero e relax. Approccio integrato allenamento e nutrizione.",
-      en: "Wellness services in Verona: nutritionist Filippo Mensi, professional massages for recovery and relaxation. Integrated approach to training and nutrition.",
-    },
-    title: { it: "Servizi Benessere", en: "Wellness Services" },
-    subtitle: {
-      it: "Nutrizione personalizzata e massaggi professionali per un approccio completo al tuo benessere.",
-      en: "Personalized nutrition and professional massages for a complete approach to your well-being.",
-    },
-    // Filippo Mensi
-    filippoName: { it: "Dott. Filippo Mensi", en: "Dr. Filippo Mensi" },
-    filippoRole: { it: "Biologo Nutrizionista e Chinesiologo", en: "Nutritionist Biologist and Kinesiologist" },
-    filippoOrdine: { it: "Iscritto all'Ordine dei Biologi del Triveneto — N° Tri_A3557", en: "Registered with the Order of Biologists of Triveneto — N° Tri_A3557" },
-    filippoBio: {
-      it: "Il Dott. Filippo Mensi collabora con Tribù Studio per offrire un servizio di nutrizione integrato con l'allenamento. Il suo approccio si basa su sostenibilità, praticità e consapevolezza, combinando solide evidenze scientifiche con esperienza pratica per soluzioni realmente personalizzate.",
-      en: "Dr. Filippo Mensi collaborates with Tribù Studio to offer a nutrition service integrated with training. His approach is based on sustainability, practicality and awareness, combining solid scientific evidence with practical experience for truly personalized solutions.",
-    },
-    filippoServizi: { it: "I suoi servizi:", en: "His services:" },
-    filippoServ1: { it: "Piani alimentari personalizzati", en: "Personalized meal plans" },
-    filippoServ2: { it: "Nutrizione sportiva per atleti", en: "Sports nutrition for athletes" },
-    filippoServ3: { it: "Consulenze per dimagrimento e composizione corporea", en: "Weight loss and body composition consultations" },
-    filippoServ4: { it: "Gestione intolleranze e allergie alimentari", en: "Food intolerance and allergy management" },
-    filippoSito: { it: "Visita il sito del Dott. Mensi", en: "Visit Dr. Mensi's website" },
-    filippoContatti: { it: "Contatti diretti:", en: "Direct contacts:" },
-    // CTA
-    ctaTitle: { it: "Vuoi prenotare una consulenza?", en: "Want to book a consultation?" },
-    ctaText: { it: "Contattaci su WhatsApp per prenotare una consulenza nutrizionale o un massaggio.", en: "Contact us on WhatsApp to book a nutrition consultation or a massage." },
-  },
 } as const;
 
 // Tipo helper per accedere alle traduzioni
