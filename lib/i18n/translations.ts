@@ -6,10 +6,13 @@ export type Locale = "it" | "en";
 export const translations = {
   // ===== HEADER & NAV =====
   nav: {
+    studio: { it: "Studio", en: "Studio" },
     chiSiamo: { it: "Chi siamo", en: "About Us" },
     servizi: { it: "Servizi", en: "Services" },
     galleria: { it: "Galleria", en: "Gallery" },
     comeFunziona: { it: "Come funziona", en: "How It Works" },
+    serviziFitness: { it: "Servizi Fitness", en: "Fitness Services" },
+    serviziBenessere: { it: "Servizi Benessere", en: "Wellness Services" },
     privateGym: { it: "Private Gym", en: "Private Gym" },
     testimonianze: { it: "Testimonianze", en: "Testimonials" },
     faq: { it: "FAQ", en: "FAQ" },
@@ -144,6 +147,13 @@ export const translations = {
       it: "Ginnastica leggera con obiettivo di recuperare e mantenere la muscolatura. Fai il primo passo verso una nuova vita piena di energia ed indipendente!",
       en: "Gentle exercise aimed at recovering and maintaining muscle tone. Take the first step toward a new life full of energy and independence!",
     },
+    // Miniclass Strafit
+    miniclassStrafit: { it: "Strafit", en: "Strafit" },
+    miniclassStrafitDesc: {
+      it: "Allenamento su cuscini instabili Strafit: migliora equilibrio, propriocezione e tonificazione profonda. Unici a Verona ad offrire questa disciplina innovativa!",
+      en: "Training on unstable Strafit cushions: improves balance, proprioception, and deep toning. The only studio in Verona offering this innovative discipline!",
+    },
+    miniclassStrafitBadge: { it: "Solo a Verona!", en: "Only in Verona!" },
     leNostreMiniclass: { it: "Le nostre Miniclass", en: "Our Miniclasses" },
     // Servizio 4 - Nutrizionista
     nutrizionTitle: { it: "Nutrizionista", en: "Nutritionist" },
@@ -176,6 +186,60 @@ export const translations = {
     vaiAlSito: { it: "Vai al sito", en: "Visit website" },
     scopriDiPiu: { it: "Scopri di più", en: "Learn more" },
     prenotaOra: { it: "Prenota ora", en: "Book now" },
+  },
+
+  // ===== PAGINA SERVIZI FITNESS =====
+  serviziFitness: {
+    metaTitle: { it: "Servizi Fitness Verona | Personal Training, Miniclass, Private Gym - Tribù Studio", en: "Fitness Services Verona | Personal Training, Miniclass, Private Gym - Tribù Studio" },
+    metaDesc: {
+      it: "Scopri i servizi fitness di Tribù Studio a Verona: personal training individuale e di coppia, miniclass Functional, Posturale, Strafit e Terza Età, Private Gym e Coaching Online.",
+      en: "Discover the fitness services at Tribù Studio in Verona: individual and partner personal training, Functional, Postural, Strafit and Senior miniclasses, Private Gym and Online Coaching.",
+    },
+    title: { it: "Servizi Fitness", en: "Fitness Services" },
+    subtitle: {
+      it: "Allenamento personalizzato per ogni obiettivo. Scegli il percorso fitness più adatto a te.",
+      en: "Personalized training for every goal. Choose the fitness path that suits you best.",
+    },
+    scopriMiniclass: { it: "Scopri le Miniclass", en: "Discover Miniclasses" },
+    scopriPrivateGym: { it: "Scopri Private Gym", en: "Discover Private Gym" },
+    vaiCoachingOnline: { it: "Vai al Coaching Online", en: "Go to Online Coaching" },
+    prenotaWhatsapp: { it: "Prenota su WhatsApp", en: "Book on WhatsApp" },
+    orariMiniclass: { it: "Orari Miniclass", en: "Miniclass Schedules" },
+  },
+
+  // ===== PAGINA SERVIZI BENESSERE =====
+  serviziBenessere: {
+    metaTitle: { it: "Servizi Benessere Verona | Nutrizionista, Massaggi Professionali - Tribù Studio", en: "Wellness Services Verona | Nutritionist, Professional Massage - Tribù Studio" },
+    metaDesc: {
+      it: "Servizi benessere integrati all'allenamento: consulenza nutrizionale personalizzata e massaggi professionali per il recupero muscolare. Tribù Studio Verona.",
+      en: "Wellness services integrated with training: personalized nutritional counseling and professional massages for muscle recovery. Tribù Studio Verona.",
+    },
+    title: { it: "Servizi Benessere", en: "Wellness Services" },
+    subtitle: {
+      it: "Completiamo il tuo percorso di trasformazione con nutrizione e recupero professionale.",
+      en: "We complete your transformation journey with nutrition and professional recovery.",
+    },
+    prenotaWhatsapp: { it: "Prenota su WhatsApp", en: "Book on WhatsApp" },
+  },
+
+  // ===== HUB SERVIZI HOMEPAGE =====
+  serviziHub: {
+    title: { it: "I Nostri Servizi", en: "Our Services" },
+    subtitle: {
+      it: "Scegli il percorso più adatto a te. Ogni servizio è pensato per offrirti il massimo supporto nel raggiungimento dei tuoi obiettivi.",
+      en: "Choose the path that suits you best. Every service is designed to give you the greatest support in reaching your goals.",
+    },
+    fitnessTitle: { it: "Servizi Fitness", en: "Fitness Services" },
+    fitnessDesc: {
+      it: "Personal training, miniclass, private gym e coaching online. Allenamento su misura per ogni obiettivo.",
+      en: "Personal training, miniclasses, private gym and online coaching. Tailored training for every goal.",
+    },
+    benessereTitle: { it: "Servizi Benessere", en: "Wellness Services" },
+    benessereDesc: {
+      it: "Nutrizionista e massaggi professionali. Il complemento perfetto al tuo percorso fitness.",
+      en: "Nutritionist and professional massages. The perfect complement to your fitness journey.",
+    },
+    scopri: { it: "Scopri tutti i servizi", en: "Discover all services" },
   },
 
   // ===== SERVIZI STUDIO (amenities) =====

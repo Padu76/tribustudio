@@ -1,5 +1,5 @@
 // components/ui/Footer.tsx
-import { Instagram, Facebook, MapPin, Phone, Mail, Dumbbell } from 'lucide-react';
+import { Instagram, Facebook, MapPin, Phone, Mail, Dumbbell, Heart, Activity } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -10,23 +10,30 @@ const CONTACT_INFO = {
   address: 'Via Albere 27/B – Verona',
 };
 
+const LEGAL_INFO = {
+  name: 'Andrea Padoan',
+  cf: 'PDNNDR76D16L781P',
+  piva: '04058990237',
+  pec: 'andreapadoan@pec.it',
+};
+
 const SOCIAL_LINKS = {
   instagram: 'https://www.instagram.com/tribu_personal_trainer/',
   facebook: 'https://www.facebook.com/tribupersonaltrainingstudio/?locale=it_IT'
 };
 
-// Link aggiornati con Galleria e Private Gym
+// Link rapidi aggiornati con la nuova struttura
 const FOOTER_LINKS = [
   { label: 'Chi siamo', href: '#chi-siamo' },
-  { label: 'Servizi', href: '#servizi' },
   { label: 'Galleria', href: '#galleria' },
   { label: 'Come funziona', href: '#come-funziona' },
   { label: 'Testimonianze', href: '#testimonianze' },
   { label: 'FAQ', href: '#faq' },
-  { label: 'Contatti', href: '#contatti' },
 ];
 
 const FOOTER_PAGES = [
+  { label: 'Servizi Fitness', href: '/servizi-fitness', icon: Activity },
+  { label: 'Servizi Benessere', href: '/servizi-benessere', icon: Heart },
   { label: 'Private Gym', href: '/private-gym', icon: Dumbbell },
   { label: 'Blog', href: '/blog' },
   { label: 'Quiz Percorso', href: '/quiz' },
@@ -129,10 +136,16 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Bottom bar */}
+        {/* Bottom bar con dati legali */}
         <div className="border-t border-gray-800 mt-10 pt-8 text-center text-sm text-gray-500">
           <p>&copy; {new Date().getFullYear()} Tribù Personal Training Studio. Tutti i diritti riservati.</p>
           <p className="mt-2">
+            {LEGAL_INFO.name} — C.F. {LEGAL_INFO.cf} — P.IVA {LEGAL_INFO.piva}
+          </p>
+          <p className="mt-1">
+            PEC: <a href={`mailto:${LEGAL_INFO.pec}`} className="hover:text-primary transition-colors">{LEGAL_INFO.pec}</a>
+          </p>
+          <p className="mt-3">
             <a href="/privacy-policy" className="hover:text-primary transition-colors">Privacy Policy</a>
             {' · '}
             <a href="/cookie-policy" className="hover:text-primary transition-colors">Cookie Policy</a>

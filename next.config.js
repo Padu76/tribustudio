@@ -10,7 +10,7 @@ const nextConfig = {
       { source: '/come-funziona', destination: '/' },
       { source: '/testimonianze', destination: '/' },
       { source: '/faq', destination: '/' },
-      { source: '/contatti', destination: '/' },
+      { source: '/galleria', destination: '/' },
     ];
   },
 };

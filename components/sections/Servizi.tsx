@@ -1,20 +1,11 @@
+// components/sections/Servizi.tsx
 'use client';
 
-import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import { Users, User, UsersRound, Apple, Heart, Monitor, X, ExternalLink, Calendar, Clock } from 'lucide-react';
-import Image from 'next/image';
+import { Activity, Heart, ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 import { useLanguage } from '@/lib/i18n/LanguageProvider';
-
-const serviceIcons: { [key: string]: React.ElementType } = {
-  individuale: User,
-  coppia: Users,
-  miniclass: UsersRound,
-  nutrizionista: Apple,
-  massaggi: Heart,
-  online: Monitor
-};
 
 export default function Servizi() {
   const { ref, inView } = useInView({
@@ -23,81 +14,6 @@ export default function Servizi() {
   });
 
   const { t } = useLanguage();
-
-  const SERVIZI = [
-    {
-      id: 'individuale',
-      titolo: t("servizi", "individualeTitle"),
-      descrizione: t("servizi", "individualeDesc"),
-      prezzi: [
-        { lezioni: 10, prezzo: 55, label: '10 lezioni → 55€/lez' },
-        { lezioni: 20, prezzo: 50, label: '20 lezioni → 50€/lez' },
-        { lezioni: 30, prezzo: 45, label: '30 lezioni → 45€/lez' }
-      ],
-      dettagli: t("servizi", "individualeDetails")
-    },
-    {
-      id: 'coppia',
-      titolo: t("servizi", "coppiaTitle"),
-      descrizione: t("servizi", "coppiaDesc"),
-      prezzi: [
-        { lezioni: 10, prezzo: 35, label: '10 lezioni → 35€/lez/pers' },
-        { lezioni: 20, prezzo: 30, label: '20 lezioni → 30€/lez/pers' },
-        { lezioni: 30, prezzo: 25, label: '30 lezioni → 25€/lez/pers' }
-      ],
-      dettagli: t("servizi", "coppiaDetails")
-    },
-    {
-      id: 'miniclass',
-      titolo: t("servizi", "miniclassTitle"),
-      descrizione: t("servizi", "miniclassDesc"),
-      prezzi: [
-        { lezioni: 10, prezzo: 15, label: '10 lezioni → 15€/lez' }
-      ],
-      dettagli: t("servizi", "miniclassDetails"),
-      orari: {
-        functional: [
-          { giorno: 'Lunedì', ora: '17:30' },
-          { giorno: 'Martedì', ora: '10:00' },
-          { giorno: 'Giovedì', ora: '17:30' },
-          { giorno: 'Sabato', ora: '10:00' }
-        ],
-        posturale: [
-          { giorno: 'Mercoledì', ora: '18:30' },
-          { giorno: 'Sabato', ora: '09:00' }
-        ],
-        terzaeta: [
-          { giorno: 'Martedì', ora: '10:00' },
-          { giorno: 'Giovedì', ora: '10:00' },
-          { giorno: 'Sabato', ora: '11:00' }
-        ]
-      }
-    },
-    {
-      id: 'nutrizionista',
-      titolo: t("servizi", "nutrizionTitle"),
-      descrizione: t("servizi", "nutrizionDesc"),
-      prezzi: null,
-      dettagli: t("servizi", "nutrizionDetails")
-    },
-    {
-      id: 'massaggi',
-      titolo: t("servizi", "massaggiTitle"),
-      descrizione: t("servizi", "massaggiDesc"),
-      prezzi: null,
-      dettagli: t("servizi", "massaggiDetails")
-    },
-    {
-      id: 'online',
-      titolo: t("servizi", "onlineTitle"),
-      descrizione: t("servizi", "onlineDesc"),
-      link: 'https://www.tornoinforma.it',
-      prezzi: null,
-      dettagli: t("servizi", "onlineDetails")
-    }
-  ];
-
-  const [selectedService, setSelectedService] = useState<typeof SERVIZI[0] | null>(null);
 
   return (
     <section id="servizi" className="py-12 md:py-16 lg:py-24 px-4 md:px-8 bg-gray-light" ref={ref}>
@@ -109,298 +25,94 @@ export default function Servizi() {
           className="text-center mb-8 md:mb-12"
         >
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-montserrat font-bold mb-4 md:mb-6">
-            {t("servizi", "title")}
+            {t("serviziHub", "title")}
           </h2>
           <div className="w-24 h-1 bg-primary mx-auto mb-6 md:mb-8"></div>
           <p className="text-base md:text-lg text-gray max-w-2xl mx-auto px-4">
-            {t("servizi", "subtitle")}
+            {t("serviziHub", "subtitle")}
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-          {SERVIZI.map((servizio, index) => {
-            const Icon = serviceIcons[servizio.id];
-            return (
-              <motion.div
-                key={servizio.id}
-                initial={{ opacity: 0, y: 30 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer group"
-                onClick={() => servizio.id !== 'online' && setSelectedService(servizio)}
-              >
-                {/* Immagine in cima alla card */}
-                {servizio.id === 'miniclass' && (
-                  <div className="relative h-40 sm:h-48 overflow-hidden bg-gray-200">
-                    <Image
-                      src="/images/servizi/miniclass-functional.jpg"
-                      alt={servizio.titolo}
-                      fill
-                      className="object-cover group-hover:scale-110 transition-transform duration-300"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </div>
-                )}
-
-                {servizio.id === 'individuale' && (
-                  <div className="relative h-40 sm:h-48 overflow-hidden bg-gray-200">
-                    <Image
-                      src="/images/servizi/personal.jpg"
-                      alt={servizio.titolo}
-                      fill
-                      className="object-cover group-hover:scale-110 transition-transform duration-300"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </div>
-                )}
-
-                {servizio.id === 'coppia' && (
-                  <div className="relative h-40 sm:h-48 overflow-hidden bg-gray-200">
-                    <Image
-                      src="/images/servizi/coppia.jpg"
-                      alt={servizio.titolo}
-                      fill
-                      className="object-cover group-hover:scale-110 transition-transform duration-300"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </div>
-                )}
-
-                {servizio.id === 'nutrizionista' && (
-                  <div className="relative h-40 sm:h-48 overflow-hidden bg-gray-200">
-                    <Image
-                      src="/images/servizi/nutrizionista.jpg"
-                      alt={servizio.titolo}
-                      fill
-                      className="object-cover group-hover:scale-110 transition-transform duration-300"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </div>
-                )}
-
-                {servizio.id === 'massaggi' && (
-                  <div className="relative h-40 sm:h-48 overflow-hidden bg-gray-200">
-                    <Image
-                      src="/images/servizi/massaggi.jpg"
-                      alt={servizio.titolo}
-                      fill
-                      className="object-cover group-hover:scale-110 transition-transform duration-300"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </div>
-                )}
-
-                {servizio.id === 'online' && (
-                  <div className="relative h-40 sm:h-48 overflow-hidden bg-gray-200">
-                    <Image
-                      src="/images/servizi/online.jpg"
-                      alt={servizio.titolo}
-                      fill
-                      className="object-cover group-hover:scale-110 transition-transform duration-300"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </div>
-                )}
-
-                {/* Contenuto della card */}
-                <div className="p-4 sm:p-6">
-                  <div className="bg-primary/10 rounded-full w-12 h-12 sm:w-16 sm:h-16 mb-3 sm:mb-4 flex items-center justify-center group-hover:bg-primary transition-colors">
-                    <Icon size={24} className="text-primary group-hover:text-white sm:w-8 sm:h-8" />
-                  </div>
-                  <h3 className="font-montserrat font-bold text-lg sm:text-xl mb-2">{servizio.titolo}</h3>
-                  <p className="text-gray mb-3 sm:mb-4 text-xs sm:text-sm">{servizio.descrizione}</p>
-
-                  {/* Speciale per Miniclass - mostra i tipi */}
-                  {servizio.id === 'miniclass' && (
-                    <div className="mb-3 sm:mb-4 space-y-1">
-                      <div className="flex items-center gap-2 text-xs sm:text-sm">
-                        <div className="w-2 h-2 bg-primary rounded-full"></div>
-                        <span className="font-semibold text-primary">{t("servizi", "miniclassFunctional")}</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-xs sm:text-sm">
-                        <div className="w-2 h-2 bg-primary rounded-full"></div>
-                        <span className="font-semibold text-primary">{t("servizi", "miniclassPosturale")}</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-xs sm:text-sm">
-                        <div className="w-2 h-2 bg-primary rounded-full"></div>
-                        <span className="font-semibold text-primary">{t("servizi", "miniclassTerzaEta")}</span>
-                      </div>
-                    </div>
-                  )}
-
-                  {servizio.prezzi && servizio.prezzi.length > 0 && (
-                    <div className="border-t pt-3 sm:pt-4 mb-3 sm:mb-4">
-                      <p className="text-xs sm:text-sm font-semibold text-primary mb-1 sm:mb-2">{t("servizi", "aPartireDa")}</p>
-                      <p className="text-xl sm:text-2xl font-bold text-dark">
-                        {servizio.prezzi[servizio.prezzi.length - 1].prezzo}€<span className="text-xs sm:text-sm font-normal">{t("servizi", "perLezione")}</span>
-                      </p>
-                    </div>
-                  )}
-
-                  {servizio.id === 'online' ? (
-                    <a
-                      href={(servizio as any).link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-primary font-semibold hover:gap-3 transition-all text-sm"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      {t("servizi", "vaiAlSito")} <ExternalLink size={14} />
-                    </a>
-                  ) : (
-                    <button className="text-primary font-semibold hover:text-primary-dark transition-colors text-sm">
-                      {t("servizi", "scopriDiPiu")} →
-                    </button>
-                  )}
-                </div>
-              </motion.div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Modal Dettagli - Ottimizzato per mobile */}
-      {selectedService && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setSelectedService(null)}>
+        <div className="grid md:grid-cols-2 gap-6 md:gap-8 max-w-4xl mx-auto">
+          {/* Card Servizi Fitness */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="bg-white rounded-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
-            onClick={(e) => e.stopPropagation()}
+            initial={{ opacity: 0, y: 30 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.1 }}
           >
-            {/* Header mobile sticky */}
-            <div className="sticky top-0 bg-white border-b p-4 flex justify-between items-center">
-              <h3 className="font-montserrat font-bold text-xl sm:text-2xl">{selectedService.titolo}</h3>
-              <button
-                onClick={() => setSelectedService(null)}
-                className="text-gray hover:text-primary transition-colors p-1"
-              >
-                <X size={24} />
-              </button>
-            </div>
-
-            <div className="p-4 sm:p-6 md:p-8">
-              <p className="text-gray mb-6 text-sm sm:text-base">{selectedService.dettagli}</p>
-
-              {/* Orari Miniclass con immagini - Mobile optimized */}
-              {selectedService.id === 'miniclass' && selectedService.orari && (
-                <div className="space-y-4 sm:space-y-6 mb-6">
-                  <h4 className="font-semibold text-base sm:text-lg flex items-center gap-2">
-                    <Calendar size={18} className="text-primary" />
-                    {t("servizi", "leNostreMiniclass")}
-                  </h4>
-
-                  {/* Functional Training */}
-                  <div className="bg-gray-light rounded-lg p-3 sm:p-4">
-                    <div className="flex flex-col gap-3 sm:gap-4">
-                      <div className="w-full">
-                        <div className="relative h-32 sm:h-48 md:h-64 rounded-lg overflow-hidden bg-gray-200">
-                          <Image
-                            src="/images/servizi/miniclass-functional.jpg"
-                            alt="Miniclass Functional"
-                            fill
-                            className="object-cover"
-                          />
-                        </div>
-                      </div>
-                      <div className="w-full">
-                        <h5 className="font-semibold text-primary mb-2 text-base sm:text-lg">{t("servizi", "miniclassFunctional")}</h5>
-                        <p className="text-xs sm:text-sm text-gray mb-3">{t("servizi", "miniclassFunctionalDesc")}</p>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 sm:gap-2">
-                          {selectedService.orari.functional.map((orario, idx) => (
-                            <div key={idx} className="flex items-center gap-2 text-xs sm:text-sm">
-                              <Clock size={12} className="text-gray" />
-                              <span>{orario.giorno}: <strong>{orario.ora}</strong></span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
+            <Link
+              href="/servizi-fitness"
+              className="block bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group h-full"
+            >
+              <div className="bg-gradient-to-br from-primary/10 to-primary/5 p-8 md:p-10">
+                <div className="bg-primary/10 rounded-full w-16 h-16 mb-6 flex items-center justify-center group-hover:bg-primary transition-colors duration-300">
+                  <Activity size={28} className="text-primary group-hover:text-white transition-colors duration-300" />
+                </div>
+                <h3 className="font-montserrat font-bold text-2xl md:text-3xl mb-3">
+                  {t("serviziHub", "fitnessTitle")}
+                </h3>
+                <p className="text-gray mb-6 text-sm md:text-base">
+                  {t("serviziHub", "fitnessDesc")}
+                </p>
+                <div className="space-y-2 mb-6">
+                  <div className="flex items-center gap-2 text-sm">
+                    <div className="w-2 h-2 bg-primary rounded-full" />
+                    <span>Personal Training 1-to-1 e di Coppia</span>
                   </div>
-
-                  {/* Posturale */}
-                  <div className="bg-gray-light rounded-lg p-3 sm:p-4">
-                    <div className="flex flex-col gap-3 sm:gap-4">
-                      <div className="w-full">
-                        <div className="relative h-32 sm:h-48 md:h-64 rounded-lg overflow-hidden bg-gray-200">
-                          <Image
-                            src="/images/servizi/miniclass-postural.jpg"
-                            alt="Miniclass Posturale"
-                            fill
-                            className="object-cover"
-                          />
-                        </div>
-                      </div>
-                      <div className="w-full">
-                        <h5 className="font-semibold text-primary mb-2 text-base sm:text-lg">{t("servizi", "miniclassPosturale")}</h5>
-                        <p className="text-xs sm:text-sm text-gray mb-3">{t("servizi", "miniclassPosturaleDesc")}</p>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 sm:gap-2">
-                          {selectedService.orari.posturale.map((orario, idx) => (
-                            <div key={idx} className="flex items-center gap-2 text-xs sm:text-sm">
-                              <Clock size={12} className="text-gray" />
-                              <span>{orario.giorno}: <strong>{orario.ora}</strong></span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <div className="w-2 h-2 bg-primary rounded-full" />
+                    <span>Miniclass: Functional, Posturale, Strafit, Terza Età</span>
                   </div>
-
-                  {/* Terza Eta */}
-                  <div className="bg-gray-light rounded-lg p-3 sm:p-4">
-                    <div className="flex flex-col gap-3 sm:gap-4">
-                      <div className="w-full">
-                        <div className="relative h-32 sm:h-48 md:h-64 rounded-lg overflow-hidden bg-gray-200">
-                          <Image
-                            src="/images/servizi/miniclass-aged.jpg"
-                            alt="Ginnastica Terza Eta"
-                            fill
-                            className="object-cover"
-                          />
-                        </div>
-                      </div>
-                      <div className="w-full">
-                        <h5 className="font-semibold text-primary mb-2 text-base sm:text-lg">{t("servizi", "miniclassDolceTerzaEta")}</h5>
-                        <p className="text-xs sm:text-sm text-gray mb-3">{t("servizi", "miniclassTerzaEtaDesc")}</p>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 sm:gap-2">
-                          {selectedService.orari.terzaeta.map((orario, idx) => (
-                            <div key={idx} className="flex items-center gap-2 text-xs sm:text-sm">
-                              <Clock size={12} className="text-gray" />
-                              <span>{orario.giorno}: <strong>{orario.ora}</strong></span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <div className="w-2 h-2 bg-primary rounded-full" />
+                    <span>Private Gym e Coaching Online</span>
                   </div>
                 </div>
-              )}
+                <span className="inline-flex items-center gap-2 text-primary font-semibold group-hover:gap-3 transition-all">
+                  {t("serviziHub", "scopri")} <ArrowRight size={18} />
+                </span>
+              </div>
+            </Link>
+          </motion.div>
 
-              {/* Prezzi */}
-              {selectedService.prezzi && (
-                <div className="bg-gray-light rounded-lg p-3 sm:p-4 mb-6">
-                  <p className="font-semibold mb-3 text-sm sm:text-base">{t("servizi", "listinoPrezzi")}</p>
-                  {selectedService.prezzi.map((prezzo, idx) => (
-                    <div key={idx} className="flex justify-between items-center py-2 border-b border-gray/10 last:border-0">
-                      <span className="text-gray text-xs sm:text-sm">{prezzo.label}</span>
-                    </div>
-                  ))}
+          {/* Card Servizi Benessere */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            <Link
+              href="/servizi-benessere"
+              className="block bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group h-full"
+            >
+              <div className="bg-gradient-to-br from-emerald-50 to-teal-50 p-8 md:p-10">
+                <div className="bg-emerald-100 rounded-full w-16 h-16 mb-6 flex items-center justify-center group-hover:bg-emerald-600 transition-colors duration-300">
+                  <Heart size={28} className="text-emerald-600 group-hover:text-white transition-colors duration-300" />
                 </div>
-              )}
-
-              <button
-                className="btn-primary w-full text-sm sm:text-base py-3 sm:py-4"
-                onClick={() => {
-                  setSelectedService(null);
-                  document.getElementById('contatti')?.scrollIntoView({ behavior: 'smooth' });
-                }}
-              >
-                {t("servizi", "prenotaOra")}
-              </button>
-            </div>
+                <h3 className="font-montserrat font-bold text-2xl md:text-3xl mb-3">
+                  {t("serviziHub", "benessereTitle")}
+                </h3>
+                <p className="text-gray mb-6 text-sm md:text-base">
+                  {t("serviziHub", "benessereDesc")}
+                </p>
+                <div className="space-y-2 mb-6">
+                  <div className="flex items-center gap-2 text-sm">
+                    <div className="w-2 h-2 bg-emerald-500 rounded-full" />
+                    <span>Nutrizionista — Piano alimentare personalizzato</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <div className="w-2 h-2 bg-emerald-500 rounded-full" />
+                    <span>Massaggi professionali e recupero muscolare</span>
+                  </div>
+                </div>
+                <span className="inline-flex items-center gap-2 text-emerald-600 font-semibold group-hover:gap-3 transition-all">
+                  {t("serviziHub", "scopri")} <ArrowRight size={18} />
+                </span>
+              </div>
+            </Link>
           </motion.div>
         </div>
-      )}
+      </div>
     </section>
   );
 }
