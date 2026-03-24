@@ -3,7 +3,7 @@
 
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import { Apple, Heart, ArrowLeft } from 'lucide-react';
+import { Apple, Heart, ArrowLeft, ExternalLink, GraduationCap, Award } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import Header from '@/components/ui/Header';
@@ -53,7 +53,7 @@ export default function ServiziBenessereContent() {
               className="grid md:grid-cols-2 gap-8 items-center"
             >
               <div className="relative h-64 md:h-96 rounded-2xl overflow-hidden">
-                <Image src="/images/servizi/nutrizionista.jpg" alt="Nutrizionista Verona - Consulenza nutrizionale" fill className="object-cover" />
+                <Image src="/images/servizi/nutrizionista.jpg" alt="Nutrizionista Verona - Filippo Mensi Biologo Nutrizionista" fill className="object-cover" />
               </div>
               <div>
                 <div className="flex items-center gap-3 mb-4">
@@ -63,22 +63,52 @@ export default function ServiziBenessereContent() {
                   <h2 className="text-3xl font-montserrat font-bold">{t("servizi", "nutrizionTitle")}</h2>
                 </div>
                 <p className="text-gray-600 mb-6">{t("servizi", "nutrizionDetails")}</p>
+
+                {/* Scheda Filippo Mensi */}
+                <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-5 mb-6">
+                  <h3 className="font-montserrat font-bold text-lg mb-1">Dott. Filippo Mensi</h3>
+                  <p className="text-emerald-700 text-sm font-medium mb-3">Biologo Nutrizionista, Chinesiologo e Personal Trainer</p>
+                  <div className="space-y-2 mb-4">
+                    <div className="flex items-start gap-2 text-sm text-gray-600">
+                      <GraduationCap size={16} className="text-emerald-600 mt-0.5 flex-shrink-0" />
+                      <span>Iscritto all&apos;Ordine dei Biologi del Triveneto (Tri_A3557)</span>
+                    </div>
+                    <div className="flex items-start gap-2 text-sm text-gray-600">
+                      <Award size={16} className="text-emerald-600 mt-0.5 flex-shrink-0" />
+                      <span>Approccio basato su evidenze scientifiche, sostenibilità e consapevolezza</span>
+                    </div>
+                  </div>
+                  <a
+                    href="https://filippomensi.it/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-emerald-700 text-sm font-semibold hover:text-emerald-900 hover:gap-2.5 transition-all"
+                  >
+                    Scopri di più su filippomensi.it <ExternalLink size={14} />
+                  </a>
+                </div>
+
+                <h4 className="font-semibold text-sm text-gray-800 mb-3">I nostri servizi nutrizionali:</h4>
                 <ul className="space-y-3 mb-8">
                   <li className="flex items-start gap-3 text-sm text-gray-600">
                     <div className="w-2 h-2 bg-emerald-500 rounded-full mt-1.5 flex-shrink-0" />
-                    Piano alimentare personalizzato in base ai tuoi obiettivi
+                    Piano alimentare personalizzato per dimagrimento, sport e benessere
                   </li>
                   <li className="flex items-start gap-3 text-sm text-gray-600">
                     <div className="w-2 h-2 bg-emerald-500 rounded-full mt-1.5 flex-shrink-0" />
-                    Integrazione perfetta con il programma di allenamento
+                    Nutrizione sportiva e ottimizzazione della composizione corporea
                   </li>
                   <li className="flex items-start gap-3 text-sm text-gray-600">
                     <div className="w-2 h-2 bg-emerald-500 rounded-full mt-1.5 flex-shrink-0" />
-                    Follow-up e aggiustamenti periodici
+                    Consulenze per intolleranze, allergie e patologie alimentari
                   </li>
                   <li className="flex items-start gap-3 text-sm text-gray-600">
                     <div className="w-2 h-2 bg-emerald-500 rounded-full mt-1.5 flex-shrink-0" />
-                    Sinergia costante tra nutrizionista e personal trainer
+                    Integrazione perfetta con il programma di allenamento Tribù
+                  </li>
+                  <li className="flex items-start gap-3 text-sm text-gray-600">
+                    <div className="w-2 h-2 bg-emerald-500 rounded-full mt-1.5 flex-shrink-0" />
+                    Follow-up e aggiustamenti periodici del piano nutrizionale
                   </li>
                 </ul>
                 <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="btn-primary inline-block">
