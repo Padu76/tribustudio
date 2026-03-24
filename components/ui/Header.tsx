@@ -2,6 +2,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { usePathname } from 'next/navigation';
 import { Menu, X, Dumbbell, ChevronDown, ChevronRight } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -35,6 +36,8 @@ const MAIN_NAV_ITEMS: NavItem[] = [
 
 export default function Header() {
   const { t } = useLanguage();
+  const pathname = usePathname();
+  const isHomepage = pathname === '/';
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState('');
@@ -78,12 +81,22 @@ export default function Header() {
     setIsDropdownOpen(false);
     setIsMobileStudioOpen(false);
     if (href.startsWith('/')) return;
-    const element = document.querySelector(href);
-    element?.scrollIntoView({ behavior: 'smooth' });
+    // Se siamo sulla homepage, scroll diretto alla sezione
+    if (isHomepage) {
+      const element = document.querySelector(href);
+      element?.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      // Se siamo su un'altra pagina, redirect alla homepage con l'anchor
+      window.location.href = '/' + href;
+    }
   };
 
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (isHomepage) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      window.location.href = '/';
+    }
     setIsMenuOpen(false);
   };
 

@@ -1,7 +1,7 @@
 // app/servizi-fitness/ServiziFitnessContent.tsx
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { User, Users, UsersRound, Dumbbell, Monitor, Calendar, Clock, ExternalLink, Star, ArrowLeft } from 'lucide-react';
@@ -11,6 +11,49 @@ import Header from '@/components/ui/Header';
 import Footer from '@/components/ui/Footer';
 import WhatsAppButton from '@/components/ui/WhatsAppButton';
 import { useLanguage } from '@/lib/i18n/LanguageProvider';
+
+// Galleria immagini Strafit con auto-slide
+const STRAFIT_IMAGES = [
+  { src: '/images/servizi/strafit-1.jpg', alt: 'Miniclass Strafit plank su cuscini instabili - Tribù Studio Verona' },
+  { src: '/images/servizi/strafit-2.jpg', alt: 'Miniclass Strafit allenamento in piedi su cuscini - Tribù Studio Verona' },
+  { src: '/images/servizi/strafit-3.jpg', alt: 'Miniclass Strafit gruppo allenamento - Unici a Verona' },
+];
+
+function StrafitGallery() {
+  const [currentImg, setCurrentImg] = useState(0);
+
+  // Auto-slide ogni 3 secondi
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImg((prev) => (prev + 1) % STRAFIT_IMAGES.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="relative h-48 overflow-hidden group">
+      {STRAFIT_IMAGES.map((img, idx) => (
+        <Image
+          key={idx}
+          src={img.src}
+          alt={img.alt}
+          fill
+          className={`object-cover transition-opacity duration-700 ${idx === currentImg ? 'opacity-100' : 'opacity-0'}`}
+        />
+      ))}
+      {/* Indicatori */}
+      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+        {STRAFIT_IMAGES.map((_, idx) => (
+          <button
+            key={idx}
+            onClick={() => setCurrentImg(idx)}
+            className={`w-2 h-2 rounded-full transition-all ${idx === currentImg ? 'bg-white w-4' : 'bg-white/50'}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
 
 // Orari miniclass
 const ORARI_MINICLASS = {
@@ -199,14 +242,7 @@ export default function ServiziFitnessContent() {
                     {t("servizi", "miniclassStrafitBadge")}
                   </span>
                 </div>
-                <div className="relative h-48 overflow-hidden bg-gradient-to-br from-primary/20 to-primary/5">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center">
-                      <Dumbbell className="w-16 h-16 text-primary mx-auto mb-2" />
-                      <p className="text-primary font-bold text-lg">STRAFIT</p>
-                    </div>
-                  </div>
-                </div>
+                <StrafitGallery />
                 <div className="p-6">
                   <h3 className="text-xl font-montserrat font-bold text-primary mb-2">{t("servizi", "miniclassStrafit")}</h3>
                   <p className="text-gray-600 text-sm mb-4">{t("servizi", "miniclassStrafitDesc")}</p>
