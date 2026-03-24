@@ -6,7 +6,6 @@ import '@/styles/cookieconsent-custom.css';
 import WebsiteTracker from '@/components/WebsiteTracker';
 import CookieConsent from '@/components/CookieConsent';
 import { LanguageProvider } from '@/lib/i18n/LanguageProvider';
-import Script from 'next/script';
 
 // Font ottimizzati con next/font — eliminano render-blocking CSS
 const montserrat = Montserrat({
@@ -27,7 +26,7 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://www.tribustudio.it'),
   title: 'Tribù Personal Training Studio - Allenati, mangia bene e vivi meglio',
   description:
-    'Studio di Personal Training a Verona. Lezioni individuali, di coppia e miniclass con personal trainer qualificati. Prenota la tua prima lezione con massaggio gratuito.',
+    'Studio di Personal Training a Verona. Lezioni individuali, di coppia e miniclass con personal trainer qualificati. Prenota la tua prima lezione gratuita.',
   keywords:
     'personal trainer verona, palestra verona, allenamento personalizzato, tribù studio, fitness verona, allenamento su misura, nutrizione, benessere',
   alternates: {
@@ -74,22 +73,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="it" className={`${montserrat.variable} ${openSans.variable}`}>
-      <head>
-        {/* Google Analytics */}
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-3N4DQKS9KK"
-          strategy="afterInteractive"
-        />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-3N4DQKS9KK');
-          `}
-        </Script>
-        <script defer src="https://analytics.tornoinforma.it/script.js" data-website-id="be4aeae8-effd-4717-8cc3-ba88e7d50332"></script>
-      </head>
+      <head />
       <body>
         <LanguageProvider>
           <WebsiteTracker websiteId="tribu-studio" />

@@ -4,6 +4,55 @@ import { useEffect } from 'react'
 import 'vanilla-cookieconsent/dist/cookieconsent.css'
 import * as CookieConsent from 'vanilla-cookieconsent'
 
+// Carica Google Analytics dinamicamente
+function loadGA() {
+  if (document.getElementById('ga-script')) return;
+  const script = document.createElement('script');
+  script.id = 'ga-script';
+  script.src = 'https://www.googletagmanager.com/gtag/js?id=G-3N4DQKS9KK';
+  script.async = true;
+  document.head.appendChild(script);
+
+  script.onload = () => {
+    window.dataLayer = window.dataLayer || [];
+    function gtag(...args: unknown[]) { window.dataLayer.push(args); }
+    gtag('js', new Date());
+    gtag('config', 'G-3N4DQKS9KK');
+  };
+}
+
+// Carica Umami analytics dinamicamente
+function loadUmami() {
+  if (document.getElementById('umami-script')) return;
+  const script = document.createElement('script');
+  script.id = 'umami-script';
+  script.src = 'https://analytics.tornoinforma.it/script.js';
+  script.defer = true;
+  script.dataset.websiteId = 'be4aeae8-effd-4717-8cc3-ba88e7d50332';
+  document.head.appendChild(script);
+}
+
+// Rimuove script e cookie analytics
+function removeAnalytics() {
+  document.getElementById('ga-script')?.remove();
+  document.getElementById('umami-script')?.remove();
+  // Rimuovi cookie GA
+  document.cookie.split(';').forEach((c) => {
+    const name = c.trim().split('=')[0];
+    if (name.startsWith('_ga')) {
+      document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=.tribustudio.it`;
+      document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+    }
+  });
+}
+
+// Tipo globale per window.dataLayer
+declare global {
+  interface Window {
+    dataLayer: unknown[];
+  }
+}
+
 export default function CookieBanner() {
   useEffect(() => {
     CookieConsent.run({
@@ -14,6 +63,23 @@ export default function CookieBanner() {
         },
         preferencesModal: {
           layout: 'box'
+        }
+      },
+
+      // Callback quando l'utente accetta/rifiuta
+      onConsent: () => {
+        if (CookieConsent.acceptedCategory('analytics')) {
+          loadGA();
+          loadUmami();
+        }
+      },
+
+      onChange: () => {
+        if (CookieConsent.acceptedCategory('analytics')) {
+          loadGA();
+          loadUmami();
+        } else {
+          removeAnalytics();
         }
       },
 
