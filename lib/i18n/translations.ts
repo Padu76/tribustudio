@@ -16,6 +16,7 @@ export const translations = {
     privateGym: { it: "Private Gym", en: "Private Gym" },
     testimonianze: { it: "Testimonianze", en: "Testimonials" },
     faq: { it: "FAQ", en: "FAQ" },
+    quiz: { it: "Quiz Percorso", en: "Path Quiz" },
     blog: { it: "Blog", en: "Blog" },
     contatti: { it: "Contatti", en: "Contact" },
     prenota: { it: "PRENOTA ORA", en: "BOOK NOW" },
@@ -418,7 +419,7 @@ export const translations = {
     // CTA finale
     finalCtaTitle: { it: "Pronto a iniziare il tuo percorso?", en: "Ready to start your journey?" },
     finalCtaText: {
-      it: "Non aspettare domani per iniziare a cambiare la tua vita. Contattaci ora e prenota la tua prima lezione gratuita con massaggio incluso!",
+      it: "Non aspettare domani per iniziare a cambiare la tua vita. Contattaci ora e prenota la tua prima lezione gratuita!",
       en: "Don't wait until tomorrow to start changing your life. Contact us now and book your first free session with a complimentary massage!",
     },
     finalCtaButton: { it: "Prenota su WhatsApp", en: "Book on WhatsApp" },

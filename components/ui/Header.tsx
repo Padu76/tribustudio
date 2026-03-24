@@ -3,7 +3,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
-import { Menu, X, Dumbbell, ChevronDown, ChevronRight } from 'lucide-react';
+import { Menu, X, Dumbbell, ChevronDown, ChevronRight, ClipboardList } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import LanguageSwitcher from './LanguageSwitcher';
@@ -31,6 +31,7 @@ const MAIN_NAV_ITEMS: NavItem[] = [
   { labelKey: 'serviziFitness', href: '/servizi-fitness', external: true },
   { labelKey: 'serviziBenessere', href: '/servizi-benessere', external: true },
   { labelKey: 'privateGym', href: '/private-gym', external: true, badgeKey: 'nuovo', icon: Dumbbell },
+  { labelKey: 'quiz', href: '/quiz', external: true, icon: ClipboardList },
   { labelKey: 'blog', href: '/blog', external: true },
 ];
 
