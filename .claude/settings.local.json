@@ -22,7 +22,8 @@
       "Bash(cp \"E:/tribu-private-gym/public/esterno/esterno.jpg\" \"E:/tribustudio/.claude/worktrees/agitated-kowalevski/public/images/private-gym/esterno/esterno.jpg\")",
       "Bash(cp \"E:/tribu-private-gym/public/postazioni/postazione1.jpg\" \"E:/tribustudio/.claude/worktrees/agitated-kowalevski/public/images/private-gym/postazioni/postazione1.jpg\")",
       "Bash(E:/miniconda/python.exe -c \"import rembg; print\\(''rembg disponibile''\\)\")",
-      "WebFetch(domain:filippomensi.it)"
+      "WebFetch(domain:filippomensi.it)",
+      "Bash(cmd.exe /c \"mkdir E:\\\\tribustudio\\\\app\\\\servizi-fitness E:\\\\tribustudio\\\\app\\\\servizi-benessere\")"
     ]
   }
 }
