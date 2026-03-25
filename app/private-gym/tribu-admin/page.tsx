@@ -44,8 +44,10 @@ function formatTime(dateStr: string) {
 }
 
 function getDateKey(dateStr: string) {
+  // Converte in ora locale italiana (CET/CEST) per evitare discrepanze UTC
   const d = new Date(dateStr);
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  const parts = new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Rome" }).format(d);
+  return parts; // formato YYYY-MM-DD
 }
 
 function toYMD(d: Date) {
