@@ -79,7 +79,8 @@ function MobileMenu() {
   ];
 
   return (
-    <div className="lg:hidden">
+    <div className="lg:hidden flex items-center gap-2">
+      <LanguageSwitcher className="!border-white/20 !bg-white/10 !text-white/80" />
       <button
         onClick={() => setOpen(!open)}
         className="flex items-center justify-center rounded-lg p-2 text-white/70 transition hover:text-white"
@@ -128,16 +129,13 @@ function MobileMenu() {
             ))}
 
             <div className="flex items-center justify-between pt-4 border-t border-white/10 mt-3">
-              <div className="flex items-center gap-3">
-                <LanguageSwitcher className="!border-white/20 !bg-white/10 !text-white/80" />
-                <Link
-                  href="/"
-                  onClick={() => setOpen(false)}
-                  className="text-sm text-white/50 hover:text-white transition"
-                >
-                  ← Tribù Studio
-                </Link>
-              </div>
+              <Link
+                href="/"
+                onClick={() => setOpen(false)}
+                className="text-sm text-white/50 hover:text-white transition"
+              >
+                ← Tribù Studio
+              </Link>
               <a
                 href="#calendario"
                 onClick={() => setOpen(false)}
