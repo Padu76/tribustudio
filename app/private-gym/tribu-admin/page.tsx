@@ -194,12 +194,31 @@ export default function TribuAdminPage() {
     if (!adminKey) return;
     setLoading(true);
 
-    const res = await fetch("/api/private-gym/admin/slots", {
-      headers: { "x-admin-key": adminKey },
-    });
+    try {
+      const res = await fetch("/api/private-gym/admin/slots", {
+        headers: { "x-admin-key": adminKey },
+        cache: "no-store",
+      });
 
-    const data = await res.json();
-    setSlots(data.slots || []);
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        console.error("[Admin] loadSlots errore:", res.status, errData);
+        alert(`Errore caricamento slot: ${res.status} - ${errData.error || "Unauthorized"}`);
+        if (res.status === 401) {
+          sessionStorage.removeItem("tribu-admin-key");
+          setIsUnlocked(false);
+        }
+        setLoading(false);
+        return;
+      }
+
+      const data = await res.json();
+      console.log("[Admin] Slot caricati:", data.slots?.length, data);
+      setSlots(data.slots || []);
+    } catch (err) {
+      console.error("[Admin] loadSlots network error:", err);
+      alert("Errore di rete nel caricamento slot");
+    }
     setLoading(false);
   }
 
