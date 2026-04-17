@@ -19,6 +19,7 @@ export const translations = {
     quiz: { it: "Quiz Percorso", en: "Path Quiz" },
     blog: { it: "Blog", en: "Blog" },
     contatti: { it: "Contatti", en: "Contact" },
+    buonoRegalo: { it: "Buono Regalo", en: "Gift Card" },
     prenota: { it: "PRENOTA ORA", en: "BOOK NOW" },
     nuovo: { it: "NUOVO", en: "NEW" },
     apriMenu: { it: "Apri menu", en: "Open menu" },
