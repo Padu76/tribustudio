@@ -12,7 +12,20 @@ type Slot = {
   capacity: number;
 };
 
-// Genera opzioni orario: ore piene e mezz'ore (06:00 - 23:30)
+type SlotRequest = {
+  id: string;
+  slot_date: string;
+  slot_start_time: string;
+  slot_end_time: string;
+  customer_name: string;
+  customer_phone: string;
+  customer_email: string;
+  status: string;
+  booking_slot_id: string | null;
+  created_at: string;
+  authorized_at: string | null;
+};
+
 const TIME_OPTIONS: string[] = [];
 for (let h = 6; h <= 23; h++) {
   TIME_OPTIONS.push(`${String(h).padStart(2, "0")}:00`);
@@ -44,10 +57,9 @@ function formatTime(dateStr: string) {
 }
 
 function getDateKey(dateStr: string) {
-  // Converte in ora locale italiana (CET/CEST) per evitare discrepanze UTC
   const d = new Date(dateStr);
   const parts = new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Rome" }).format(d);
-  return parts; // formato YYYY-MM-DD
+  return parts;
 }
 
 function toYMD(d: Date) {
@@ -57,7 +69,6 @@ function toYMD(d: Date) {
   return `${y}-${m}-${day}`;
 }
 
-// Calendario visuale
 function Calendar({
   selected,
   onSelect,
@@ -72,7 +83,6 @@ function Calendar({
   const [viewMonth, setViewMonth] = useState(today.getMonth());
 
   const firstDay = new Date(viewYear, viewMonth, 1);
-  // lunedi = 0
   let startDow = firstDay.getDay() - 1;
   if (startDow < 0) startDow = 6;
   const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
@@ -84,20 +94,10 @@ function Calendar({
   const todayStr = toYMD(today);
 
   function prev() {
-    if (viewMonth === 0) {
-      setViewMonth(11);
-      setViewYear(viewYear - 1);
-    } else {
-      setViewMonth(viewMonth - 1);
-    }
+    if (viewMonth === 0) { setViewMonth(11); setViewYear(viewYear - 1); } else { setViewMonth(viewMonth - 1); }
   }
   function next() {
-    if (viewMonth === 11) {
-      setViewMonth(0);
-      setViewYear(viewYear + 1);
-    } else {
-      setViewMonth(viewMonth + 1);
-    }
+    if (viewMonth === 11) { setViewMonth(0); setViewYear(viewYear + 1); } else { setViewMonth(viewMonth + 1); }
   }
 
   return (
@@ -175,12 +175,15 @@ export default function TribuAdminPage() {
   const [slots, setSlots] = useState<Slot[]>([]);
   const [loading, setLoading] = useState(false);
 
+  const [requests, setRequests] = useState<SlotRequest[]>([]);
+  const [requestsLoading, setRequestsLoading] = useState(false);
+  const [processingId, setProcessingId] = useState<string | null>(null);
+
   const [date, setDate] = useState("");
   const [startTime, setStartTime] = useState("13:00");
   const [endTime, setEndTime] = useState("14:00");
   const [price, setPrice] = useState("25");
 
-  // Quando cambia startTime, aggiorna endTime a +1h
   function handleStartChange(val: string) {
     setStartTime(val);
     const [h, m] = val.split(":").map(Number);
@@ -213,13 +216,70 @@ export default function TribuAdminPage() {
       }
 
       const data = await res.json();
-      console.log("[Admin] Slot caricati:", data.slots?.length, data);
       setSlots(data.slots || []);
     } catch (err) {
       console.error("[Admin] loadSlots network error:", err);
       alert("Errore di rete nel caricamento slot");
     }
     setLoading(false);
+  }
+
+  async function loadRequests() {
+    if (!adminKey) return;
+    setRequestsLoading(true);
+
+    try {
+      const res = await fetch("/api/private-gym/admin/slot-requests", {
+        headers: { "x-admin-key": adminKey },
+        cache: "no-store",
+      });
+
+      if (!res.ok) {
+        console.error("[Admin] loadRequests errore:", res.status);
+        setRequestsLoading(false);
+        return;
+      }
+
+      const data = await res.json();
+      setRequests(data.requests || []);
+    } catch (err) {
+      console.error("[Admin] loadRequests network error:", err);
+    }
+    setRequestsLoading(false);
+  }
+
+  async function authorizeRequest(id: string) {
+    setProcessingId(id);
+    try {
+      const res = await fetch(`/api/private-gym/admin/slot-requests/${id}/authorize`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-admin-key": adminKey,
+        },
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.error || "Errore autorizzazione");
+        setProcessingId(null);
+        return;
+      }
+
+      let msg = "Richiesta autorizzata. ";
+      if (data.email_provider === "resend") {
+        msg += "Email inviata al cliente con il link di pagamento.";
+      } else {
+        msg += `Email NON inviata (provider: ${data.email_provider}). Condividi manualmente: ${data.booking_url}`;
+      }
+      alert(msg);
+
+      loadRequests();
+      loadSlots();
+    } catch (err) {
+      console.error("[Admin] authorize error:", err);
+      alert("Errore di rete.");
+    }
+    setProcessingId(null);
   }
 
   async function createSlot() {
@@ -233,19 +293,14 @@ export default function TribuAdminPage() {
       return;
     }
 
-    // Calcola offset locale del browser per gestire CET/CEST automaticamente
-    // Questo evita che Supabase/Vercel interpretino l'orario in UTC
     const localStart = new Date(`${date}T${startTime}:00`);
-    const localEnd = new Date(`${date}T${endTime}:00`);
-    const offsetMin = localStart.getTimezoneOffset(); // es. -60 per CET, -120 per CEST
+    const offsetMin = localStart.getTimezoneOffset();
     const sign = offsetMin <= 0 ? "+" : "-";
     const absH = String(Math.floor(Math.abs(offsetMin) / 60)).padStart(2, "0");
     const absM = String(Math.abs(offsetMin) % 60).padStart(2, "0");
     const tz = `${sign}${absH}:${absM}`;
     const starts_at = `${date}T${startTime}:00${tz}`;
     const ends_at = `${date}T${endTime}:00${tz}`;
-    // Verifica: il browser deve mostrare lo stesso giorno/ora che l'admin ha scelto
-    console.log("[Admin] Creazione slot:", { date, startTime, endTime, tz, starts_at, ends_at, localStart: localStart.toISOString(), localEnd: localEnd.toISOString() });
 
     const res = await fetch("/api/private-gym/admin/slots", {
       method: "POST",
@@ -312,11 +367,13 @@ export default function TribuAdminPage() {
   }
 
   useEffect(() => {
-    if (isUnlocked) loadSlots();
+    if (isUnlocked) {
+      loadSlots();
+      loadRequests();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isUnlocked]);
 
-  // Conta slot per data (per badge calendario)
   const slotDates = useMemo(() => {
     const map: Record<string, number> = {};
     for (const slot of slots) {
@@ -326,7 +383,6 @@ export default function TribuAdminPage() {
     return map;
   }, [slots]);
 
-  // Slot raggruppati per data
   const groupedSlots = useMemo(() => {
     const map: Record<string, Slot[]> = {};
     for (const slot of slots) {
@@ -337,13 +393,21 @@ export default function TribuAdminPage() {
     return map;
   }, [slots]);
 
-  // Filtra slot del giorno selezionato (se selezionato)
   const filteredGrouped = useMemo(() => {
     if (!date) return groupedSlots;
     const daySlots = groupedSlots[date];
     if (!daySlots) return {};
     return { [date]: daySlots };
   }, [date, groupedSlots]);
+
+  const pendingRequests = useMemo(
+    () => requests.filter((r) => r.status === "pending"),
+    [requests]
+  );
+  const otherRequests = useMemo(
+    () => requests.filter((r) => r.status !== "pending").slice(0, 20),
+    [requests]
+  );
 
   if (!isUnlocked) {
     return (
@@ -389,7 +453,6 @@ export default function TribuAdminPage() {
   return (
     <main className="min-h-screen bg-[#050505] px-4 py-10 text-white">
       <div className="mx-auto max-w-7xl">
-        {/* Header */}
         <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
           <div>
             <div className="inline-flex rounded-full border border-orange-500/30 bg-orange-500/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-orange-400">
@@ -409,7 +472,10 @@ export default function TribuAdminPage() {
               Vedi sul sito
             </a>
             <button
-              onClick={loadSlots}
+              onClick={() => {
+                loadSlots();
+                loadRequests();
+              }}
               className="rounded-full border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-white hover:bg-white/10"
             >
               Aggiorna
@@ -420,6 +486,7 @@ export default function TribuAdminPage() {
                 setAdminKey("");
                 setIsUnlocked(false);
                 setSlots([]);
+                setRequests([]);
               }}
               className="rounded-full border border-red-500/30 bg-red-500/10 px-5 py-3 text-sm font-semibold text-red-400 hover:bg-red-500/20"
             >
@@ -428,16 +495,114 @@ export default function TribuAdminPage() {
           </div>
         </div>
 
+        <section className="mb-8 rounded-[32px] border border-amber-400/30 bg-amber-400/5 p-6">
+          <div className="mb-4 flex items-center justify-between">
+            <div>
+              <h2 className="text-lg font-bold text-white">
+                Richieste in attesa
+                {pendingRequests.length > 0 && (
+                  <span className="ml-2 inline-flex items-center justify-center rounded-full bg-amber-400 px-2.5 py-0.5 text-xs font-bold text-black">
+                    {pendingRequests.length}
+                  </span>
+                )}
+              </h2>
+              <p className="mt-1 text-xs text-white/50">
+                Clienti che hanno richiesto uno slot non direttamente prenotabile. Clicca &quot;Autorizza&quot; per aprire lo slot e inviare l&apos;email con link di pagamento.
+              </p>
+            </div>
+          </div>
+
+          {requestsLoading ? (
+            <div className="py-6 text-center text-white/40 text-sm">Caricamento...</div>
+          ) : pendingRequests.length === 0 ? (
+            <div className="py-6 text-center text-white/40 text-sm">Nessuna richiesta in attesa.</div>
+          ) : (
+            <div className="space-y-2">
+              {pendingRequests.map((req) => {
+                const isProcessing = processingId === req.id;
+                const dateLabel = formatDateLong(req.slot_date);
+                const timeLabel = `${req.slot_start_time.slice(0, 5)} — ${req.slot_end_time.slice(0, 5)}`;
+                return (
+                  <div
+                    key={req.id}
+                    className="flex flex-col gap-3 rounded-2xl border border-amber-400/20 bg-black/30 p-4 sm:flex-row sm:items-center sm:justify-between"
+                  >
+                    <div className="flex-1 min-w-0">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="text-base font-semibold text-white">{req.customer_name}</span>
+                        <span className="text-xs text-white/40">·</span>
+                        <span className="text-xs text-white/60">{req.customer_phone}</span>
+                        <a
+                          href={`mailto:${req.customer_email}`}
+                          className="text-xs text-amber-400 hover:underline"
+                        >
+                          {req.customer_email}
+                        </a>
+                      </div>
+                      <div className="mt-1 text-sm capitalize text-white/80">
+                        {dateLabel} · <span className="font-semibold">{timeLabel}</span>
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => authorizeRequest(req.id)}
+                        disabled={isProcessing}
+                        className="rounded-full bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700 disabled:opacity-60 disabled:cursor-wait"
+                      >
+                        {isProcessing ? "..." : "Autorizza"}
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {otherRequests.length > 0 && (
+            <details className="mt-6">
+              <summary className="cursor-pointer text-xs text-white/40 hover:text-white/60">
+                Richieste recenti (autorizzate / rifiutate)
+              </summary>
+              <div className="mt-3 space-y-1.5">
+                {otherRequests.map((req) => {
+                  const dateLabel = formatDateLong(req.slot_date);
+                  const timeLabel = `${req.slot_start_time.slice(0, 5)}-${req.slot_end_time.slice(0, 5)}`;
+                  return (
+                    <div
+                      key={req.id}
+                      className="flex flex-col gap-1 rounded-lg border border-white/5 bg-white/5 px-3 py-2 text-xs sm:flex-row sm:items-center sm:justify-between"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="text-white/70">{req.customer_name}</span>
+                        <span className="text-white/30">·</span>
+                        <span className="capitalize text-white/60">{dateLabel} {timeLabel}</span>
+                      </div>
+                      <span
+                        className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
+                          req.status === "authorized"
+                            ? "bg-green-500/20 text-green-400"
+                            : req.status === "rejected"
+                            ? "bg-red-500/20 text-red-400"
+                            : "bg-white/10 text-white/40"
+                        }`}
+                      >
+                        {req.status}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </details>
+          )}
+        </section>
+
         <div className="grid gap-8 lg:grid-cols-[380px_1fr]">
-          {/* Colonna sinistra: Calendario + Form */}
           <div className="space-y-6">
-            {/* Calendario */}
             <section className="rounded-[32px] border border-white/10 bg-white/5 p-6">
               <h2 className="mb-4 text-lg font-bold text-white">Seleziona giorno</h2>
               <Calendar selected={date} onSelect={setDate} slotDates={slotDates} />
             </section>
 
-            {/* Form creazione slot */}
             <section className="rounded-[32px] border border-white/10 bg-white/5 p-6">
               <h2 className="text-lg font-bold text-white">Nuovo slot</h2>
 
@@ -500,7 +665,6 @@ export default function TribuAdminPage() {
             </section>
           </div>
 
-          {/* Colonna destra: Slot creati */}
           <section className="rounded-[32px] border border-white/10 bg-white/5 p-6">
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-lg font-bold text-white">
