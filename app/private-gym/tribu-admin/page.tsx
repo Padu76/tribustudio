@@ -26,6 +26,7 @@ type SlotRequest = {
   authorized_at: string | null;
 };
 
+// Genera opzioni orario: ore piene e mezz'ore (06:00 - 23:30)
 const TIME_OPTIONS: string[] = [];
 for (let h = 6; h <= 23; h++) {
   TIME_OPTIONS.push(`${String(h).padStart(2, "0")}:00`);
@@ -282,6 +283,29 @@ export default function TribuAdminPage() {
     setProcessingId(null);
   }
 
+  async function deleteRequest(id: string) {
+    const ok = window.confirm("Eliminare questa richiesta? L'operazione è irreversibile.");
+    if (!ok) return;
+    setProcessingId(id);
+    try {
+      const res = await fetch(`/api/private-gym/admin/slot-requests/${id}`, {
+        method: "DELETE",
+        headers: { "x-admin-key": adminKey },
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.error || "Errore eliminazione richiesta");
+        setProcessingId(null);
+        return;
+      }
+      loadRequests();
+    } catch (err) {
+      console.error("[Admin] delete request error:", err);
+      alert("Errore di rete.");
+    }
+    setProcessingId(null);
+  }
+
   async function createSlot() {
     if (!date || !startTime || !endTime) {
       alert("Seleziona data e orari dal calendario.");
@@ -453,6 +477,7 @@ export default function TribuAdminPage() {
   return (
     <main className="min-h-screen bg-[#050505] px-4 py-10 text-white">
       <div className="mx-auto max-w-7xl">
+        {/* Header */}
         <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
           <div>
             <div className="inline-flex rounded-full border border-orange-500/30 bg-orange-500/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-orange-400">
@@ -495,6 +520,7 @@ export default function TribuAdminPage() {
           </div>
         </div>
 
+        {/* Richieste in attesa — FULL WIDTH */}
         <section className="mb-8 rounded-[32px] border border-amber-400/30 bg-amber-400/5 p-6">
           <div className="mb-4 flex items-center justify-between">
             <div>
@@ -507,7 +533,7 @@ export default function TribuAdminPage() {
                 )}
               </h2>
               <p className="mt-1 text-xs text-white/50">
-                Clienti che hanno richiesto uno slot non direttamente prenotabile. Clicca &quot;Autorizza&quot; per aprire lo slot e inviare l&apos;email con link di pagamento.
+                Clienti che hanno richiesto uno slot non direttamente prenotabile. Clicca &quot;Autorizza&quot; per aprire lo slot e inviare l&apos;email con link di pagamento, oppure &quot;Elimina&quot; per rimuovere la richiesta.
               </p>
             </div>
           </div>
@@ -550,6 +576,13 @@ export default function TribuAdminPage() {
                         className="rounded-full bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700 disabled:opacity-60 disabled:cursor-wait"
                       >
                         {isProcessing ? "..." : "Autorizza"}
+                      </button>
+                      <button
+                        onClick={() => deleteRequest(req.id)}
+                        disabled={isProcessing}
+                        className="rounded-full bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-60 disabled:cursor-wait"
+                      >
+                        Elimina
                       </button>
                     </div>
                   </div>
