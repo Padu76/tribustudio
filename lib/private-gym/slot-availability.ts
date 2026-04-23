@@ -57,6 +57,19 @@ function isClassSummary(summary: string | null | undefined, keywords: string[]):
   return keywords.some((kw) => upper.includes(kw));
 }
 
+function normalizePrivateKey(raw: string): string {
+  let k = raw.trim();
+  // Strip surrounding quotes (Vercel sometimes wraps values)
+  if ((k.startsWith('"') && k.endsWith('"')) || (k.startsWith("'") && k.endsWith("'"))) {
+    k = k.slice(1, -1).trim();
+  }
+  // Convert literal \n to real newlines
+  k = k.replace(/\\n/g, "\n");
+  // Normalize CRLF to LF
+  k = k.replace(/\r\n/g, "\n");
+  return k;
+}
+
 export function toRomeISO(utcDate: Date): string {
   const fmt = new Intl.DateTimeFormat("en-CA", {
     timeZone: "Europe/Rome",
@@ -143,48 +156,56 @@ export async function fetchCalendarEvents(
     return [];
   }
 
-  const auth = new google.auth.JWT({
-    email: env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-    key: env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY.replace(/\\n/g, "\n"),
-    scopes: ["https://www.googleapis.com/auth/calendar.readonly"],
-  });
-
-  const calendar = google.calendar({ version: "v3", auth });
-
-  const timeMin = new Date(romeISOToMs(`${fromDateISO}T00:00:00`)).toISOString();
-  const timeMax = new Date(romeISOToMs(`${addDaysISO(toDateISO, 1)}T00:00:00`)).toISOString();
-
-  const response = await calendar.events.list({
-    calendarId: env.GOOGLE_CALENDAR_ID,
-    timeMin,
-    timeMax,
-    singleEvents: true,
-    orderBy: "startTime",
-    maxResults: 500,
-  });
-
-  const keywords = getClassKeywords();
-  const items = response.data.items ?? [];
-  const result: CalendarEventLite[] = [];
-
-  for (const ev of items) {
-    const startISO = ev.start?.dateTime ?? ev.start?.date;
-    const endISO = ev.end?.dateTime ?? ev.end?.date;
-    if (!startISO || !endISO) continue;
-
-    const startRome = toRomeISO(new Date(startISO));
-    const endRome = toRomeISO(new Date(endISO));
-
-    result.push({
-      id: ev.id ?? "",
-      summary: ev.summary ?? "",
-      starts_at_rome: startRome,
-      ends_at_rome: endRome,
-      isClass: isClassSummary(ev.summary, keywords),
+  try {
+    const auth = new google.auth.JWT({
+      email: env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+      key: normalizePrivateKey(env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY),
+      scopes: ["https://www.googleapis.com/auth/calendar.readonly"],
     });
-  }
 
-  return result;
+    const calendar = google.calendar({ version: "v3", auth });
+
+    const timeMin = new Date(romeISOToMs(`${fromDateISO}T00:00:00`)).toISOString();
+    const timeMax = new Date(romeISOToMs(`${addDaysISO(toDateISO, 1)}T00:00:00`)).toISOString();
+
+    const response = await calendar.events.list({
+      calendarId: env.GOOGLE_CALENDAR_ID,
+      timeMin,
+      timeMax,
+      singleEvents: true,
+      orderBy: "startTime",
+      maxResults: 500,
+    });
+
+    const keywords = getClassKeywords();
+    const items = response.data.items ?? [];
+    const result: CalendarEventLite[] = [];
+
+    for (const ev of items) {
+      const startISO = ev.start?.dateTime ?? ev.start?.date;
+      const endISO = ev.end?.dateTime ?? ev.end?.date;
+      if (!startISO || !endISO) continue;
+
+      const startRome = toRomeISO(new Date(startISO));
+      const endRome = toRomeISO(new Date(endISO));
+
+      result.push({
+        id: ev.id ?? "",
+        summary: ev.summary ?? "",
+        starts_at_rome: startRome,
+        ends_at_rome: endRome,
+        isClass: isClassSummary(ev.summary, keywords),
+      });
+    }
+
+    return result;
+  } catch (err) {
+    // Degrade gracefully: if Google Calendar call fails (bad key, calendar not shared, quota, etc.)
+    // return an empty event list so candidates fall back to status "request-whatsapp" and the
+    // page still shows bookable-via-whatsapp slots instead of "Nessuno slot disponibile".
+    console.error("[slot-availability] Google Calendar fetch failed:", err);
+    return [];
+  }
 }
 
 function isBlacklisted(dateISO: string, hour: number): boolean {
