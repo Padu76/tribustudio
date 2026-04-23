@@ -35,6 +35,12 @@ function slotKey(s: ComputedSlot): string {
   return `${s.date}|${s.start_time}|${s.end_time}`;
 }
 
+function formatItalianDate(dateISO: string): string {
+  const [y, m, d] = dateISO.split("-").map(Number);
+  const date = new Date(y, m - 1, d);
+  return format(date, "EEEE d MMMM yyyy", { locale: it });
+}
+
 export default function LiveSlots() {
   const router = useRouter();
   const [slots, setSlots] = useState<ComputedSlot[]>([]);
@@ -43,6 +49,15 @@ export default function LiveSlots() {
   const [weekOffset, setWeekOffset] = useState(0);
   const [reservingKey, setReservingKey] = useState<string | null>(null);
   const [reserveError, setReserveError] = useState<string | null>(null);
+
+  // Modal state for amber "request" flow
+  const [requestSlot, setRequestSlot] = useState<ComputedSlot | null>(null);
+  const [reqName, setReqName] = useState("");
+  const [reqPhone, setReqPhone] = useState("");
+  const [reqEmail, setReqEmail] = useState("");
+  const [reqSubmitting, setReqSubmitting] = useState(false);
+  const [reqError, setReqError] = useState<string | null>(null);
+  const [reqSuccess, setReqSuccess] = useState<{ whatsapp_url: string } | null>(null);
 
   useEffect(() => {
     fetch("/api/private-gym/slots/computed", { cache: "no-store" })
@@ -118,6 +133,68 @@ export default function LiveSlots() {
     }
   }
 
+  function openRequestModal(slot: ComputedSlot) {
+    setRequestSlot(slot);
+    setReqName("");
+    setReqPhone("");
+    setReqEmail("");
+    setReqError(null);
+    setReqSuccess(null);
+  }
+
+  function closeRequestModal() {
+    setRequestSlot(null);
+    setReqName("");
+    setReqPhone("");
+    setReqEmail("");
+    setReqError(null);
+    setReqSuccess(null);
+  }
+
+  async function submitRequest() {
+    if (!requestSlot) return;
+    setReqError(null);
+
+    if (reqName.trim().length < 2) {
+      setReqError("Inserisci il tuo nome.");
+      return;
+    }
+    if (reqPhone.trim().length < 5) {
+      setReqError("Inserisci un numero di telefono valido.");
+      return;
+    }
+    if (!reqEmail.includes("@")) {
+      setReqError("Inserisci una email valida.");
+      return;
+    }
+
+    setReqSubmitting(true);
+    try {
+      const res = await fetch("/api/private-gym/slot-requests", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          date: requestSlot.date,
+          start_time: requestSlot.start_time,
+          end_time: requestSlot.end_time,
+          customer_name: reqName.trim(),
+          customer_phone: reqPhone.trim(),
+          customer_email: reqEmail.trim(),
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Errore nell'invio della richiesta.");
+      }
+      setReqSuccess({ whatsapp_url: data.whatsapp_url });
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Errore imprevisto.";
+      setReqError(message);
+    } finally {
+      setReqSubmitting(false);
+    }
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -186,7 +263,7 @@ export default function LiveSlots() {
         </span>
         <span className="inline-flex items-center gap-1.5">
           <span className="inline-block h-2.5 w-2.5 rounded-full bg-amber-400" />
-          Su richiesta (WhatsApp)
+          Su richiesta
         </span>
       </div>
 
@@ -237,21 +314,20 @@ export default function LiveSlots() {
                           );
                         }
                         return (
-                          <a
+                          <button
                             key={key}
-                            href={slot.whatsapp_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center justify-between rounded-xl border border-amber-400/20 bg-amber-400/5 p-3 hover:border-amber-400/40 hover:bg-amber-400/10 transition"
+                            type="button"
+                            onClick={() => openRequestModal(slot)}
+                            className="w-full flex items-center justify-between rounded-xl border border-amber-400/20 bg-amber-400/5 p-3 hover:border-amber-400/40 hover:bg-amber-400/10 transition text-left"
                           >
                             <div className="flex items-center gap-3">
                               <div className="text-base font-semibold text-white">{startTime} — {endTime}</div>
                               <span className="text-xs text-white/50">{slot.price}€</span>
                             </div>
                             <span className="rounded-full bg-amber-400/20 border border-amber-400/40 px-3 py-1.5 text-xs font-semibold text-amber-300">
-                              WhatsApp
+                              Richiedi
                             </span>
-                          </a>
+                          </button>
                         );
                       })}
                   </div>
@@ -347,29 +423,28 @@ export default function LiveSlots() {
               }
 
               return (
-                <a
+                <button
                   key={key}
-                  href={slot.whatsapp_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="absolute rounded-lg bg-amber-400/10 border border-amber-400/30 px-1.5 py-1 hover:bg-amber-400/20 hover:border-amber-400/50 transition cursor-pointer overflow-hidden group"
+                  type="button"
+                  onClick={() => openRequestModal(slot)}
+                  className="absolute rounded-lg bg-amber-400/10 border border-amber-400/30 px-1.5 py-1 hover:bg-amber-400/20 hover:border-amber-400/50 transition cursor-pointer overflow-hidden group text-left"
                   style={{
                     top: `${top}px`,
                     height: `${Math.max(height, 28)}px`,
                     left: `calc(${(dayIdx / 7) * 100}% + 48px + 2px)`,
                     width: `calc(${100 / 7}% - 4px)`,
                   }}
-                  title={`${startLabel}-${endLabel} · Richiesta via WhatsApp`}
+                  title={`${startLabel}-${endLabel} · Richiedi slot`}
                 >
                   <div className="text-[11px] font-bold text-amber-300 leading-tight">
                     {startLabel} - {endLabel}
                   </div>
                   {height >= 40 && (
                     <div className="text-[10px] text-amber-400/70 mt-0.5">
-                      WhatsApp
+                      Richiedi
                     </div>
                   )}
-                </a>
+                </button>
               );
             });
           })}
@@ -381,6 +456,119 @@ export default function LiveSlots() {
           </div>
         )}
       </div>
+
+      {/* MODAL — Request slot */}
+      {requestSlot && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
+          onClick={(e) => {
+            if (e.target === e.currentTarget && !reqSubmitting) closeRequestModal();
+          }}
+        >
+          <div className="w-full max-w-md rounded-2xl border border-white/10 bg-[#0a0a0a] p-6 text-white shadow-2xl">
+            {!reqSuccess ? (
+              <>
+                <div className="mb-5">
+                  <h2 className="text-xl font-bold text-white">Richiedi questo slot</h2>
+                  <p className="mt-1 text-sm text-white/60 capitalize">
+                    {formatItalianDate(requestSlot.date)} · {requestSlot.start_time.slice(0, 5)}-{requestSlot.end_time.slice(0, 5)}
+                  </p>
+                </div>
+
+                <div className="space-y-3">
+                  <div>
+                    <label className="mb-1 block text-xs font-medium text-white/60">Nome e Cognome</label>
+                    <input
+                      type="text"
+                      value={reqName}
+                      onChange={(e) => setReqName(e.target.value)}
+                      className="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-2.5 text-white placeholder:text-white/30 focus:border-orange-500 focus:outline-none"
+                      placeholder="Mario Rossi"
+                      autoFocus
+                    />
+                  </div>
+                  <div>
+                    <label className="mb-1 block text-xs font-medium text-white/60">Telefono</label>
+                    <input
+                      type="tel"
+                      value={reqPhone}
+                      onChange={(e) => setReqPhone(e.target.value)}
+                      className="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-2.5 text-white placeholder:text-white/30 focus:border-orange-500 focus:outline-none"
+                      placeholder="+39 347 888 1515"
+                    />
+                  </div>
+                  <div>
+                    <label className="mb-1 block text-xs font-medium text-white/60">Email</label>
+                    <input
+                      type="email"
+                      value={reqEmail}
+                      onChange={(e) => setReqEmail(e.target.value)}
+                      className="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-2.5 text-white placeholder:text-white/30 focus:border-orange-500 focus:outline-none"
+                      placeholder="mario@email.it"
+                    />
+                  </div>
+                </div>
+
+                {reqError && (
+                  <div className="mt-3 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs text-red-400">
+                    {reqError}
+                  </div>
+                )}
+
+                <p className="mt-4 text-xs text-white/40">
+                  Dopo aver inviato la richiesta riceverai una email con il link di pagamento appena la confermiamo. Ti arriverà anche la notifica WhatsApp di avvenuta richiesta.
+                </p>
+
+                <div className="mt-5 flex gap-2">
+                  <button
+                    type="button"
+                    onClick={closeRequestModal}
+                    disabled={reqSubmitting}
+                    className="flex-1 rounded-full border border-white/10 bg-white/5 px-4 py-2.5 text-sm font-semibold text-white/70 hover:bg-white/10 transition disabled:opacity-40"
+                  >
+                    Annulla
+                  </button>
+                  <button
+                    type="button"
+                    onClick={submitRequest}
+                    disabled={reqSubmitting}
+                    className="flex-1 rounded-full bg-orange-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-orange-600 transition disabled:opacity-60 disabled:cursor-wait"
+                  >
+                    {reqSubmitting ? "Invio..." : "Invia richiesta"}
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="mb-4 text-center">
+                  <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-green-500/20">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="3"><path d="M20 6 9 17l-5-5"/></svg>
+                  </div>
+                  <h2 className="text-xl font-bold text-white">Richiesta inviata!</h2>
+                  <p className="mt-2 text-sm text-white/60">
+                    Riceverai a breve una email con il link di pagamento non appena approveremo la tua richiesta.
+                  </p>
+                </div>
+                <a
+                  href={reqSuccess.whatsapp_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-4 block w-full rounded-full bg-green-600 px-4 py-3 text-center text-sm font-semibold text-white hover:bg-green-700 transition"
+                >
+                  Mandaci un avviso su WhatsApp
+                </a>
+                <button
+                  type="button"
+                  onClick={closeRequestModal}
+                  className="mt-2 block w-full rounded-full border border-white/10 bg-white/5 px-4 py-2.5 text-sm font-semibold text-white/70 hover:bg-white/10 transition"
+                >
+                  Chiudi
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
