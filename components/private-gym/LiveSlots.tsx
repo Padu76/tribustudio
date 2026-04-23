@@ -2,57 +2,61 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   format,
   parseISO,
-  isAfter,
   startOfWeek,
   addDays,
   addWeeks,
   isSameDay,
-  getHours,
-  getMinutes,
-  differenceInMinutes,
 } from "date-fns";
 import { it } from "date-fns/locale";
 
-interface Slot {
-  id: string;
-  starts_at: string;
-  ends_at: string;
-  price_eur: number;
-  status: string;
-  capacity: number;
-}
+type ComputedSlot = {
+  date: string;
+  start_time: string;
+  end_time: string;
+  starts_at_rome: string;
+  ends_at_rome: string;
+  status: "available" | "request-whatsapp" | "booked";
+  price: number;
+  whatsapp_url?: string;
+};
 
-const HOUR_HEIGHT = 56; // px per ora
+const HOUR_HEIGHT = 56;
 const START_HOUR = 6;
 const END_HOUR = 22;
 const HOURS = Array.from({ length: END_HOUR - START_HOUR }, (_, i) => START_HOUR + i);
 
 const WEEKDAY_SHORT = ["Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"];
 
+function slotKey(s: ComputedSlot): string {
+  return `${s.date}|${s.start_time}|${s.end_time}`;
+}
+
 export default function LiveSlots() {
-  const [slots, setSlots] = useState<Slot[]>([]);
+  const router = useRouter();
+  const [slots, setSlots] = useState<ComputedSlot[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [weekOffset, setWeekOffset] = useState(0);
+  const [reservingKey, setReservingKey] = useState<string | null>(null);
+  const [reserveError, setReserveError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("/api/private-gym/slots", { cache: "no-store" })
+    fetch("/api/private-gym/slots/computed", { cache: "no-store" })
       .then((r) => r.json())
       .then((data) => {
-        const now = new Date();
-        const futureSlots = (data.slots || []).filter((s: Slot) => {
-          return isAfter(parseISO(s.ends_at), now);
-        });
-        setSlots(futureSlots);
+        const visible = (data.slots || []).filter(
+          (s: ComputedSlot) => s.status !== "booked"
+        );
+        setSlots(visible);
       })
       .catch(() => setError("Errore nel caricamento degli slot"))
       .finally(() => setLoading(false));
   }, []);
 
-  // Settimana corrente (lun-dom)
   const weekStart = useMemo(() => {
     const today = new Date();
     const start = startOfWeek(today, { weekStartsOn: 1 });
@@ -69,12 +73,11 @@ export default function LiveSlots() {
     return `${from} — ${to}`;
   }, [weekDays]);
 
-  // Slot della settimana corrente raggruppati per giorno
   const slotsByDay = useMemo(() => {
-    const map: Record<number, Slot[]> = {};
+    const map: Record<number, ComputedSlot[]> = {};
     for (let i = 0; i < 7; i++) map[i] = [];
     for (const slot of slots) {
-      const d = parseISO(slot.starts_at);
+      const d = parseISO(slot.starts_at_rome);
       for (let i = 0; i < 7; i++) {
         if (isSameDay(d, weekDays[i])) {
           map[i].push(slot);
@@ -85,10 +88,35 @@ export default function LiveSlots() {
     return map;
   }, [slots, weekDays]);
 
-  // Controlla se la settimana ha slot
   const weekHasSlots = useMemo(() => {
     return Object.values(slotsByDay).some((arr) => arr.length > 0);
   }, [slotsByDay]);
+
+  async function reserveAndRedirect(slot: ComputedSlot) {
+    setReserveError(null);
+    const key = slotKey(slot);
+    setReservingKey(key);
+    try {
+      const res = await fetch("/api/private-gym/slots/reserve", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          date: slot.date,
+          start_time: slot.start_time,
+          end_time: slot.end_time,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.id) {
+        throw new Error(data.error || "Slot non più disponibile. Riprova.");
+      }
+      router.push(`/private-gym/booking?slot=${data.id}`);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Errore imprevisto.";
+      setReserveError(message);
+      setReservingKey(null);
+    }
+  }
 
   if (loading) {
     return (
@@ -109,7 +137,7 @@ export default function LiveSlots() {
           Nessuno slot disponibile al momento
         </p>
         <p className="mt-2 text-sm text-white/50">
-          Nuovi slot vengono pubblicati regolarmente. Torna a controllare!
+          Gli orari si aggiornano automaticamente in base al calendario dello studio.
         </p>
       </div>
     );
@@ -119,7 +147,12 @@ export default function LiveSlots() {
 
   return (
     <div>
-      {/* Navigazione settimana */}
+      {reserveError && (
+        <div className="mb-4 rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-center text-sm text-red-400">
+          {reserveError}
+        </div>
+      )}
+
       <div className="mb-4 flex items-center justify-between">
         <button
           onClick={() => setWeekOffset((w) => w - 1)}
@@ -146,7 +179,18 @@ export default function LiveSlots() {
         </button>
       </div>
 
-      {/* MOBILE: vista lista compatta */}
+      <div className="mb-4 flex flex-wrap items-center justify-center gap-3 text-xs text-white/60">
+        <span className="inline-flex items-center gap-1.5">
+          <span className="inline-block h-2.5 w-2.5 rounded-full bg-orange-500" />
+          Prenotabile online
+        </span>
+        <span className="inline-flex items-center gap-1.5">
+          <span className="inline-block h-2.5 w-2.5 rounded-full bg-amber-400" />
+          Su richiesta (WhatsApp)
+        </span>
+      </div>
+
+      {/* MOBILE */}
       <div className="block lg:hidden">
         {!weekHasSlots ? (
           <div className="py-8 text-center text-white/40 text-sm">
@@ -166,22 +210,46 @@ export default function LiveSlots() {
                   </div>
                   <div className="space-y-2">
                     {daySlots
-                      .sort((a, b) => a.starts_at.localeCompare(b.starts_at))
+                      .slice()
+                      .sort((a, b) => a.starts_at_rome.localeCompare(b.starts_at_rome))
                       .map((slot) => {
-                        const startTime = format(parseISO(slot.starts_at), "HH:mm");
-                        const endTime = format(parseISO(slot.ends_at), "HH:mm");
+                        const startTime = slot.start_time.slice(0, 5);
+                        const endTime = slot.end_time.slice(0, 5);
+                        const key = slotKey(slot);
+                        const isReserving = reservingKey === key;
+                        if (slot.status === "available") {
+                          return (
+                            <button
+                              key={key}
+                              type="button"
+                              onClick={() => reserveAndRedirect(slot)}
+                              disabled={isReserving}
+                              className="w-full flex items-center justify-between rounded-xl border border-white/10 bg-black/30 p-3 hover:border-orange-500/30 hover:bg-orange-500/5 transition disabled:opacity-60 disabled:cursor-wait text-left"
+                            >
+                              <div className="flex items-center gap-3">
+                                <div className="text-base font-semibold text-white">{startTime} — {endTime}</div>
+                                <span className="text-xs text-white/50">{slot.price}€</span>
+                              </div>
+                              <span className="rounded-full bg-orange-500 px-4 py-1.5 text-xs font-semibold text-white">
+                                {isReserving ? "…" : "Prenota"}
+                              </span>
+                            </button>
+                          );
+                        }
                         return (
                           <a
-                            key={slot.id}
-                            href={`/private-gym/booking?slot=${slot.id}`}
-                            className="flex items-center justify-between rounded-xl border border-white/10 bg-black/30 p-3 hover:border-orange-500/30 hover:bg-orange-500/5 transition"
+                            key={key}
+                            href={slot.whatsapp_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center justify-between rounded-xl border border-amber-400/20 bg-amber-400/5 p-3 hover:border-amber-400/40 hover:bg-amber-400/10 transition"
                           >
                             <div className="flex items-center gap-3">
                               <div className="text-base font-semibold text-white">{startTime} — {endTime}</div>
-                              <span className="text-xs text-white/50">{slot.price_eur}€</span>
+                              <span className="text-xs text-white/50">{slot.price}€</span>
                             </div>
-                            <span className="rounded-full bg-orange-500 px-4 py-1.5 text-xs font-semibold text-white">
-                              Prenota
+                            <span className="rounded-full bg-amber-400/20 border border-amber-400/40 px-3 py-1.5 text-xs font-semibold text-amber-300">
+                              WhatsApp
                             </span>
                           </a>
                         );
@@ -194,9 +262,8 @@ export default function LiveSlots() {
         )}
       </div>
 
-      {/* DESKTOP: vista calendario settimanale */}
+      {/* DESKTOP */}
       <div className="hidden lg:block">
-        {/* Header giorni */}
         <div className="grid grid-cols-[48px_repeat(7,1fr)] border-b border-white/10">
           <div />
           {weekDays.map((day, i) => {
@@ -218,9 +285,7 @@ export default function LiveSlots() {
           })}
         </div>
 
-        {/* Griglia oraria */}
         <div className="relative grid grid-cols-[48px_repeat(7,1fr)]" style={{ height: `${(END_HOUR - START_HOUR) * HOUR_HEIGHT}px` }}>
-          {/* Righe orarie */}
           {HOURS.map((hour) => {
             const top = (hour - START_HOUR) * HOUR_HEIGHT;
             return (
@@ -239,45 +304,71 @@ export default function LiveSlots() {
             );
           })}
 
-          {/* Slot per ogni giorno */}
           {weekDays.map((day, dayIdx) => {
             const daySlots = slotsByDay[dayIdx];
             return daySlots.map((slot) => {
-              const startDate = parseISO(slot.starts_at);
-              const endDate = parseISO(slot.ends_at);
-              const startHour = getHours(startDate) + getMinutes(startDate) / 60;
-              const durationMin = differenceInMinutes(endDate, startDate);
+              const [sh, sm] = slot.start_time.split(":").map(Number);
+              const [eh, em] = slot.end_time.split(":").map(Number);
+              const startHour = sh + (sm || 0) / 60;
+              const durationMin = (eh * 60 + (em || 0)) - (sh * 60 + (sm || 0));
               const top = (startHour - START_HOUR) * HOUR_HEIGHT;
               const height = (durationMin / 60) * HOUR_HEIGHT;
-              const startLabel = format(startDate, "HH:mm");
-              const endLabel = format(endDate, "HH:mm");
+              const startLabel = slot.start_time.slice(0, 5);
+              const endLabel = slot.end_time.slice(0, 5);
+              const key = slotKey(slot);
+              const isReserving = reservingKey === key;
 
-              // Posizione colonna: 48px label + colonna giorno
-              const colStart = dayIdx + 2; // grid-cols parte da 1, +1 per la colonna label
+              if (slot.status === "available") {
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => reserveAndRedirect(slot)}
+                    disabled={isReserving}
+                    className="absolute rounded-lg bg-orange-500/20 border border-orange-500/40 px-1.5 py-1 hover:bg-orange-500/30 hover:border-orange-500/60 transition cursor-pointer overflow-hidden group disabled:opacity-60 disabled:cursor-wait text-left"
+                    style={{
+                      top: `${top}px`,
+                      height: `${Math.max(height, 28)}px`,
+                      left: `calc(${(dayIdx / 7) * 100}% + 48px + 2px)`,
+                      width: `calc(${100 / 7}% - 4px)`,
+                    }}
+                    title={`${startLabel}-${endLabel} · ${slot.price}€ · Clicca per prenotare`}
+                  >
+                    <div className="text-[11px] font-bold text-orange-300 leading-tight">
+                      {startLabel} - {endLabel}
+                    </div>
+                    {height >= 40 && (
+                      <div className="text-[10px] text-orange-400/70 mt-0.5">
+                        {isReserving ? "…" : `${slot.price}€ · Prenota`}
+                      </div>
+                    )}
+                  </button>
+                );
+              }
 
               return (
                 <a
-                  key={slot.id}
-                  href={`/private-gym/booking?slot=${slot.id}`}
-                  className="absolute rounded-lg bg-orange-500/20 border border-orange-500/40 px-1.5 py-1 hover:bg-orange-500/30 hover:border-orange-500/60 transition cursor-pointer overflow-hidden group"
+                  key={key}
+                  href={slot.whatsapp_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="absolute rounded-lg bg-amber-400/10 border border-amber-400/30 px-1.5 py-1 hover:bg-amber-400/20 hover:border-amber-400/50 transition cursor-pointer overflow-hidden group"
                   style={{
                     top: `${top}px`,
                     height: `${Math.max(height, 28)}px`,
-                    gridColumn: `${colStart}`,
-                    left: `calc(${((dayIdx) / 7) * 100}% + 48px + 2px)`,
+                    left: `calc(${(dayIdx / 7) * 100}% + 48px + 2px)`,
                     width: `calc(${100 / 7}% - 4px)`,
                   }}
-                  title={`${startLabel}-${endLabel} · ${slot.price_eur}€ · Clicca per prenotare`}
+                  title={`${startLabel}-${endLabel} · Richiesta via WhatsApp`}
                 >
-                  <div className="text-[11px] font-bold text-orange-300 leading-tight">
+                  <div className="text-[11px] font-bold text-amber-300 leading-tight">
                     {startLabel} - {endLabel}
                   </div>
                   {height >= 40 && (
-                    <div className="text-[10px] text-orange-400/70 mt-0.5">
-                      {slot.price_eur}€ · Prenota
+                    <div className="text-[10px] text-amber-400/70 mt-0.5">
+                      WhatsApp
                     </div>
                   )}
-                  <div className="absolute inset-0 bg-orange-500/0 group-hover:bg-orange-500/10 transition rounded-lg" />
                 </a>
               );
             });

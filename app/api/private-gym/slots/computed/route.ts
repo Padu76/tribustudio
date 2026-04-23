@@ -1,0 +1,74 @@
+// app/api/private-gym/slots/computed/route.ts
+import { NextRequest, NextResponse } from "next/server";
+import {
+  computeAvailableSlots,
+  buildWhatsAppRequestURL,
+  utcISOToRomeKey,
+} from "@/lib/private-gym/slot-availability";
+import { getSupabaseAdmin } from "@/lib/private-gym/supabase-admin";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+export const fetchCache = "force-no-store";
+
+function endTimeFromStart(startTime: string): string {
+  const [h, m, s] = startTime.split(":").map(Number);
+  const next = (h + 1) % 24;
+  return `${next.toString().padStart(2, "0")}:${(m ?? 0).toString().padStart(2, "0")}:${(s ?? 0).toString().padStart(2, "0")}`;
+}
+
+export async function GET(req: NextRequest) {
+  try {
+    const url = new URL(req.url);
+    const from = url.searchParams.get("from") ?? undefined;
+    const to = url.searchParams.get("to") ?? undefined;
+
+    const supabase = getSupabaseAdmin();
+    const bookedKeys = new Set<string>();
+    const blockedKeys = new Set<string>();
+
+    if (supabase) {
+      const { data } = await supabase
+        .from("tribu_private_gym_slots")
+        .select("starts_at, ends_at, status")
+        .in("status", ["booked", "blocked"]);
+
+      for (const row of data ?? []) {
+        if (!row.starts_at) continue;
+        const start = utcISOToRomeKey(row.starts_at);
+        const endTime = row.ends_at
+          ? utcISOToRomeKey(row.ends_at).start_time
+          : endTimeFromStart(start.start_time);
+        const key = `${start.date}|${start.start_time}|${endTime}`;
+        if (row.status === "booked") bookedKeys.add(key);
+        if (row.status === "blocked") blockedKeys.add(key);
+      }
+    }
+
+    const slots = await computeAvailableSlots({
+      fromDateISO: from,
+      toDateISO: to,
+      bookedKeys,
+    });
+
+    const filtered = slots.filter((s) => {
+      const key = `${s.date}|${s.start_time}|${s.end_time}`;
+      return !blockedKeys.has(key);
+    });
+
+    const enriched = filtered.map((s) => ({
+      ...s,
+      whatsapp_url: s.status === "request-whatsapp" ? buildWhatsAppRequestURL(s) : undefined,
+    }));
+
+    const response = NextResponse.json({ slots: enriched });
+    response.headers.set("Cache-Control", "no-store, no-cache, must-revalidate");
+    response.headers.set("CDN-Cache-Control", "no-store");
+    response.headers.set("Vercel-CDN-Cache-Control", "no-store");
+    return response;
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Errore imprevisto.";
+    console.error("[/api/private-gym/slots/computed] error:", error);
+    return NextResponse.json({ error: message, slots: [] }, { status: 500 });
+  }
+}

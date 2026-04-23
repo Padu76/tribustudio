@@ -21,6 +21,7 @@ const schema = z.object({
   GOOGLE_SERVICE_ACCOUNT_EMAIL: z.string().optional(),
   GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY: z.string().optional(),
   GOOGLE_CALENDAR_ENABLED: z.string().default("false"),
+  CALENDAR_CLASS_KEYWORDS: z.string().optional(),
   RESEND_API_KEY: z.string().optional(),
   EMAIL_FROM: z.string().optional(),
   EMAIL_ENABLED: z.string().default("false"),
