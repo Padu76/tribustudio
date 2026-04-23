@@ -2,6 +2,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { getSupabaseAdmin } from "@/lib/private-gym/supabase-admin";
+import { sendAdminNewRequestNotification } from "@/lib/private-gym/email";
+import { env } from "@/lib/private-gym/config";
 
 export const dynamic = "force-dynamic";
 
@@ -32,6 +34,19 @@ function buildWhatsAppNotificationUrl(body: z.infer<typeof schema>): string {
     `Email: ${body.customer_email}\n` +
     `Attendo conferma via mail, grazie!`;
   return `https://wa.me/393478881515?text=${encodeURIComponent(message)}`;
+}
+
+function formatItalianDate(dateISO: string): string {
+  const [y, m, d] = dateISO.split("-").map(Number);
+  const date = new Date(Date.UTC(y, m - 1, d, 12));
+  const fmt = new Intl.DateTimeFormat("it-IT", {
+    timeZone: "Europe/Rome",
+    weekday: "long",
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
+  return fmt.format(date);
 }
 
 export async function POST(req: NextRequest) {
@@ -67,6 +82,23 @@ export async function POST(req: NextRequest) {
     }
 
     const whatsappUrl = buildWhatsAppNotificationUrl(body);
+
+    // Fire-and-forget admin notification email (don't block response)
+    const siteUrl = env.NEXT_PUBLIC_SITE_URL || "https://www.tribustudio.it";
+    const adminUrl = `${siteUrl}/private-gym/tribu-admin`;
+    const dateLabel = formatItalianDate(body.date);
+    const timeLabel = `${body.start_time.slice(0, 5)}-${body.end_time.slice(0, 5)}`;
+
+    sendAdminNewRequestNotification({
+      customerName: body.customer_name.trim(),
+      customerPhone: body.customer_phone.trim(),
+      customerEmail: body.customer_email.trim().toLowerCase(),
+      dateLabel,
+      timeLabel,
+      adminUrl,
+    }).catch((e) => {
+      console.error("[slot-requests] admin notification error:", e);
+    });
 
     return NextResponse.json({
       id: data.id,

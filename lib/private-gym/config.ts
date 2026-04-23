@@ -26,6 +26,7 @@ const schema = z.object({
   EMAIL_FROM: z.string().optional(),
   EMAIL_ENABLED: z.string().default("false"),
   EMAIL_TO_DEBUG: z.string().optional(),
+  ADMIN_NOTIFICATION_EMAIL: z.string().optional(),
 });
 
 export const env = schema.parse(process.env);
