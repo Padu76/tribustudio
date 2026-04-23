@@ -32,7 +32,7 @@ const DEFAULT_OPENING_HOURS: Record<number, { start: number; end: number } | nul
   3: { start: 8, end: 20 },
   4: { start: 8, end: 20 },
   5: { start: 8, end: 20 },
-  6: { start: 9, end: 13 },
+  6: { start: 9, end: 12 },
 };
 
 const DEFAULT_BLACKLIST: Array<{ weekday: number; start: number; end: number }> = [
